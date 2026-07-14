@@ -72,7 +72,7 @@ export default function PatientMenuPage() {
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner">
               <ShieldPlus className="h-5 w-5" />
             </span>
-            Bienvenido
+            ALEXIS PAZ ESTUVO AQUI
           </div>
 
           <div className="flex items-center gap-3">
