@@ -4,6 +4,6 @@ const cleanUrl = typeof rawUrl === 'string' ? rawUrl.replace(/^['"]|['"]$/g, '')
 const isProd = import.meta.env.PROD
 
 export const API_CONFIG = {
-  BASE_URL: isProd ? 'https://paz-dietetica.uaeftt-ute.site/api' : cleanUrl,
+  BASE_URL: isProd ? '/api' : cleanUrl,
   TIMEOUT: 10_000,
 } as const
