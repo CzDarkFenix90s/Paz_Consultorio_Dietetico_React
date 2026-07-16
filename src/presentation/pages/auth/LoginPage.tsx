@@ -1,118 +1,164 @@
+// src/presentation/pages/auth/LoginPage.tsx
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { EyeOff, Lock, ShieldPlus, User } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Eye, EyeOff, Lock, ShieldPlus, User } from 'lucide-react'
+import { useAuthStore } from '../../store/useAuthStore'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { login, loading, error, clearError } = useAuthStore()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
-    if (username.trim().toLowerCase() === 'john' && password === '12345678') {
-      setErrorMessage('')
-      navigate('/patient/menu')
+    if (!username.trim() || !password) {
       return
     }
 
-    setErrorMessage('Usuario o contraseña incorrectos. Prueba con john / 12345678.')
+    const success = await login({
+      username: username.trim(),
+      password,
+    })
+
+    if (success) {
+      // Profile loaded. Check role to redirect.
+      const state = useAuthStore.getState()
+      const role = state.user?.role
+      if (role === 'admin' || role === 'nutricionista') {
+        navigate('/admin')
+      } else {
+        navigate('/patient/menu')
+      }
+    }
+  }
+
+  const fillCredentials = (userType: 'admin' | 'nutri' | 'paciente') => {
+    clearError()
+    if (userType === 'admin') {
+      setUsername('admin')
+      setPassword('Admin1234')
+    } else if (userType === 'nutri') {
+      setUsername('nutri_pro')
+      setPassword('Admin1234')
+    } else {
+      setUsername('john')
+      setPassword('12345678')
+    }
   }
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#3c9b42_0%,#5ca95a_18%,#5aa45c_100%)] px-4 py-6 text-white sm:px-6 lg:px-8">
-      <section className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-6xl items-center justify-center rounded-[2rem] border border-white/15 bg-white/10 p-4 shadow-[0_30px_80px_rgba(0,0,0,0.18)] backdrop-blur-sm sm:p-6 lg:p-8">
-        <div className="w-full rounded-[1.75rem] border border-white/15 bg-white/10 p-6 sm:p-8 lg:p-10">
-          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/95 text-emerald-600 shadow-lg shadow-black/10">
-              <ShieldPlus className="h-10 w-10" strokeWidth={2.5} />
-            </div>
+    <main className="min-h-screen bg-[linear-gradient(180deg,#1b4332_0%,#2d6a4f_50%,#40916c_100%)] px-4 py-6 text-white sm:px-6 lg:px-8 flex items-center justify-center">
+      <section className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-slate-900/80 p-6 shadow-2xl backdrop-blur-md sm:p-10">
+        <div className="mx-auto flex flex-col items-center text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20">
+            <ShieldPlus className="h-10 w-10 animate-pulse" strokeWidth={2.5} />
+          </div>
 
-            <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">Dietetic App</h1>
-            <p className="mt-3 text-lg font-medium text-white/75">Bienvenido a tu salud inteligente</p>
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">
+            Dietetic App
+          </h1>
+          <p className="mt-3 text-lg font-medium text-slate-300">Bienvenido a tu salud inteligente</p>
 
-            <form className="mt-10 w-full space-y-5 text-left" onSubmit={handleSubmit}>
-              <label className="block">
-                <span className="sr-only">Nombre de Usuario</span>
-                <div className="flex items-center gap-3 rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-white/85 shadow-inner shadow-white/5">
-                  <User className="h-5 w-5 shrink-0 text-white/85" />
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder="Nombre de Usuario"
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                    className="w-full bg-transparent text-lg font-medium outline-none placeholder:text-white/70"
-                  />
-                </div>
-              </label>
-
-              <label className="block">
-                <span className="sr-only">Contraseña de Acceso</span>
-                <div className="flex items-center gap-3 rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-white/85 shadow-inner shadow-white/5">
-                  <Lock className="h-5 w-5 shrink-0 text-white/85" />
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Contraseña de Acceso"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    className="w-full bg-transparent text-lg font-medium outline-none placeholder:text-white/70"
-                  />
-                  <EyeOff className="h-5 w-5 shrink-0 text-white/75" />
-                </div>
-              </label>
-
-              {errorMessage ? (
-                <p className="rounded-2xl border border-red-200/30 bg-red-500/15 px-4 py-3 text-sm font-medium text-red-50">
-                  {errorMessage}
-                </p>
-              ) : null}
-
-              <button
-                type="submit"
-                className="mt-2 w-full rounded-2xl bg-sky-500 px-4 py-4 text-base font-bold uppercase tracking-wide text-white shadow-lg shadow-sky-500/25 transition hover:bg-sky-400"
-              >
-                Iniciar sesión
-              </button>
-            </form>
-
-            <div className="mt-8 w-full">
-              <p className="text-center text-sm font-semibold text-white/80">O entrar como (Prueba):</p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <button
-                  type="button"
-                  className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 font-semibold text-white transition hover:bg-white/15"
-                >
-                  Admin
-                </button>
-                <button
-                  type="button"
-                  className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 font-semibold text-white transition hover:bg-white/15"
-                >
-                  Nutri
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setUsername('john')
-                    setPassword('12345678')
+          <form className="mt-10 w-full space-y-5 text-left" onSubmit={handleSubmit}>
+            <label className="block space-y-2">
+              <span className="text-sm font-semibold text-slate-300">Nombre de Usuario</span>
+              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 px-4 py-3.5 text-slate-100 shadow-inner focus-within:border-emerald-500/50 transition">
+                <User className="h-5 w-5 shrink-0 text-slate-400" />
+                <input
+                  type="text"
+                  name="username"
+                  required
+                  placeholder="Nombre de Usuario"
+                  value={username}
+                  onChange={(event) => {
+                    clearError()
+                    setUsername(event.target.value)
                   }}
-                  className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 font-semibold text-white transition hover:bg-white/15"
+                  className="w-full bg-transparent text-base font-medium outline-none placeholder:text-slate-500"
+                />
+              </div>
+            </label>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-semibold text-slate-300">Contraseña de Acceso</span>
+              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 px-4 py-3.5 text-slate-100 shadow-inner focus-within:border-emerald-500/50 transition">
+                <Lock className="h-5 w-5 shrink-0 text-slate-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  required
+                  placeholder="Contraseña de Acceso"
+                  value={password}
+                  onChange={(event) => {
+                    clearError()
+                    setPassword(event.target.value)
+                  }}
+                  className="w-full bg-transparent text-base font-medium outline-none placeholder:text-slate-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-slate-400 hover:text-white transition shrink-0"
                 >
-                  Paciente
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-            </div>
+            </label>
 
-            <p className="mt-10 text-sm font-medium text-white/85">
-              ¿Eres nuevo?{' '}
-              <a href="/register" className="underline decoration-2 underline-offset-4 transition hover:text-white">
-                Crea una cuenta aquí
-              </a>
-            </p>
+            {error ? (
+              <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-400 whitespace-pre-line">
+                {error}
+              </p>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-2 w-full flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-4 text-base font-bold uppercase tracking-wider text-slate-950 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:opacity-50"
+            >
+              {loading ? (
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
+              ) : (
+                'Iniciar sesión'
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 w-full border-t border-white/5 pt-6">
+            <p className="text-center text-xs font-bold uppercase tracking-widest text-slate-500">Prefijar Credenciales de Prueba:</p>
+            <div className="mt-4 grid gap-3 grid-cols-3">
+              <button
+                type="button"
+                onClick={() => fillCredentials('admin')}
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold hover:bg-white/10 transition"
+              >
+                Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => fillCredentials('nutri')}
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold hover:bg-white/10 transition"
+              >
+                Nutricionista
+              </button>
+              <button
+                type="button"
+                onClick={() => fillCredentials('paciente')}
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold hover:bg-white/10 transition"
+              >
+                Paciente
+              </button>
+            </div>
           </div>
+
+          <p className="mt-8 text-sm font-medium text-slate-400">
+            ¿Eres nuevo?{' '}
+            <Link to="/register" className="text-emerald-400 font-bold hover:underline transition decoration-2 underline-offset-4">
+              Crea una cuenta aquí
+            </Link>
+          </p>
         </div>
       </section>
     </main>

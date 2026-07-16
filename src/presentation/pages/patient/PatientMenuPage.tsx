@@ -1,329 +1,330 @@
+// src/presentation/pages/patient/PatientMenuPage.tsx
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, CalendarCheck2, ChartColumn, ChevronRight, Clock3, Droplets, Footprints, House, LayoutList, Menu, MessageSquareText, MoonStar, PanelLeftClose, Settings, ShieldPlus, SquareUserRound, UtensilsCrossed, UserCircle2 } from 'lucide-react'
-
-const summaryCards = [
-  {
-    icon: Droplets,
-    title: 'Agua hoy',
-    value: '0.0 L',
-    tone: 'from-sky-50 to-blue-50 text-sky-600',
-  },
-  {
-    icon: Footprints,
-    title: 'Ejercicio',
-    value: 'Pendiente',
-    tone: 'from-amber-50 to-orange-50 text-orange-500',
-  },
-]
+import { useAuthStore } from '../../store/useAuthStore'
+import { 
+  Bell, 
+  CalendarCheck2, 
+  ChartColumn, 
+  ChevronRight, 
+  Clock3, 
+  Droplets, 
+  Footprints, 
+  House, 
+  Menu, 
+  MessageSquareText, 
+  PanelLeftClose, 
+  ShieldPlus, 
+  UtensilsCrossed, 
+  UserCircle2,
+  LogOut,
+  Target,
+  Sparkles,
+  Flame,
+  Camera
+} from 'lucide-react'
 
 const meals = [
   {
-    title: 'Almuerzo: Pechuga a la plancha',
+    title: 'Almuerzo: Pechuga a la plancha con quinua',
     time: '13:30 PM',
+    calories: '550 kcal',
     icon: UtensilsCrossed,
   },
 ]
 
 const bottomNav = [
-  { label: 'Inicio', icon: Menu, active: true },
+  { label: 'Inicio', icon: House, active: true },
   { label: 'Mi Plan', icon: UtensilsCrossed, active: false },
-  { label: 'Recetas', icon: CalendarCheck2, active: false },
   { label: 'Progreso', icon: Footprints, active: false },
   { label: 'Chat', icon: MessageSquareText, active: false },
-]
-
-const drawerGroups = [
-  {
-    title: 'MI SALUD',
-    items: [
-      { label: 'Inicio', icon: House, active: true },
-      { label: 'Mi Plan', icon: UtensilsCrossed, active: false },
-      { label: 'Seguimiento', icon: ChartColumn, active: false },
-    ],
-  },
-  {
-    title: 'CONSULTAS',
-    items: [
-      { label: 'Chat Nutri', icon: MessageSquareText, active: false },
-      { label: 'Mis Citas', icon: CalendarCheck2, active: false },
-      { label: 'Perfil', icon: SquareUserRound, active: false },
-    ],
-  },
 ]
 
 export default function PatientMenuPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const { user, logout } = useAuthStore()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
+
+  const initialLetter = user?.username?.[0]?.toUpperCase() || 'P'
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
+    <main className="min-h-screen bg-slate-950 text-slate-100 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
+      {/* Glow ambient background elements */}
+      <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
+
+      {/* Premium Navbar */}
+      <header className="sticky top-0 z-30 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100 transition hover:bg-emerald-100"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] transition hover:bg-white/10"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner">
+          <div className="flex items-center gap-2 text-lg font-bold text-white">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
               <ShieldPlus className="h-5 w-5" />
             </span>
-            ALEXIS PAZ ESTUVO AQUI
+            Consultorio <span className="text-emerald-400">Dietético</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50">
+            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10">
               <Bell className="h-5 w-5" />
-              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">3</span>
+              <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-slate-950">1</span>
             </button>
-            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-sm font-semibold text-emerald-700 shadow-sm">
-              J
+            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              {initialLetter}
             </button>
           </div>
         </div>
       </header>
 
-      <div
-        className={`fixed inset-0 z-40 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
-        aria-hidden={!menuOpen}
-      >
-        <button
-          type="button"
-          aria-label="Cerrar menú"
-          className={`absolute inset-0 bg-black/25 backdrop-blur-[2px] transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`}
-          onClick={() => setMenuOpen(false)}
-        />
+      {/* Sidebar Drawer */}
+      <div className={`fixed inset-0 z-40 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
+        <button type="button" aria-label="Cerrar menú" className={`absolute inset-0 bg-slate-950/60 backdrop-blur-[3px] transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setMenuOpen(false)} />
+        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden bg-slate-900 border-r border-white/5 shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="relative flex min-h-[260px] flex-col justify-between bg-gradient-to-b from-emerald-950 to-slate-900 px-6 pb-8 pt-7 text-white">
+            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
+              <PanelLeftClose className="h-5 w-5" />
+            </button>
 
-        <aside
-          className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden bg-white shadow-[24px_0_60px_rgba(15,23,42,0.18)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}
-        >
-          <div className="flex-1 overflow-y-auto">
-            <div className="relative flex min-h-[300px] flex-col justify-between bg-[linear-gradient(180deg,#4caf50_0%,#43a047_100%)] px-6 pb-8 pt-7 text-white">
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/20"
-              >
-                <PanelLeftClose className="h-5 w-5" />
-              </button>
-
-              <div className="flex flex-col items-start gap-5">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/20 bg-white text-emerald-600 shadow-[0_14px_30px_rgba(0,0,0,0.15)]">
-                  <UserCircle2 className="h-12 w-12" />
-                </div>
-
-                <div>
-                  <p className="text-lg font-semibold text-white/95">john</p>
-                  <span className="mt-3 inline-flex rounded-full bg-white/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-white/95">
-                    Paciente
-                  </span>
-                </div>
+            <div className="flex flex-col items-start gap-5">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)]">
+                <UserCircle2 className="h-10 w-10" />
               </div>
-
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.18))]" />
+              <div>
+                <p className="text-xl font-bold tracking-tight text-white">{user?.username}</p>
+                <span className="mt-2.5 inline-flex rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">Paciente</span>
+              </div>
             </div>
+          </div>
 
-            <div className="px-4 py-5">
-              {drawerGroups.map((group) => (
-                <section key={group.title} className="mb-6 last:mb-0">
-                  <h2 className="px-3 text-xs font-bold tracking-[0.28em] text-slate-300">{group.title}</h2>
-                  <div className="mt-4 space-y-2">
-                    {group.items.map(({ label, icon: Icon, active }) => (
-                      <button
-                        key={label}
-                        type="button"
-                        onClick={() => {
-                          setMenuOpen(false)
-                          if (label === 'Mi Plan') {
-                            navigate('/patient/plan')
-                          }
-                        }}
-                        className={`flex w-full items-center gap-4 rounded-[1.5rem] px-4 py-3.5 text-left text-lg font-semibold transition ${
-                          active
-                            ? 'bg-[#4caf50] text-white shadow-[0_10px_20px_rgba(76,175,80,0.22)]'
-                            : 'text-slate-800 hover:bg-slate-50'
-                        }`}
-                      >
-                        <Icon className={`h-6 w-6 shrink-0 ${active ? 'text-white' : 'text-slate-500'}`} />
-                        <span>{label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-              ))}
+          <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+            <nav className="space-y-2">
+              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">Mi Salud</p>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient') }} className="flex w-full items-center gap-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3.5 text-left text-sm font-bold text-emerald-400">
+                <House className="h-5 w-5 shrink-0" />
+                <span>Inicio</span>
+              </button>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
+                <UtensilsCrossed className="h-5 w-5 shrink-0 text-slate-400" />
+                <span>Mi Plan</span>
+              </button>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/photos') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
+                <Camera className="h-5 w-5 shrink-0 text-slate-400" />
+                <span>Seguimiento</span>
+              </button>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
+                <MessageSquareText className="h-5 w-5 shrink-0 text-slate-400" />
+                <span>Soporte por Chat</span>
+              </button>
+            </nav>
 
-              <section>
-                <h2 className="px-3 text-xs font-bold tracking-[0.28em] text-slate-300">AJUSTES</h2>
-                <div className="mt-4 space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex w-full items-center gap-4 rounded-[1.5rem] px-4 py-3.5 text-left text-lg font-semibold text-slate-800 transition hover:bg-slate-50"
-                  >
-                    <Settings className="h-6 w-6 shrink-0 text-slate-500" />
-                    <span>Configuración</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex w-full items-center gap-4 rounded-[1.5rem] px-4 py-3.5 text-left text-lg font-semibold text-slate-800 transition hover:bg-slate-50"
-                  >
-                    <MoonStar className="h-6 w-6 shrink-0 text-slate-500" />
-                    <span>Modo noche</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex w-full items-center gap-4 rounded-[1.5rem] px-4 py-3.5 text-left text-lg font-semibold text-slate-800 transition hover:bg-slate-50"
-                  >
-                    <LayoutList className="h-6 w-6 shrink-0 text-slate-500" />
-                    <span>Más opciones</span>
-                  </button>
-                </div>
-              </section>
-            </div>
+            <nav className="space-y-2">
+              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">Cuenta</p>
+              <button type="button" onClick={handleLogout} className="flex w-full items-center gap-4 rounded-2xl border border-rose-500/10 px-4 py-3.5 text-left text-sm font-semibold text-rose-400 hover:bg-rose-500/5 transition">
+                <LogOut className="h-5 w-5 shrink-0 text-rose-400" />
+                <span>Cerrar sesión</span>
+              </button>
+            </nav>
           </div>
         </aside>
       </div>
 
-      <div className="mx-auto max-w-[1600px] px-4 pb-24 pt-5 sm:px-6 lg:px-8">
-        <section className="rounded-[2rem] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.05)] sm:p-6 lg:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      {/* Main Container */}
+      <div className="mx-auto max-w-[1200px] px-4 pt-8 space-y-8">
+        
+        {/* Welcome Premium Card */}
+        <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+          <div className="absolute top-[-30%] right-[-10%] -z-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
+          
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-18 w-18 items-center justify-center rounded-full border-2 border-emerald-600 bg-white text-emerald-600 shadow-sm">
-                <UserCircle2 className="h-12 w-12" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_8px_20px_rgba(16,185,129,0.15)]">
+                <UserCircle2 className="h-10 w-10 animate-pulse" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-400">Bienvenido de vuelta,</p>
-                <h1 className="text-3xl font-medium tracking-tight text-slate-800">john</h1>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Bienvenido de vuelta,</p>
+                <h1 className="text-3xl font-extrabold tracking-tight text-white mt-1 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                  {user?.username}
+                </h1>
               </div>
             </div>
 
-            <button className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50">
-              <Settings className="h-6 w-6" />
+            <button
+              onClick={handleLogout}
+              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-slate-950 transition shadow-lg shadow-rose-500/5"
+              title="Cerrar sesión"
+            >
+              <LogOut className="h-5 w-5" />
             </button>
           </div>
+        </section>
 
-          <div className="mt-8 space-y-8">
-            <section>
-              <h2 className="text-sm font-bold uppercase tracking-[0.22em] text-slate-300">Mi resumen diario</h2>
-              <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                {summaryCards.map(({ icon: Icon, title, value, tone }) => (
-                  <article key={title} className="rounded-[1.75rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tone.split(' ')[0]} ${tone.split(' ')[1]} text-xl`}>
-                      <Icon className={`h-6 w-6 ${tone.split(' ')[2]}`} />
-                    </div>
-                    <div className="mt-4 text-3xl font-semibold text-slate-800">{value}</div>
-                    <div className="mt-1 text-sm font-medium text-slate-500">{title}</div>
-                  </article>
-                ))}
+        {/* Daily Summary Rings/Stats Grid */}
+        <section className="grid gap-6 md:grid-cols-2">
+          
+          {/* Water card with beautiful visual circular indicator */}
+          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex items-center justify-between">
+            <div className="space-y-2">
+              <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">CONSUMO DE AGUA</p>
+              <div className="text-4xl font-extrabold text-white">1.2 <span className="text-xl font-medium text-slate-400">L</span></div>
+              <p className="text-xs text-slate-500 font-semibold">Meta diaria: 2.0 L</p>
+            </div>
+            
+            {/* SVG Progress Circle */}
+            <div className="relative h-20 w-20 shrink-0">
+              <svg className="w-full h-full transform -rotate-95" viewBox="0 0 36 36">
+                <path className="text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path className="text-sky-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray="60, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Droplets className="h-6 w-6 text-sky-500 animate-bounce" />
               </div>
-            </section>
+            </div>
+          </article>
 
-            <section>
-              <h2 className="text-sm font-bold uppercase tracking-[0.22em] text-slate-300">Progreso físico</h2>
-              <article className="mt-4 rounded-[1.75rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 sm:p-6">
-                <div className="grid gap-6 md:grid-cols-3 md:items-center">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-500">Actual</p>
-                    <div className="mt-2 text-4xl font-semibold text-slate-800">
-                      78.5
-                      <span className="text-xl font-medium text-slate-400">kg</span>
-                    </div>
-                  </div>
-                  <div className="hidden h-12 justify-self-center border-l border-slate-200 md:block" />
-                  <div>
-                    <p className="text-sm font-semibold text-slate-500">Meta</p>
-                    <div className="mt-2 text-4xl font-semibold text-slate-800">
-                      72.0
-                      <span className="text-xl font-medium text-slate-400">kg</span>
-                    </div>
-                  </div>
-                  <div className="hidden h-12 justify-self-center border-l border-slate-200 md:block" />
-                  <div className="md:text-right">
-                    <p className="text-sm font-semibold text-slate-500">IMC</p>
-                    <div className="mt-2 text-4xl font-semibold text-slate-800">24.2</div>
-                  </div>
-                </div>
+          {/* Calories/Activity Summary */}
+          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex items-center justify-between">
+            <div className="space-y-2">
+              <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">ACTIVIDAD FÍSICA</p>
+              <div className="text-4xl font-extrabold text-white">Completado</div>
+              <p className="text-xs text-slate-500 font-semibold">Rutina cardiovascular de hoy</p>
+            </div>
 
-                <div className="mt-8">
-                  <div className="h-4 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full w-[65%] rounded-full bg-emerald-600 shadow-[0_0_18px_rgba(34,197,94,0.28)]" />
-                  </div>
-                  <div className="mt-4 flex items-center justify-between text-sm font-semibold text-slate-500">
-                    <span>Progreso al objetivo</span>
-                    <span className="text-emerald-600">65%</span>
-                  </div>
-                </div>
-              </article>
-            </section>
-
-            <section>
-              <h2 className="text-sm font-bold uppercase tracking-[0.22em] text-slate-300">Siguiente comida</h2>
-              <div className="mt-4 space-y-4">
-                {meals.map(({ title, time, icon: Icon }) => (
-                  <article key={title} className="rounded-[1.75rem] bg-white p-4 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 sm:p-5">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-                        <Icon className="h-7 w-7" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-lg font-semibold text-slate-800">{title}</h3>
-                        <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-600">
-                          <Clock3 className="h-4 w-4" />
-                          {time}
-                        </div>
-                      </div>
-                      <ChevronRight className="h-6 w-6 text-slate-300" />
-                    </div>
-                  </article>
-                ))}
+            <div className="relative h-20 w-20 shrink-0">
+              <svg className="w-full h-full transform -rotate-95" viewBox="0 0 36 36">
+                <path className="text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path className="text-amber-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray="100, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Footprints className="h-6 w-6 text-amber-500" />
               </div>
-            </section>
+            </div>
+          </article>
 
-            <section>
-              <h2 className="text-sm font-bold uppercase tracking-[0.22em] text-slate-300">Próxima consulta</h2>
-              <article className="mt-4 rounded-[1.75rem] bg-emerald-500 p-5 text-white shadow-[0_16px_40px_rgba(34,197,94,0.22)] sm:p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15">
-                    <CalendarCheck2 className="h-7 w-7" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-semibold tracking-tight">Lunes, 24 de Julio</h3>
-                    <p className="mt-1 text-base font-semibold text-white/85">10:00 AM - Dra. Maria Cosio</p>
-                  </div>
-                </div>
-              </article>
-            </section>
+        </section>
+
+        {/* Physical Progress Dashboard */}
+        <section className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Progreso Antropométrico</h2>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
+              <Sparkles className="h-3.5 w-3.5 animate-spin" />
+              Recomposición
+            </span>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
+              <p className="text-xs font-bold text-slate-400">Peso Actual</p>
+              <div className="text-3xl font-extrabold text-white">78.5 <span className="text-base font-semibold text-slate-500">kg</span></div>
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
+              <p className="text-xs font-bold text-slate-400">Peso Objetivo</p>
+              <div className="text-3xl font-extrabold text-white">72.0 <span className="text-base font-semibold text-slate-500">kg</span></div>
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
+              <p className="text-xs font-bold text-slate-400">Índice de Masa Corporal (IMC)</p>
+              <div className="text-3xl font-extrabold text-emerald-400">24.2</div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+              <span>Progreso de Pérdida de Peso</span>
+              <span className="text-emerald-400">65% Completado</span>
+            </div>
+            <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full w-[65%] rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
+            </div>
           </div>
         </section>
+
+        {/* Meal & Next consultation Grid */}
+        <section className="grid gap-6 md:grid-cols-2">
+          
+          {/* Next Meal */}
+          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Siguiente Comida del Plan</h2>
+            
+            {meals.map((item) => (
+              <div key={item.title} className="flex items-center gap-4 rounded-2xl border border-white/5 bg-slate-950/40 p-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                  <item.icon className="h-6 w-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-sm font-bold text-white">{item.title}</h3>
+                  <div className="mt-1 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-emerald-400" /> {item.time}</span>
+                    <span className="flex items-center gap-1"><Flame className="h-3.5 w-3.5 text-orange-400" /> {item.calories}</span>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-slate-600" />
+              </div>
+            ))}
+          </article>
+
+          {/* Consultation Alerts */}
+          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex flex-col justify-between">
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Cita Programada</h2>
+              <div className="mt-4 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400">
+                  <CalendarCheck2 className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Lunes, 24 de Julio</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">10:00 AM - Dra. Maria Cosio</p>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => navigate('/patient/chat')}
+              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3.5 text-sm font-bold text-slate-950 hover:brightness-110 transition shadow-md shadow-emerald-500/10 mt-4"
+            >
+              <MessageSquareText className="h-4.5 w-4.5" />
+              Chatear con Nutricionista
+            </button>
+          </article>
+
+        </section>
+
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto grid max-w-[1600px] grid-cols-5 px-2 py-2 sm:px-6 lg:px-8">
+      {/* Floating Bottom Nav Dock (Extremely Premium) */}
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl p-2.5">
+        <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
               key={label}
               type="button"
               onClick={() => {
-                if (label === 'Inicio') {
-                  navigate('/patient/menu')
-                }
-                if (label === 'Mi Plan') {
-                  navigate('/patient/plan')
-                }
-                if (label === 'Recetas') {
-                  navigate('/patient/recipes')
-                }
+                if (label === 'Inicio') navigate('/patient/menu')
+                if (label === 'Mi Plan') navigate('/patient/plan')
+                if (label === 'Progreso') navigate('/patient/photos')
+                if (label === 'Chat') navigate('/patient/chat')
               }}
-              className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-2 text-xs font-semibold transition ${active ? 'text-emerald-600' : 'text-slate-300'}`}
+              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
+                active 
+                  ? 'text-emerald-400 bg-emerald-500/5' 
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
             >
-              <Icon className="h-6 w-6" />
-              {label}
+              <Icon className="h-5 w-5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
             </button>
           ))}
         </div>

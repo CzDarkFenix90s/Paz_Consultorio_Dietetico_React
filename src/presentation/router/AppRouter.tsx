@@ -1,47 +1,185 @@
 // src/presentation/router/AppRouter.tsx
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import PlaceholderPage from '../pages/PlaceholderPage'
-import AdminModelsPage from '../pages/admin/AdminModelsPage'
+import { useAuthStore } from '../store/useAuthStore'
 import LoginPage from '../pages/auth/LoginPage'
 import RegisterPage from '../pages/auth/RegisterPage'
+import LandingPage from '../pages/public/LandingPage'
 import PatientMenuPage from '../pages/patient/PatientMenuPage'
 import PatientPlanPage from '../pages/patient/PatientPlanPage'
-import PatientPlanDetailPage from '../pages/patient/PatientPlanDetailPage'
-import PatientPlansListPage from '../pages/patient/PatientPlansListPage'
 import PatientRecipesPage from '../pages/patient/PatientRecipesPage'
+import PatientProgressPhotosPage from '../pages/patient/PatientProgressPhotosPage'
+import PatientChatPage from '../pages/patient/PatientChatPage'
+import AdminDashboard from '../pages/admin/AdminDashboard'
+import PacienteFormPage from '../pages/admin/PacienteFormPage'
+import PlanFormPage from '../pages/admin/PlanFormPage'
+
+// Protected Route Guard
+function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) {
+  const { isAuthenticated, user, loading, init } = useAuthStore()
+
+  useEffect(() => {
+    init()
+  }, [init])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
+          <p className="text-lg font-medium">Verificando sesión...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+
+  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+    // If not allowed, redirect to correct role portal
+    if (user.role === 'admin' || user.role === 'nutricionista') {
+      return <Navigate to="/admin" replace />
+    } else {
+      return <Navigate to="/patient/menu" replace />
+    }
+  }
+
+  return <>{children}</>
+}
+
+// Guest Route Guard (Redirects if already logged in)
+function GuestRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, user } = useAuthStore()
+
+  if (isAuthenticated && user) {
+    if (user.role === 'admin' || user.role === 'nutricionista') {
+      return <Navigate to="/admin" replace />
+    } else {
+      return <Navigate to="/patient/menu" replace />
+    }
+  }
+
+  return <>{children}</>
+}
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Auth — Módulo 3 */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
 
-        {/* Catálogo (público) — Módulo 4 / 5 */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/catalog" element={<PlaceholderPage title="Catálogo — Módulo 4" />} />
-        <Route path="/products/:id" element={<PlaceholderPage title="Detalle de producto — Módulo 5" />} />
+        {/* Auth (Redirect if logged in) */}
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <RegisterPage />
+            </GuestRoute>
+          }
+        />
 
-        {/* Requieren autenticación — Módulos 6, 7, 8 */}
-        <Route path="/cart" element={<PlaceholderPage title="Carrito — Módulo 6" />} />
-        <Route path="/orders" element={<PlaceholderPage title="Órdenes — Módulo 7" />} />
-        <Route path="/orders/:id" element={<PlaceholderPage title="Detalle de orden — Módulo 7" />} />
-        <Route path="/profile" element={<PlaceholderPage title="Perfil — Módulo 8" />} />
-        <Route path="/patient" element={<PatientMenuPage />} />
-        <Route path="/patient/menu" element={<PatientMenuPage />} />
-        <Route path="/patient/plan" element={<PatientPlanPage />} />
-        <Route path="/patient/plans" element={<PatientPlansListPage />} />
-        <Route path="/patient/plans/:id" element={<PatientPlanDetailPage />} />
-        <Route path="/patient/recipes" element={<PatientRecipesPage />} />
+        {/* Patient Portal (Patient role only) */}
+        <Route
+          path="/patient"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientMenuPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/menu"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientMenuPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/plan"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientPlanPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/photos"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientProgressPhotosPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/recipes"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientRecipesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/chat"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientChatPage />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Admin — Módulos 9 a 13 */}
-        <Route path="/admin" element={<AdminModelsPage />} />
-        <Route path="/admin/models" element={<AdminModelsPage />} />
-        <Route path="/admin/categories" element={<PlaceholderPage title="Admin Categorías — Módulo 10" />} />
-        <Route path="/admin/products" element={<PlaceholderPage title="Admin Productos — Módulo 11" />} />
-        <Route path="/admin/orders" element={<PlaceholderPage title="Admin Órdenes — Módulo 12" />} />
-        <Route path="/admin/users" element={<PlaceholderPage title="Admin Usuarios — Módulo 13" />} />
+        {/* Admin & Nutritionist Portal */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'nutricionista']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/pacientes/nuevo"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'nutricionista']}>
+              <PacienteFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/pacientes/editar/:id"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'nutricionista']}>
+              <PacienteFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/planes/nuevo"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'nutricionista']}>
+              <PlanFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/planes/editar/:id"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'nutricionista']}>
+              <PlanFormPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
