@@ -37,9 +37,11 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode;
     return <Navigate to="/login" replace />
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+  const userRole = user?.role?.toLowerCase()
+
+  if (allowedRoles && userRole && !allowedRoles.map(r => r.toLowerCase()).includes(userRole)) {
     // If not allowed, redirect to correct role portal
-    if (user.role === 'admin' || user.role === 'nutricionista') {
+    if (userRole === 'admin' || userRole === 'nutricionista') {
       return <Navigate to="/admin" replace />
     } else {
       return <Navigate to="/patient/menu" replace />
@@ -54,7 +56,8 @@ function GuestRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, user } = useAuthStore()
 
   if (isAuthenticated && user) {
-    if (user.role === 'admin' || user.role === 'nutricionista') {
+    const userRole = user.role?.toLowerCase()
+    if (userRole === 'admin' || userRole === 'nutricionista') {
       return <Navigate to="/admin" replace />
     } else {
       return <Navigate to="/patient/menu" replace />
