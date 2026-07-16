@@ -19,7 +19,7 @@ interface AuthState {
   clearError: () => void
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   user: localTokenStorage.getUser(),
   loading: false,
   error: null,

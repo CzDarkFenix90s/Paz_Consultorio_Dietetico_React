@@ -4,7 +4,10 @@ import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } f
 import type { User } from '../../domain/entities/user.entity'
 
 export class LoginUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  private authRepository: IAuthRepository
+  constructor(authRepository: IAuthRepository) {
+    this.authRepository = authRepository
+  }
 
   async execute(credentials: LoginRequest): Promise<LoginResponse> {
     return this.authRepository.login(credentials)
@@ -12,7 +15,10 @@ export class LoginUseCase {
 }
 
 export class RegisterUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  private authRepository: IAuthRepository
+  constructor(authRepository: IAuthRepository) {
+    this.authRepository = authRepository
+  }
 
   async execute(data: RegisterRequest): Promise<RegisterResponse> {
     return this.authRepository.register(data)
@@ -20,7 +26,10 @@ export class RegisterUseCase {
 }
 
 export class LogoutUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  private authRepository: IAuthRepository
+  constructor(authRepository: IAuthRepository) {
+    this.authRepository = authRepository
+  }
 
   async execute(refreshToken: string): Promise<void> {
     return this.authRepository.logout(refreshToken)
@@ -28,7 +37,10 @@ export class LogoutUseCase {
 }
 
 export class VerifyEmailUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  private authRepository: IAuthRepository
+  constructor(authRepository: IAuthRepository) {
+    this.authRepository = authRepository
+  }
 
   async execute(code: string): Promise<void> {
     return this.authRepository.verifyEmail(code)
@@ -36,7 +48,10 @@ export class VerifyEmailUseCase {
 }
 
 export class GetProfileUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  private authRepository: IAuthRepository
+  constructor(authRepository: IAuthRepository) {
+    this.authRepository = authRepository
+  }
 
   async execute(): Promise<User> {
     return this.authRepository.getProfile()

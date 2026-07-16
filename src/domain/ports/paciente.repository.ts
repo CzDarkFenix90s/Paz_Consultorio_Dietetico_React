@@ -1,5 +1,5 @@
 // src/domain/ports/paciente.repository.ts
-import { Paciente } from '../entities/user.entity'
+import type { Paciente } from '../entities/user.entity'
 
 export interface IPacienteRepository {
   getAll(filters?: { status?: string; search?: string }): Promise<Paciente[]>

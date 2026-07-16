@@ -5,7 +5,6 @@ import { useAuthStore } from '../../store/useAuthStore'
 import { 
   Bell, 
   CalendarCheck2, 
-  ChartColumn, 
   ChevronRight, 
   Clock3, 
   Droplets, 
@@ -18,7 +17,6 @@ import {
   UtensilsCrossed, 
   UserCircle2,
   LogOut,
-  Target,
   Sparkles,
   Flame,
   Camera

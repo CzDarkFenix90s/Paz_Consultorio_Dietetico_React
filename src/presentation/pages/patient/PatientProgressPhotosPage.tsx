@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePhotoStore } from '../../store/usePhotoStore'
-import { useAuthStore } from '../../store/useAuthStore'
+//import { useAuthStore } from '../../store/useAuthStore'
 import { 
   ArrowLeft, 
   Camera, 
@@ -27,7 +27,6 @@ const bottomNav = [
 
 export default function PatientProgressPhotosPage() {
   const navigate = useNavigate()
-  const { user } = useAuthStore()
   const { photos, fetchPhotos, uploadPhoto, loading, error, clearError } = usePhotoStore()
 
   const [description, setDescription] = useState('')

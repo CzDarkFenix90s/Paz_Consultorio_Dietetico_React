@@ -1,5 +1,5 @@
 // src/domain/ports/plan.repository.ts
-import { PlanNutricional } from '../entities/user.entity'
+import type { PlanNutricional } from '../entities/user.entity'
 
 export interface IPlanRepository {
   getAll(): Promise<PlanNutricional[]>

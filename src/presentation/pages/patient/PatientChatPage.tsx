@@ -99,6 +99,7 @@ export default function PatientChatPage() {
 
   useEffect(() => {
     if (!selectedNutri) return
+    const activeNutri = selectedNutri
     
     async function loadMessages() {
       try {
@@ -113,8 +114,8 @@ export default function PatientChatPage() {
         const results = data.results || data
         
         const chatLogs = (results || []).filter((msg: any) => {
-          const isMine = msg.remitente_id === user?.id && msg.destinatario_id === selectedNutri.user_id
-          const isTheirs = msg.remitente_id === selectedNutri.user_id && msg.destinatario_id === user?.id
+          const isMine = msg.remitente_id === user?.id && msg.destinatario_id === activeNutri.user_id
+          const isTheirs = msg.remitente_id === activeNutri.user_id && msg.destinatario_id === user?.id
           return isMine || isTheirs
         })
         
@@ -123,7 +124,7 @@ export default function PatientChatPage() {
         const initialOfflineMessages: Message[] = [
           {
             id: 101,
-            remitente_id: selectedNutri.user_id,
+            remitente_id: activeNutri.user_id,
             destinatario_id: user?.id || 999,
             contenido: `Hola ${user?.username || 'Paciente'}, bienvenido a tu chat de soporte nutricional. ¿Cómo vas con tu dieta esta semana?`,
             timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),

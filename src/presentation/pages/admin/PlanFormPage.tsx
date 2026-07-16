@@ -66,8 +66,8 @@ export default function PlanFormPage() {
       name: formData.name.trim(),
       description: formData.description.trim() || '',
       goal: formData.goal,
-      target_calories: formData.target_calories ? Number(formData.target_calories) : null,
-      duration_weeks: formData.duration_weeks ? Number(formData.duration_weeks) : null,
+      target_calories: formData.target_calories ? Number(formData.target_calories) : undefined,
+      duration_weeks: formData.duration_weeks ? Number(formData.duration_weeks) : undefined,
       estimated_cost: formData.estimated_cost ? Number(formData.estimated_cost) : 0,
       is_active: formData.is_active,
     }

@@ -9,7 +9,6 @@ import {
   deletePlanUseCase,
 } from '../../infrastructure/factories/plan.factory'
 import { planRepository } from '../../infrastructure/factories/plan.factory'
-import { parseApiError } from '../../infrastructure/http/parse-api-error'
 
 const mockPlanes: PlanNutricional[] = [
   {

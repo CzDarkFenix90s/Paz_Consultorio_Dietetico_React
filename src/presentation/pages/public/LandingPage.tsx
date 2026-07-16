@@ -2,10 +2,7 @@
 import { Link } from 'react-router-dom'
 import { 
   ShieldPlus, 
-  Activity, 
   Sparkles, 
-  Apple, 
-  ClipboardList, 
   CheckCircle2, 
   ChevronRight, 
   Phone, 
@@ -215,7 +212,7 @@ export default function LandingPage() {
                 badge: 'Preparación y Cocina',
                 colorGlow: 'group-hover:shadow-teal-500/20 group-hover:border-teal-500/45'
               }
-            ].map((service, index) => (
+            ].map((service) => (
               <article 
                 key={service.title} 
                 className={`group relative rounded-3xl border border-white/5 bg-slate-900/40 overflow-hidden shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col ${service.colorGlow}`}

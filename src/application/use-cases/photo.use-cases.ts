@@ -3,7 +3,10 @@ import type { IPhotoRepository } from '../../domain/ports/photo.repository'
 import type { ProgresoFoto } from '../../domain/entities/user.entity'
 
 export class GetPhotosUseCase {
-  constructor(private repository: IPhotoRepository) {}
+  private repository: IPhotoRepository
+  constructor(repository: IPhotoRepository) {
+    this.repository = repository
+  }
 
   async execute(): Promise<ProgresoFoto[]> {
     return this.repository.getAll()
@@ -11,7 +14,10 @@ export class GetPhotosUseCase {
 }
 
 export class UploadPhotoUseCase {
-  constructor(private repository: IPhotoRepository) {}
+  private repository: IPhotoRepository
+  constructor(repository: IPhotoRepository) {
+    this.repository = repository
+  }
 
   async execute(file: File, description: string): Promise<ProgresoFoto> {
     return this.repository.upload(file, description)

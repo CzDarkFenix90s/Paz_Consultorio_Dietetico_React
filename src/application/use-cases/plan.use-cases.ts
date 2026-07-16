@@ -3,7 +3,10 @@ import type { IPlanRepository } from '../../domain/ports/plan.repository'
 import type { PlanNutricional } from '../../domain/entities/user.entity'
 
 export class GetPlanesUseCase {
-  constructor(private repository: IPlanRepository) {}
+  private repository: IPlanRepository
+  constructor(repository: IPlanRepository) {
+    this.repository = repository
+  }
 
   async execute(): Promise<PlanNutricional[]> {
     return this.repository.getAll()
@@ -11,7 +14,10 @@ export class GetPlanesUseCase {
 }
 
 export class GetPlanByIdUseCase {
-  constructor(private repository: IPlanRepository) {}
+  private repository: IPlanRepository
+  constructor(repository: IPlanRepository) {
+    this.repository = repository
+  }
 
   async execute(id: number): Promise<PlanNutricional> {
     return this.repository.getById(id)
@@ -19,7 +25,10 @@ export class GetPlanByIdUseCase {
 }
 
 export class CreatePlanUseCase {
-  constructor(private repository: IPlanRepository) {}
+  private repository: IPlanRepository
+  constructor(repository: IPlanRepository) {
+    this.repository = repository
+  }
 
   async execute(data: Partial<PlanNutricional>): Promise<PlanNutricional> {
     return this.repository.create(data)
@@ -27,7 +36,10 @@ export class CreatePlanUseCase {
 }
 
 export class UpdatePlanUseCase {
-  constructor(private repository: IPlanRepository) {}
+  private repository: IPlanRepository
+  constructor(repository: IPlanRepository) {
+    this.repository = repository
+  }
 
   async execute(id: number, data: Partial<PlanNutricional>): Promise<PlanNutricional> {
     return this.repository.update(id, data)
@@ -35,7 +47,10 @@ export class UpdatePlanUseCase {
 }
 
 export class DeletePlanUseCase {
-  constructor(private repository: IPlanRepository) {}
+  private repository: IPlanRepository
+  constructor(repository: IPlanRepository) {
+    this.repository = repository
+  }
 
   async execute(id: number): Promise<void> {
     return this.repository.delete(id)

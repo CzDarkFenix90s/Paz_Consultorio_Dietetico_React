@@ -1,5 +1,5 @@
 // src/domain/ports/photo.repository.ts
-import { ProgresoFoto } from '../entities/user.entity'
+import type { ProgresoFoto } from '../entities/user.entity'
 
 export interface IPhotoRepository {
   getAll(): Promise<ProgresoFoto[]>

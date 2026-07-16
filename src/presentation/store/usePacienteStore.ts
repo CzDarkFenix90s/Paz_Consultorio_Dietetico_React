@@ -8,12 +8,13 @@ import {
   updatePacienteUseCase,
   deletePacienteUseCase,
 } from '../../infrastructure/factories/paciente.factory'
-import { parseApiError } from '../../infrastructure/http/parse-api-error'
 
 const mockPacientes: Paciente[] = [
   {
     id: 1,
     patient_code: 'PAC-1284',
+    first_name: 'Alejandro',
+    last_name: 'Ramos',
     full_name: 'Alejandro Ramos',
     age: 28,
     goal: 'Aumento de masa muscular magra',
@@ -24,6 +25,8 @@ const mockPacientes: Paciente[] = [
   {
     id: 2,
     patient_code: 'PAC-9482',
+    first_name: 'Camila',
+    last_name: 'Torres',
     full_name: 'Camila Torres',
     age: 32,
     goal: 'Pérdida de grasa corporal',
@@ -34,6 +37,8 @@ const mockPacientes: Paciente[] = [
   {
     id: 3,
     patient_code: 'PAC-3091',
+    first_name: 'David',
+    last_name: 'Espinoza',
     full_name: 'David Espinoza',
     age: 45,
     goal: 'Control de glucosa y diabetes',
@@ -67,9 +72,9 @@ export const usePacienteStore = create<PacienteState>((set) => ({
       set({ loading: true, error: null })
       const data = await getPacientesUseCase.execute(filters)
       set({ pacientes: data.length > 0 ? data : mockPacientes, loading: false })
-    } catch (err) {
+    } catch {
       // Offline fallback
-      set({ pacientes: mockPacientes, error: null, loading: false })
+      set({ pacientes: mockPacientes, loading: false })
     }
   },
 
@@ -78,7 +83,7 @@ export const usePacienteStore = create<PacienteState>((set) => ({
       set({ loading: true, error: null })
       const data = await getPacienteByIdUseCase.execute(id)
       set({ activePaciente: data, loading: false })
-    } catch (err) {
+    } catch {
       // Offline fallback
       const found = mockPacientes.find(p => p.id === id) || mockPacientes[0]
       set({ activePaciente: found, error: null, loading: false })
@@ -91,13 +96,15 @@ export const usePacienteStore = create<PacienteState>((set) => ({
       await createPacienteUseCase.execute(data)
       set({ loading: false })
       return true
-    } catch (err) {
+    } catch {
       // Offline fallback success simulation
       set((state) => {
         const newPac: Paciente = {
           id: state.pacientes.length + 10,
           patient_code: `PAC-${Math.floor(1000 + Math.random() * 9000)}`,
-          full_name: data.full_name || 'Nuevo Paciente',
+          first_name: data.first_name || 'Nuevo',
+          last_name: data.last_name || 'Paciente',
+          full_name: data.full_name || `${data.first_name || 'Nuevo'} ${data.last_name || 'Paciente'}`,
           age: data.age || 30,
           goal: data.goal || 'General',
           bmi: data.bmi || 24.0,
@@ -119,12 +126,24 @@ export const usePacienteStore = create<PacienteState>((set) => ({
       await updatePacienteUseCase.execute(id, data)
       set({ loading: false })
       return true
-    } catch (err) {
+    } catch {
       // Offline fallback success simulation
-      set((state) => ({
-        pacientes: state.pacientes.map(p => p.id === id ? { ...p, ...data } : p),
-        loading: false
-      }))
+      set((state) => {
+        const updated = state.pacientes.map((p) => {
+          if (p.id === id) {
+            return {
+              ...p,
+              ...data,
+              full_name: data.full_name || `${data.first_name || p.first_name} ${data.last_name || p.last_name}`
+            }
+          }
+          return p
+        })
+        return {
+          pacientes: updated,
+          loading: false
+        }
+      })
       return true
     }
   },
@@ -133,16 +152,13 @@ export const usePacienteStore = create<PacienteState>((set) => ({
     try {
       set({ loading: true, error: null })
       await deletePacienteUseCase.execute(id)
-      set((state) => ({
-        pacientes: state.pacientes.filter((p) => p.id !== id),
-        loading: false,
-      }))
+      set({ loading: false })
       return true
-    } catch (err) {
+    } catch {
       // Offline fallback success simulation
       set((state) => ({
         pacientes: state.pacientes.filter((p) => p.id !== id),
-        loading: false,
+        loading: false
       }))
       return true
     }

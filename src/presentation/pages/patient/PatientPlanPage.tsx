@@ -67,7 +67,7 @@ export default function PatientPlanPage() {
   
   const [activePlan, setActivePlan] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [, setError] = useState('')
 
   useEffect(() => {
     async function loadActivePlan() {
