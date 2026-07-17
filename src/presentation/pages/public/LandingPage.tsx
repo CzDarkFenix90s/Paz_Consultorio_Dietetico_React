@@ -194,21 +194,21 @@ export default function LandingPage() {
               {
                 title: 'Dietas Personalizadas',
                 description: 'Cálculo preciso de macros y calorías según tus objetivos de pérdida de peso, masa muscular o condiciones de salud clínica.',
-                image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80',
+                image: '/assets/service_diet.png',
                 badge: 'Gourmet y Saludable',
                 colorGlow: 'group-hover:shadow-emerald-500/20 group-hover:border-emerald-500/45'
               },
               {
                 title: 'Seguimiento de Progreso',
                 description: 'Línea de tiempo con fotos de progreso físico, control antropométrico y metas de agua integradas en tu perfil privado.',
-                image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80',
+                image: '/assets/service_gym.png',
                 badge: 'Evaluación Corporal',
                 colorGlow: 'group-hover:shadow-cyan-500/20 group-hover:border-cyan-500/45'
               },
               {
                 title: 'Recetas Saludables',
                 description: 'Catálogo de preparaciones sencillas creadas por nutricionistas que te demuestran que comer sano también es delicioso.',
-                image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80',
+                image: '/assets/service_recipe.png',
                 badge: 'Preparación y Cocina',
                 colorGlow: 'group-hover:shadow-teal-500/20 group-hover:border-teal-500/45'
               }
