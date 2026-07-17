@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../store/useAuthStore'
 import { API_CONFIG } from '../../../infrastructure/config/api.config'
-import { ArrowRight, ChefHat, Clock3, Filter, Flame, Heart, Menu, Search, ShieldPlus, Sparkles, UtensilsCrossed, Wheat } from 'lucide-react'
+import { ArrowRight, ChefHat, Clock3, Filter, Flame, Heart, Menu, Search, UtensilsCrossed, Wheat, MessageSquareText } from 'lucide-react'
 
 type RecipeApiItem = {
   id: number
@@ -29,6 +30,24 @@ type Recipe = {
   tag: string
   favorite: boolean
   difficulty: 'Fácil' | 'Media' | 'Alta'
+  image: string
+}
+
+function getRecipeImage(name: string): string {
+  const normalized = name.toLowerCase()
+  if (normalized.includes('huevo') || normalized.includes('desayuno')) {
+    return 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=80'
+  }
+  if (normalized.includes('pollo') || normalized.includes('fajita') || normalized.includes('res') || normalized.includes('carne')) {
+    return 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80'
+  }
+  if (normalized.includes('parfait') || normalized.includes('granola') || normalized.includes('yogur')) {
+    return 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&auto=format&fit=crop&q=80'
+  }
+  if (normalized.includes('calabacin') || normalized.includes('ensalada') || normalized.includes('crema') || normalized.includes('verdura')) {
+    return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80'
+  }
+  return 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=80'
 }
 
 const fallbackRecipes: Recipe[] = [
@@ -44,6 +63,7 @@ const fallbackRecipes: Recipe[] = [
     tag: 'Energía rápida',
     favorite: true,
     difficulty: 'Fácil',
+    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 2,
@@ -57,6 +77,7 @@ const fallbackRecipes: Recipe[] = [
     tag: 'Alta saciedad',
     favorite: false,
     difficulty: 'Media',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 3,
@@ -70,6 +91,7 @@ const fallbackRecipes: Recipe[] = [
     tag: 'Ligero',
     favorite: false,
     difficulty: 'Fácil',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80',
   },
 ]
 
@@ -111,18 +133,46 @@ function buildRecipes(apiItems: RecipeApiItem[]) {
       tag: item.is_active ? 'Disponible' : 'Desactivado',
       favorite: fallback?.favorite ?? item.id % 2 === 1,
       difficulty: fallback?.difficulty ?? 'Fácil',
+      image: fallback?.image ?? getRecipeImage(item.name),
     } satisfies Recipe
   })
 }
 
 export default function PatientRecipesPage() {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const [loading, setLoading] = useState(true)
   const [recipes, setRecipes] = useState<Recipe[]>(fallbackRecipes)
   const [selectedId, setSelectedId] = useState<number | null>(fallbackRecipes[0].id)
   const [query, setQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<'all' | 'Desayuno' | 'Proteínas' | 'Cena'>('all')
   const [errorMessage, setErrorMessage] = useState('')
+  const [userProfileData, setUserProfileData] = useState<any | null>(null)
+
+  const loadUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const response = await fetch(`${API_CONFIG.BASE_URL}/profiles/`, { headers })
+      if (response.ok) {
+        const data = await response.json()
+        const results = data.results || data
+        if (Array.isArray(results) && results.length > 0) {
+          setUserProfileData(results[0])
+        }
+      }
+    } catch (err) {
+      console.error('Error loading user profile:', err)
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id) {
+      loadUserProfile()
+    }
+  }, [user])
+
+  const initialLetter = user?.username?.[0]?.toUpperCase() || 'P'
 
   useEffect(() => {
     let ignore = false
@@ -206,15 +256,19 @@ export default function PatientRecipesPage() {
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner">
-              <ShieldPlus className="h-5 w-5" />
+          <div className="flex items-center gap-2 text-xl font-black text-slate-800 tracking-tight">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)] font-black text-base">
+              N
             </span>
-            Recetas
+            Nutri<span className="text-emerald-500">Tec</span>
           </div>
 
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-sm font-semibold text-emerald-700 shadow-sm">
-            J
+          <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            {userProfileData?.avatar_url ? (
+              <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+            ) : (
+              initialLetter
+            )}
           </button>
         </div>
       </header>
@@ -296,8 +350,8 @@ export default function PatientRecipesPage() {
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-                      <UtensilsCrossed className="h-8 w-8" />
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
+                      <img src={recipe.image} alt={recipe.name} className="h-full w-full object-cover" />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -331,31 +385,41 @@ export default function PatientRecipesPage() {
             </section>
 
             <aside className="space-y-6">
-              <article className="rounded-[1.75rem] bg-emerald-500 p-5 text-white shadow-[0_16px_40px_rgba(34,197,94,0.22)]">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
-                    <Sparkles className="h-6 w-6" />
+              <article className="overflow-hidden rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_16px_40px_rgba(15,23,42,0.06)] relative group/detail">
+                {selectedRecipe?.image && (
+                  <div className="w-full h-48 relative overflow-hidden">
+                    <img 
+                      src={selectedRecipe.image} 
+                      alt={selectedRecipe.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover/detail:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                    
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Receta seleccionada</p>
+                      <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5">{selectedRecipe.name}</h2>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-white/85">Receta seleccionada</p>
-                    <h2 className="text-2xl font-semibold">{selectedRecipe?.name ?? 'Sin selección'}</h2>
-                  </div>
-                </div>
+                )}
+                
+                <div className="p-5 space-y-4">
+                  <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+                    {selectedRecipe?.subtitle ?? 'Selecciona una receta para ver su detalle.'}
+                  </p>
 
-                <p className="mt-4 text-sm leading-6 text-white/85">{selectedRecipe?.subtitle ?? 'Selecciona una receta para ver su detalle.'}</p>
-
-                <div className="mt-5 grid grid-cols-3 gap-3 text-center text-sm font-semibold">
-                  <div className="rounded-2xl bg-white/12 px-3 py-3">
-                    <div className="text-xl">{selectedRecipe?.kcal ?? 0}</div>
-                    <div className="text-white/75">kcal</div>
-                  </div>
-                  <div className="rounded-2xl bg-white/12 px-3 py-3">
-                    <div className="text-xl">{selectedRecipe?.minutes ?? 0}</div>
-                    <div className="text-white/75">min</div>
-                  </div>
-                  <div className="rounded-2xl bg-white/12 px-3 py-3">
-                    <div className="text-xl">{selectedRecipe?.difficulty ?? 'Fácil'}</div>
-                    <div className="text-white/75">Nivel</div>
+                  <div className="grid grid-cols-3 gap-3 text-center text-xs font-bold">
+                    <div className="rounded-2xl bg-slate-50 border border-slate-100/60 px-3 py-3">
+                      <div className="text-lg font-black text-slate-800">{selectedRecipe?.kcal ?? 0}</div>
+                      <div className="text-slate-400">kcal</div>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 border border-slate-100/60 px-3 py-3">
+                      <div className="text-lg font-black text-slate-800">{selectedRecipe?.minutes ?? 0}</div>
+                      <div className="text-slate-400">min</div>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 border border-slate-100/60 px-3 py-3">
+                      <div className="text-lg font-black text-slate-800">{selectedRecipe?.difficulty ?? 'Fácil'}</div>
+                      <div className="text-slate-400">Nivel</div>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -412,8 +476,8 @@ export default function PatientRecipesPage() {
             { label: 'Inicio', icon: Menu, href: '/patient/menu', active: false },
             { label: 'Mi Plan', icon: UtensilsCrossed, href: '/patient/plan', active: false },
             { label: 'Recetas', icon: ChefHat, href: '/patient/recipes', active: true },
-            { label: 'Progreso', icon: Wheat, href: '/patient/menu', active: false },
-            { label: 'Chat', icon: ShieldPlus, href: '/patient/menu', active: false },
+            { label: 'Progreso', icon: Wheat, href: '/patient/photos', active: false },
+            { label: 'Chat', icon: MessageSquareText, href: '/patient/chat', active: false },
           ].map(({ label, icon: Icon, href, active }) => (
             <button
               key={label}
