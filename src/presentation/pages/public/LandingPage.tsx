@@ -20,11 +20,11 @@ export default function LandingPage() {
       {/* Premium Navbar */}
       <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-white">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-              <ShieldPlus className="h-5.5 w-5.5" />
+          <Link to="/" className="flex items-center gap-2.5 text-2xl font-black tracking-tight text-white">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.3)] font-black text-lg">
+              N
             </span>
-            Consultorio <span className="text-emerald-400">Dietético</span>
+            Nutri<span className="text-emerald-400">Tec</span>
           </Link>
           
           <nav className="hidden items-center gap-8 md:flex">

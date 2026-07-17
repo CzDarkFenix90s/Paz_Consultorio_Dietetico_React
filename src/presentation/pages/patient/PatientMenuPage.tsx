@@ -14,7 +14,6 @@ import {
   Menu, 
   MessageSquareText, 
   PanelLeftClose, 
-  ShieldPlus, 
   UtensilsCrossed, 
   UserCircle2,
   LogOut,
@@ -22,7 +21,8 @@ import {
   Flame,
   Camera,
   Activity,
-  Plus
+  Plus,
+  ChefHat
 } from 'lucide-react'
 
 const meals = [
@@ -64,6 +64,61 @@ export default function PatientMenuPage() {
     sintoma_choice: 'EXCELENTE',
     sintoma_notas: ''
   })
+
+  const [userProfileData, setUserProfileData] = useState<any | null>(null)
+
+  const loadUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const response = await fetch(`${API_CONFIG.BASE_URL}/profiles/`, { headers })
+      if (response.ok) {
+        const data = await response.json()
+        const results = data.results || data
+        if (Array.isArray(results) && results.length > 0) {
+          setUserProfileData(results[0])
+        }
+      }
+    } catch (err) {
+      console.error('Error loading user profile:', err)
+    }
+  }
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !userProfileData) return
+
+    // Limit file size to 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      alert('La imagen no debe superar los 2MB.')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      
+      const formData = new FormData()
+      formData.append('avatar', file)
+
+      const response = await fetch(`${API_CONFIG.BASE_URL}/profiles/${userProfileData.id}/`, {
+        method: 'PATCH',
+        headers,
+        body: formData
+      })
+
+      if (response.ok) {
+        alert('Foto de perfil actualizada con éxito.')
+        loadUserProfile()
+      } else {
+        const errDetails = await response.json()
+        alert('Error al actualizar la foto de perfil: ' + JSON.stringify(errDetails))
+      }
+    } catch (err) {
+      console.error('Error uploading avatar:', err)
+      alert('Error de conexión al subir la imagen.')
+    }
+  }
 
   const handleLogout = () => {
     logout()
@@ -297,6 +352,7 @@ export default function PatientMenuPage() {
   useEffect(() => {
     if (user?.id) {
       loadPatientProfile()
+      loadUserProfile()
     }
   }, [user])
 
@@ -376,16 +432,17 @@ export default function PatientMenuPage() {
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-lg font-bold text-white">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-              <ShieldPlus className="h-5 w-5" />
+          <div className="flex items-center gap-2 text-xl font-black text-white tracking-tight">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)] font-black text-base">
+              N
             </span>
-            Consultorio <span className="text-emerald-400">Dietético</span>
+            Nutri<span className="text-emerald-400">Tec</span>
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
             <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition">Inicio</button>
             <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Recetas</button>
             <button onClick={() => navigate('/patient/photos')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Progreso</button>
             <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Chat</button>
           </nav>
@@ -395,8 +452,12 @@ export default function PatientMenuPage() {
               <Bell className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-slate-950">1</span>
             </button>
-            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-              {initialLetter}
+            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              {userProfileData?.avatar_url ? (
+                <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                initialLetter
+              )}
             </button>
           </div>
         </div>
@@ -412,8 +473,27 @@ export default function PatientMenuPage() {
             </button>
 
             <div className="flex flex-col items-start gap-5">
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)]">
-                <UserCircle2 className="h-10 w-10" />
+              <div className="relative group/avatar cursor-pointer">
+                <input 
+                  type="file" 
+                  id="avatar-upload-sidebar" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleAvatarChange} 
+                />
+                <label 
+                  htmlFor="avatar-upload-sidebar"
+                  className="cursor-pointer block overflow-hidden relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)] hover:border-emerald-500/50 transition-colors"
+                >
+                  {userProfileData?.avatar_url ? (
+                    <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+                  ) : (
+                    <UserCircle2 className="h-10 w-10" />
+                  )}
+                  <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center text-[10px] font-bold text-emerald-400 text-center px-1">
+                    Cambiar Foto
+                  </div>
+                </label>
               </div>
               <div>
                 <p className="text-xl font-bold tracking-tight text-white">{user?.username}</p>
@@ -432,6 +512,10 @@ export default function PatientMenuPage() {
               <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
                 <UtensilsCrossed className="h-5 w-5 shrink-0 text-slate-400" />
                 <span>Mi Plan</span>
+              </button>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
+                <ChefHat className="h-5 w-5 shrink-0 text-slate-400" />
+                <span>Recetas</span>
               </button>
               <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/photos') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
                 <Camera className="h-5 w-5 shrink-0 text-slate-400" />
@@ -574,6 +658,38 @@ export default function PatientMenuPage() {
               </div>
             </div>
           </article>
+        </section>
+
+        {/* Interactive Recipes Banner Card */}
+        <section 
+          onClick={() => navigate('/patient/recipes')}
+          className="animate-fade-in cursor-pointer relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/40 p-6 md:p-8 backdrop-blur-md shadow-2xl hover:border-emerald-500/30 hover:bg-slate-900/60 transition group"
+          style={{ animationDelay: '250ms' }}
+        >
+          <div className="absolute top-0 right-0 bottom-0 w-full md:w-1/2 -z-10 overflow-hidden rounded-r-[2rem] md:rounded-l-none">
+            <img 
+              src="/assets/recipe_banner.png" 
+              alt="Recetas Saludables" 
+              className="w-full h-full object-cover opacity-30 md:opacity-75 transition duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent hidden md:block" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent md:hidden" />
+          </div>
+
+          <div className="max-w-md space-y-4 pr-0 md:pr-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-400">
+              <ChefHat className="h-4 w-4" />
+              NUEVO MÓDULO
+            </span>
+            <h2 className="text-2xl font-extrabold text-white group-hover:text-emerald-400 transition">Explora Recetas Rápidas y Nutritivas</h2>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Encuentra deliciosas opciones adaptadas a tu plan nutricional. Filtra por momento de comida, revisa calorías y prepara platos saludables en casa.
+            </p>
+            <div className="inline-flex items-center gap-2 text-emerald-400 font-bold text-sm group-hover:underline">
+              Explorar recetas
+              <ChevronRight className="h-4 w-4 transition group-hover:translate-x-1" />
+            </div>
+          </div>
         </section>
 
         {/* Physical Progress Dashboard */}

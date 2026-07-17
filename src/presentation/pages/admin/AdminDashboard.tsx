@@ -581,11 +581,11 @@ export default function AdminDashboard() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.35)] font-black text-xl">
-              D
+              N
             </span>
             <div>
               <h1 className="text-base font-black tracking-tight text-white">Panel Clínico</h1>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Consultorio Dietético</p>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-0.5 font-bold">NutriTec</p>
             </div>
           </div>
 
