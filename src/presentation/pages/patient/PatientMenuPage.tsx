@@ -336,6 +336,31 @@ export default function PatientMenuPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+          0%, 100% { box-shadow: 0 0 15px rgba(16,185,129,0.2); }
+          50% { box-shadow: 0 0 25px rgba(16,185,129,0.4); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.6s ease-out forwards;
+          opacity: 0;
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+        .animate-glow {
+          animation: pulseGlow 2s infinite;
+        }
+      `}</style>
+
       {/* Glow ambient background elements */}
       <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
@@ -433,10 +458,10 @@ export default function PatientMenuPage() {
       <div className="mx-auto max-w-[1200px] px-4 pt-8 space-y-8">
         
         {/* Welcome Premium Card */}
-        <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+        <section className="animate-fade-in relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6 sm:p-8 backdrop-blur-xl shadow-2xl flex flex-col md:flex-row gap-6 items-center justify-between">
           <div className="absolute top-[-30%] right-[-10%] -z-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
           
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-5 flex-1">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_8px_20px_rgba(16,185,129,0.15)]">
                 <UserCircle2 className="h-10 w-10 animate-pulse" />
@@ -448,11 +473,15 @@ export default function PatientMenuPage() {
                 </h1>
               </div>
             </div>
+            
+            <p className="text-sm text-slate-300 max-w-md">
+              Estamos aquí para ayudarte a cumplir tus metas de nutrición y salud. Revisa tu plan personalizado y registra tu progreso diario.
+            </p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setShowFichaModal(true)}
-                className="flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 transition shadow-lg shadow-emerald-500/20"
+                className="animate-glow flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 transition shadow-lg shadow-emerald-500/20"
               >
                 <Activity className="h-4.5 w-4.5" />
                 Actualizar Ficha Médica
@@ -465,6 +494,17 @@ export default function PatientMenuPage() {
               >
                 <LogOut className="h-5 w-5" />
               </button>
+            </div>
+          </div>
+
+          <div className="w-full md:w-80 lg:w-[26rem] h-48 md:h-52 relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl animate-float shrink-0 bg-slate-950/60">
+            <img 
+              src="/assets/patient_banner.png" 
+              alt="Dashboard Banner" 
+              className="w-full h-full object-cover opacity-90"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent flex items-end p-4">
+              <p className="text-xs font-bold text-emerald-400 drop-shadow">Estilo de vida saludable</p>
             </div>
           </div>
         </section>

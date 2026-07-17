@@ -196,11 +196,30 @@ export default function AdminDashboard() {
         setPatientEjercicios((ejList || []).filter((e: any) => e.paciente === patient.id || e.paciente_id === patient.id))
       }
       
+      let activePlanId: number | null = null
+      try {
+        const subRes = await fetch(`${API_CONFIG.BASE_URL}/suscripciones/?page_size=100`, { headers })
+        if (subRes.ok) {
+          const subData = await subRes.json()
+          const results = subData.results || subData
+          const activeSub = (results || []).find(
+            (s: any) => (s.paciente === patient.id || s.paciente_id === patient.id) && s.estado === 'activo'
+          )
+          if (activeSub) {
+            activePlanId = activeSub.plan || activeSub.plan_id
+          }
+        }
+      } catch (err) {
+        console.error('Error loading subscriptions for routines:', err)
+      }
+
       const rutRes = await fetch(`${API_CONFIG.BASE_URL}/rutinas-ejercicio/?page_size=100`, { headers })
       if (rutRes.ok) {
         const rutData = await rutRes.json()
         const rutList = rutData.results || rutData
-        setPatientRutinas((rutList || []).filter((r: any) => r.paciente === patient.id || r.paciente_id === patient.id))
+        setPatientRutinas((rutList || []).filter(
+          (r: any) => r.plan_nutricional === activePlanId || r.plan_nutricional_id === activePlanId
+        ))
       }
 
       // 4. Fetch Paciente tracking followups
@@ -325,12 +344,6 @@ export default function AdminDashboard() {
   const handleAddRutina = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedPatientForFicha) return
-    // Link routine to the patient's nutritional plan or first plan
-    const planId = selectedPatientForFicha.plan_nutricional || planes[0]?.id
-    if (!planId) {
-      alert('El paciente no tiene un plan activo asignado.')
-      return
-    }
 
     try {
       const token = localStorage.getItem('dietetic_access_token')
@@ -338,6 +351,34 @@ export default function AdminDashboard() {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       }
+
+      // Link routine to the patient's active nutritional plan subscription
+      let planId: number | null = null
+      try {
+        const subRes = await fetch(`${API_CONFIG.BASE_URL}/suscripciones/?page_size=100`, { headers })
+        if (subRes.ok) {
+          const subData = await subRes.json()
+          const results = subData.results || subData
+          const activeSub = (results || []).find(
+            (s: any) => (s.paciente === selectedPatientForFicha.id || s.paciente_id === selectedPatientForFicha.id) && s.estado === 'activo'
+          )
+          if (activeSub) {
+            planId = activeSub.plan || activeSub.plan_id
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching subscriptions for routine save:', err)
+      }
+
+      if (!planId) {
+        planId = planes[0]?.id || null
+      }
+
+      if (!planId) {
+        alert('El paciente no tiene un plan activo asignado.')
+        return
+      }
+
       const response = await fetch(`${API_CONFIG.BASE_URL}/rutinas-ejercicio/`, {
         method: 'POST',
         headers,
@@ -359,6 +400,7 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error(err)
+      alert('Error de conexión al guardar la rutina')
     }
   }
 
