@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Phone, 
@@ -7,27 +8,112 @@ import {
   Menu,
   X
 } from 'lucide-react'
-import { useState } from 'react'
+
+// Helper to resolve media files from Django backend
+const getMediaUrl = (path: string) => {
+  if (import.meta.env.PROD) {
+    return `/media/${path}`
+  }
+  return `http://localhost:8000/media/${path}`
+}
+
+function FadeInProjectSection({ number, title, subtitle, videoName, posterSrc }: any) {
+  const [isVisible, setIsVisible] = useState(false)
+  const domRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting)
+        })
+      },
+      { threshold: 0.15 }
+    )
+    if (domRef.current) {
+      observer.observe(domRef.current)
+    }
+    return () => {
+      if (domRef.current) {
+        observer.unobserve(domRef.current)
+      }
+    }
+  }, [])
+
+  const videoUrl = getMediaUrl(`videos/${videoName}`)
+
+  return (
+    <div 
+      ref={domRef}
+      className={`transition-all duration-[1200ms] ease-out transform ${
+        isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-24 scale-[0.97]'
+      } flex flex-col md:flex-row items-center gap-8 border-b border-[#D60001]/20 py-20`}
+    >
+      {/* Left Monospaced Number */}
+      <div className="hidden md:block w-16 text-left text-sm font-extrabold text-[#D60001] tracking-widest">
+        {number}
+      </div>
+
+      {/* Widescreen Video Card Container */}
+      <div className="flex-1 relative aspect-[21/9] w-full overflow-hidden border border-white/10 group bg-slate-950">
+        <video 
+          src={videoUrl} 
+          poster={posterSrc}
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+          className="w-full h-full object-cover opacity-60 group-hover:opacity-85 transition-opacity duration-700 ease-out" 
+        />
+        
+        {/* Overlay Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-between p-6">
+          <div className="text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">
+            {subtitle}
+          </div>
+          
+          <div className="space-y-1">
+            <h3 className="text-2xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">
+              {title}
+            </h3>
+            <p className="text-[9px] text-[#D60001] tracking-widest uppercase font-bold">
+              [ NutriTec Premium Program ]
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Action Button */}
+      <div className="w-24 text-right">
+        <Link 
+          to="/register"
+          className="inline-block bg-[#D60001] hover:bg-white hover:text-black text-white font-extrabold text-[10px] tracking-widest px-6 py-2.5 transition-colors uppercase"
+        >
+          VIEW
+        </Link>
+      </div>
+    </div>
+  )
+}
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  const heroVideoUrl = getMediaUrl('videos/hero_loop.mp4')
+
   return (
     <div className="min-h-screen bg-[#000000] text-white font-mono selection:bg-[#D60001] selection:text-white relative overflow-hidden">
       
-      {/* Cinematic Grid Lines Background */}
+      {/* Background Grid Overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px]" />
       
-      {/* Glow highlight */}
-      <div className="absolute top-[-10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-[#D60001]/10 blur-[150px] pointer-events-none" />
-
       {/* Industrial Thin Navbar */}
-      <header className="sticky top-0 z-50 border-b border-[#D60001]/25 bg-black/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-[#D60001]/25 bg-black/95 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 text-lg font-black tracking-[0.25em] text-white hover:text-[#D60001] transition-colors">
-            <span className="text-[#D60001] font-black">●</span> NUTRI_TEC
+            <span className="text-[#D60001]">●</span> NUTRI_TEC
           </Link>
           
           {/* Menu Links */}
@@ -101,207 +187,109 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 border-b border-[#D60001]/25">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
-            
-            {/* Left Content */}
-            <div className="lg:col-span-7 space-y-10">
-              <span className="text-[11px] font-bold tracking-[0.45em] text-[#D60001] uppercase block">
-                [ INDUSTRIAL NUTRITION & CLINICAL KINETICS ]
-              </span>
-              
-              <h1 className="text-5xl font-black tracking-tighter text-white sm:text-7xl lg:text-[5.5rem] leading-[0.9] uppercase">
-                NUTRICIÓN <br />
-                DE PRECISIÓN <br />
-                A TU MEDIDA
-              </h1>
+      {/* Cinematic Fullscreen Background Hero */}
+      <section className="relative h-screen flex items-center justify-center border-b border-[#D60001]/25">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-[#050505]">
+          <video 
+            src={heroVideoUrl} 
+            poster="/assets/patient_banner.png"
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-full object-cover opacity-35" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
+        </div>
 
-              <div className="w-20 h-[2px] bg-[#D60001]" />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full text-center flex flex-col items-center space-y-8 select-none">
+          <span className="text-[11px] font-bold tracking-[0.6em] text-[#D60001] uppercase block animate-pulse">
+            [ NUTRITEC // INDUSTRIAL CLINIC 2.0 ]
+          </span>
+          
+          <h1 className="text-7xl sm:text-[9rem] font-black tracking-tighter text-white uppercase leading-[0.85] text-center max-w-5xl">
+            NUTRITECH <br />
+            <span className="text-[#D60001]">CINEMA</span>
+          </h1>
 
-              <p className="text-xs leading-relaxed text-slate-400 max-w-lg tracking-wider font-semibold">
-                [ EDICIÓN 2026 // FUSIONAMOS LA CIENCIA DIETÉTICA MOLECULAR CON MONITOREO ANTRÓPOMETRICO EN TIEMPO REAL. DISEÑADO PARA QUIENES EXIGEN MÁXIMO RENDIMIENTO Y BIENESTAR BAJO CONTROL ABSOLUTO. ]
-              </p>
+          <div className="w-48 h-[2px] bg-[#D60001]" />
 
-              <div className="flex flex-wrap gap-6 pt-4">
-                <Link
-                  to="/register"
-                  className="inline-flex items-center gap-3 bg-[#D60001] hover:bg-[#b00000] px-8 py-4 text-xs font-bold tracking-[0.2em] text-white transition-all shadow-lg shadow-[#D60001]/20 uppercase"
-                >
-                  Comienza Gratis
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-                <a
-                  href="#servicios"
-                  className="inline-flex items-center gap-3 border border-white/20 hover:border-white text-white px-8 py-4 text-xs font-bold tracking-[0.2em] transition-all uppercase"
-                >
-                  Ver Servicios
-                </a>
-              </div>
-            </div>
+          <p className="text-[10px] leading-relaxed text-slate-400 max-w-lg tracking-[0.25em] font-semibold uppercase mx-auto">
+            [ MONITOREO DIETÉTICO ANTRÓPOMETRICO EN TIEMPO REAL CON ASESORÍA DE ALTA COMPLEJIDAD VÍA STREAMING BACKEND. ]
+          </p>
 
-            {/* Right Side: Cinematic Grid Stats Simulator */}
-            <div className="lg:col-span-5 relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#D60001] to-[#ff4d4d] opacity-10 blur-xl pointer-events-none" />
-              
-              <div className="relative border border-[#D60001]/30 bg-black p-6 sm:p-8 space-y-8">
-                
-                <div className="flex items-center justify-between border-b border-[#D60001]/20 pb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#D60001]" />
-                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">[ CLINICAL_MONITOR_SYS ]</span>
-                  </div>
-                  <span className="text-[9px] font-bold text-[#D60001] uppercase tracking-widest animate-pulse">
-                    ONLINE
-                  </span>
-                </div>
-
-                <div className="space-y-6">
-                  
-                  {/* Calorie Card */}
-                  <div className="border border-white/10 bg-white/[0.01] p-4 space-y-3">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
-                      <span>01 / REQUERIMIENTO CALÓRICO</span>
-                      <span className="text-[#D60001]">▲ 1,850 KCAL</span>
-                    </div>
-                    <div className="h-1 bg-slate-900 overflow-hidden">
-                      <div className="h-full w-2/3 bg-[#D60001]" />
-                    </div>
-                  </div>
-
-                  {/* Water intake Card */}
-                  <div className="border border-white/10 bg-white/[0.01] p-4 space-y-3">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
-                      <span>02 / METAS DE HIDRATACIÓN</span>
-                      <span className="text-[#D60001]">● 1.2 L / 2.0 L</span>
-                    </div>
-                    <div className="h-1 bg-slate-900 overflow-hidden">
-                      <div className="h-full w-3/5 bg-[#D60001]" />
-                    </div>
-                  </div>
-
-                  {/* Weight progress graph simulation */}
-                  <div className="border border-white/10 bg-white/[0.01] p-4 space-y-3">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
-                      <span>03 / HISTORIAL CORPORAL</span>
-                      <span className="text-[#D60001]">▼ -4 KG</span>
-                    </div>
-                    <div className="flex items-end justify-between h-14 pt-4 px-2">
-                      <div className="w-8 bg-slate-900 h-12 text-center text-[8px] text-slate-500 pt-1">82kg</div>
-                      <div className="w-8 bg-slate-900 h-10 text-center text-[8px] text-slate-500 pt-1">80kg</div>
-                      <div className="w-8 bg-[#D60001]/40 h-8 text-center text-[8px] text-slate-400 pt-1">79kg</div>
-                      <div className="w-8 bg-[#D60001] h-6 text-center text-[8px] text-white pt-1">78kg</div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
+          <div className="flex flex-wrap justify-center gap-6 pt-4">
+            <Link
+              to="/register"
+              className="bg-[#D60001] hover:bg-white hover:text-black text-white px-8 py-4 text-xs font-bold tracking-[0.2em] transition-all uppercase flex items-center gap-2"
+            >
+              Comenzar <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <a
+              href="#servicios"
+              className="border border-white/20 hover:border-white text-white px-8 py-4 text-xs font-bold tracking-[0.2em] transition-all uppercase"
+            >
+              Servicios
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Services Section with Cinematic Work Grid */}
-      <section id="servicios" className="py-24 border-b border-[#D60001]/25 bg-white/[0.01]">
+      {/* Services Widescreen Portfolio Section */}
+      <section id="servicios" className="py-24 border-b border-[#D60001]/25">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="max-w-3xl space-y-4 mb-16">
             <span className="text-[11px] font-bold tracking-[0.45em] text-[#D60001] uppercase block">
-              [ NUESTROS SERVICIOS // SOLUCIONES ]
+              [ PROGRAMAS CLÍNICOS / SERVICIOS ]
             </span>
             <h2 className="text-4xl font-black tracking-tight text-white uppercase sm:text-5xl leading-none">
-              SOLUCIONES CLÍNICAS Y DEPORTIVAS
+              SERVICIOS DE ALTO ESPECTRO
             </h2>
             <p className="text-xs text-slate-400 max-w-xl leading-relaxed tracking-wider font-semibold">
-              [ EXPLORA LAS METODOLOGÍAS Y MÓDULOS DIGITALES DESARROLLADOS PARA EL CONTROL ANTROPOMÉTRICO Y LA NUTRICIÓN DE ALTA COMPLEJIDAD. ]
+              [ CADA MÓDULO DIGITAL ESTÁ VINCULADO A LOS VIDEOS E INSTRUCCIONES DE TU NUTRICIONISTA Y CARGA DESDE EL SERVIDOR LOCAL DEL CONSULTORIO. ]
             </p>
           </div>
 
-          {/* Grid of highly visual cards with Unsplash photos */}
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              {
-                number: '01',
-                title: 'DIETAS MOLECULARES',
-                description: 'Cálculo analítico de macronutrientes adaptado a tus exigencias cardiovasculares y metas antropométricas.',
-                image: '/assets/service_diet.png',
-                badge: 'DESARROLLO Y SALUD'
-              },
-              {
-                number: '02',
-                title: 'CONTROL DE EVOLUCIÓN',
-                description: 'Línea de tiempo visual, métricas de composición corporal y metas de hidratación en tiempo real.',
-                image: '/assets/service_gym.png',
-                badge: 'ESTADÍSTICA DIARIA'
-              },
-              {
-                number: '03',
-                title: 'RECETARIO INDUSTRIAL',
-                description: 'Catálogo de preparaciones saludables detalladas con porciones exactas para evitar desorganización.',
-                image: '/assets/service_recipe.png',
-                badge: 'PLANIFICACIÓN KITCHEN'
-              }
-            ].map((service) => (
-              <article 
-                key={service.title} 
-                className="group relative border border-white/10 bg-black overflow-hidden flex flex-col justify-between h-[420px] transition-all duration-300 hover:border-[#D60001]"
-              >
-                {/* Image Container with zoom hover */}
-                <div className="relative h-56 overflow-hidden">
-                  <div className="absolute inset-0 bg-slate-950/40 z-10 transition group-hover:bg-slate-950/20" />
-                  <img 
-                    src={service.image} 
-                    alt={service.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" 
-                  />
-                  <span className="absolute top-4 left-4 z-20 border border-[#D60001]/30 bg-black px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-[#D60001]">
-                    {service.badge}
-                  </span>
-                </div>
-
-                {/* Content Box */}
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <div className="text-[10px] font-bold text-[#D60001] tracking-widest">{service.number} // PROGRAM</div>
-                    <h3 className="text-lg font-black text-white group-hover:text-[#D60001] transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
-                      {service.description}
-                    </p>
-                  </div>
-                  
-                  <Link 
-                    to="/register"
-                    className="inline-flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest group-hover:text-[#D60001] transition-colors"
-                  >
-                    Adquirir Plan
-                    <ArrowUpRight className="h-4.5 w-4.5" />
-                  </Link>
-                </div>
-              </article>
-            ))}
+          {/* Fade-in widescreen video items with IntersectionObserver */}
+          <div className="space-y-6">
+            <FadeInProjectSection 
+              number="01"
+              title="DIETAS MOLECULARES"
+              subtitle="Cálculo analítico de macronutrientes"
+              videoName="service_diet.mp4"
+              posterSrc="/assets/service_diet.png"
+            />
+            <FadeInProjectSection 
+              number="02"
+              title="EVOLUCIÓN ANTROPOMÉTRICA"
+              subtitle="Control diario y composición corporal"
+              videoName="service_progress.mp4"
+              posterSrc="/assets/service_gym.png"
+            />
+            <FadeInProjectSection 
+              number="03"
+              title="RECETARIO INDUSTRIAL"
+              subtitle="Instrucciones en video y porciones exactas"
+              videoName="service_recipes.mp4"
+              posterSrc="/assets/service_recipe.png"
+            />
           </div>
 
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="beneficios" className="py-24 border-b border-[#D60001]/25">
+      {/* Benefits Specifications Section */}
+      <section id="beneficios" className="py-24 border-b border-[#D60001]/25 bg-white/[0.01]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="max-w-3xl space-y-4 mb-16">
             <span className="text-[11px] font-bold tracking-[0.45em] text-[#D60001] uppercase block">
-              [ POR QUÉ ELEGIRNOS // METRICAS ]
+              [ ESPECIFICACIONES TÉCNICAS / BENEFICIOS ]
             </span>
             <h2 className="text-4xl font-black tracking-tight text-white uppercase sm:text-5xl leading-none">
-              TU BIENESTAR BAJO CONTROL ABSOLUTO
+              METRICAS BAJO CONTROL ABSOLUTO
             </h2>
-            <p className="text-xs text-slate-400 max-w-xl leading-relaxed tracking-wider font-semibold">
-              [ TECNOLOGÍA ENCRIPTADA, EVALUACIÓN CIENTÍFICA Y SEGUIMIENTO ACTIVO. ]
-            </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -313,8 +301,8 @@ export default function LandingPage() {
               { number: '05', title: 'SEGURIDAD JWT', desc: 'Autenticación encriptada para mantener tu historial clínico e información de salud 100% privada.' },
               { number: '06', title: 'EVIDENCIA VISUAL', desc: 'Sube fotos de tu progreso directamente a nuestro servidor de manera totalmente privada.' },
             ].map((item) => (
-              <div key={item.title} className="border border-white/10 bg-white/[0.01] p-6 hover:border-[#D60001]/40 transition duration-300">
-                <div className="text-xs font-bold text-[#D60001]">{item.number} // SPECIFICATION</div>
+              <div key={item.title} className="border border-white/10 bg-black p-6 hover:border-[#D60001]/40 transition duration-300">
+                <div className="text-[10px] font-bold text-[#D60001]">{item.number} // PARAMETRO</div>
                 <h3 className="text-base font-bold text-white mt-4 uppercase">{item.title}</h3>
                 <p className="text-slate-400 mt-2 text-[11px] leading-relaxed font-semibold">{item.desc}</p>
               </div>
@@ -333,9 +321,6 @@ export default function LandingPage() {
                 ¿TIENES DUDAS? <br />
                 PONTE EN CONTACTO
               </h2>
-              <p className="text-xs leading-relaxed text-slate-400 tracking-wider font-semibold max-w-md">
-                [ ESTAMOS AQUÍ PARA ACOMPAÑARTE EN TU EVOLUCIÓN FÍSICA Y ALIMENTARIA. ESCRÍBENOS O VISÍTANOS EN NUESTRO CONSULTORIO. ]
-              </p>
               <div className="space-y-4 text-xs font-semibold text-slate-300">
                 <div className="flex items-center gap-3">
                   <Phone className="h-4.5 w-4.5 text-[#D60001]" />
@@ -353,7 +338,7 @@ export default function LandingPage() {
             </div>
 
             <div className="lg:col-span-6 border border-[#D60001]/30 bg-black p-8 shadow-2xl">
-              <h3 className="text-lg font-black text-white mb-6 uppercase tracking-wider">[ INTAKE_MESSAGE_BOX ]</h3>
+              <h3 className="text-lg font-black text-white mb-6 uppercase tracking-wider">[ ENTAKE_MESSAGE_BOX ]</h3>
               <form onSubmit={(e) => { e.preventDefault(); alert('Mensaje enviado. ¡Nos contactaremos pronto!'); }} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block space-y-2">
@@ -369,7 +354,7 @@ export default function LandingPage() {
                   <span className="text-[10px] font-bold text-slate-400 uppercase">Mensaje</span>
                   <textarea rows={4} required placeholder="Hola, quisiera agendar una asesoría..." className="w-full rounded bg-white/5 border border-white/10 px-4 py-3 text-xs text-slate-100 outline-none focus:border-[#D60001] resize-none" />
                 </label>
-                <button type="submit" className="w-full bg-[#D60001] hover:bg-[#b00000] py-4 text-xs font-bold tracking-[0.2em] text-white transition-all uppercase">
+                <button type="submit" className="w-full bg-[#D60001] hover:bg-white hover:text-black py-4 text-xs font-bold tracking-[0.2em] text-white transition-all uppercase">
                   Enviar Mensaje
                 </button>
               </form>
