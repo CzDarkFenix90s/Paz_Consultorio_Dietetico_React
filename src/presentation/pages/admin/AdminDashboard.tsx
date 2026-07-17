@@ -276,11 +276,14 @@ export default function AdminDashboard() {
       if (response.ok) {
         alert('Notas clínicas actualizadas con éxito.')
         selectedPatientForFicha.medical_notes = patientNoteInput
+        fetchPacientes()
       } else {
-        alert('Error al actualizar las notas')
+        const errorData = await response.json()
+        alert('Error al actualizar las notas: ' + JSON.stringify(errorData))
       }
     } catch (err) {
       console.error(err)
+      alert('Error de conexión al guardar notas')
     }
   }
 
@@ -310,10 +313,12 @@ export default function AdminDashboard() {
         setNewObjetivo({ objetivo: 'BAJAR_PESO', fecha_meta: '' })
         loadFichaData(selectedPatientForFicha)
       } else {
-        alert('Error al registrar objetivo')
+        const errorData = await response.json()
+        alert('Error al registrar objetivo: ' + JSON.stringify(errorData))
       }
     } catch (err) {
       console.error(err)
+      alert('Error de conexión al registrar objetivo')
     }
   }
 
@@ -349,7 +354,8 @@ export default function AdminDashboard() {
         setNewRutina({ descripcion_rutina: '', dias_semana: 'Lunes, Miércoles, Viernes', duracion_minutos: '30' })
         loadFichaData(selectedPatientForFicha)
       } else {
-        alert('Error al guardar la rutina')
+        const errorData = await response.json()
+        alert('Error al guardar la rutina: ' + JSON.stringify(errorData))
       }
     } catch (err) {
       console.error(err)
@@ -1267,6 +1273,11 @@ export default function AdminDashboard() {
                 <p className="text-xs text-slate-400 uppercase tracking-widest mt-1">
                   Código: {selectedPatientForFicha.patient_code} | Edad: {selectedPatientForFicha.age || 'N/D'} años
                 </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs font-semibold">
+                  <span className="text-emerald-400">Peso Inicial / Actual: <strong className="text-white">{selectedPatientForFicha.current_weight ? `${selectedPatientForFicha.current_weight} kg` : 'Sin registrar'}</strong></span>
+                  <span className="text-emerald-400">Estatura: <strong className="text-white">{selectedPatientForFicha.height_cm ? `${(Number(selectedPatientForFicha.height_cm) > 3 ? Number(selectedPatientForFicha.height_cm) / 100 : Number(selectedPatientForFicha.height_cm)).toFixed(2)} m` : 'Sin registrar'}</strong></span>
+                  <span className="text-emerald-400">IMC: <strong className="text-white">{selectedPatientForFicha.bmi ? Number(selectedPatientForFicha.bmi).toFixed(1) : 'N/D'}</strong></span>
+                </div>
               </div>
               <button 
                 onClick={() => setSelectedPatientForFicha(null)}
