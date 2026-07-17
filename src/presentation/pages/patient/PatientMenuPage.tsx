@@ -521,6 +521,41 @@ export default function PatientMenuPage() {
           </div>
         </section>
 
+        {/* Historial Antropométrico */}
+        <section className="rounded-3xl border border-white/5 bg-slate-900/20 p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-bold text-white">Historial de Progreso Corporal (Mis Controles)</h3>
+            <span className="text-xs text-slate-400">Total de controles: {pacienteData?.seguimientos?.length || 0}</span>
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-white/5">
+            <table className="min-w-full text-xs text-left">
+              <thead className="bg-slate-950 text-slate-400 uppercase font-bold">
+                <tr>
+                  <th className="px-4 py-3">Fecha</th>
+                  <th className="px-4 py-3">Peso</th>
+                  <th className="px-4 py-3">Cintura</th>
+                  <th className="px-4 py-3">Progreso / Nota del Nutricionista</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 bg-slate-950/20 text-slate-300">
+                {(pacienteData?.seguimientos || []).map((ev: any) => (
+                  <tr key={ev.id}>
+                    <td className="px-4 py-3">{new Date(ev.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 font-bold text-white">{ev.weight_kg} kg</td>
+                    <td className="px-4 py-3">{ev.waist_cm ? `${ev.waist_cm} cm` : 'N/D'}</td>
+                    <td className="px-4 py-3 text-slate-400">{ev.notes || 'Control de rutina'}</td>
+                  </tr>
+                ))}
+                {(!pacienteData?.seguimientos || pacienteData.seguimientos.length === 0) && (
+                  <tr>
+                    <td colSpan={4} className="text-center py-6 text-slate-500">Aún no tienes controles registrados por tu nutricionista.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
         {/* Meal & Next consultation Grid */}
         <section className="grid gap-6 md:grid-cols-2">
           

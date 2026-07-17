@@ -156,7 +156,7 @@ export default function AdminDashboard() {
       if (objRes.ok) {
         const objData = await objRes.json()
         const objList = objData.results || objData
-        setPatientObjetivos((objList || []).filter((o: any) => o.paciente === patient.id))
+        setPatientObjetivos((objList || []).filter((o: any) => o.paciente === patient.id || o.paciente_id === patient.id))
       }
 
       // 2. Fetch Sintomas
@@ -164,7 +164,7 @@ export default function AdminDashboard() {
       if (sintRes.ok) {
         const sintData = await sintRes.json()
         const sintList = sintData.results || sintData
-        setPatientSintomas((sintList || []).filter((s: any) => s.paciente === patient.id))
+        setPatientSintomas((sintList || []).filter((s: any) => s.paciente === patient.id || s.paciente_id === patient.id))
       }
 
       // 3. Fetch Ejercicios & Rutinas
@@ -172,14 +172,14 @@ export default function AdminDashboard() {
       if (ejRes.ok) {
         const ejData = await ejRes.json()
         const ejList = ejData.results || ejData
-        setPatientEjercicios((ejList || []).filter((e: any) => e.paciente === patient.id))
+        setPatientEjercicios((ejList || []).filter((e: any) => e.paciente === patient.id || e.paciente_id === patient.id))
       }
       
       const rutRes = await fetch(`${API_CONFIG.BASE_URL}/rutinas-ejercicio/?page_size=100`, { headers })
       if (rutRes.ok) {
         const rutData = await rutRes.json()
         const rutList = rutData.results || rutData
-        setPatientRutinas((rutList || []).filter((r: any) => r.paciente === patient.id))
+        setPatientRutinas((rutList || []).filter((r: any) => r.paciente === patient.id || r.paciente_id === patient.id))
       }
 
       // 4. Fetch Paciente tracking followups
@@ -187,6 +187,7 @@ export default function AdminDashboard() {
       if (patRes.ok) {
         const patData = await patRes.json()
         setPatientEvaluaciones(patData.seguimientos || [])
+        setSelectedPatientForFicha(patData) // Update parent patient object to refresh details in UI!
       }
 
     } catch (err) {
@@ -634,8 +635,8 @@ export default function AdminDashboard() {
                       activeTab === 'nutricionistas' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:bg-white/5'
                     }`}
                   >
-                    <Users className="h-4 w-4 shrink-0" />
-                    Nutricionistas
+                    <FileSpreadsheet className="h-4 w-4 shrink-0" />
+                    Reportes (Nutricionistas)
                   </button>
 
                   <button
