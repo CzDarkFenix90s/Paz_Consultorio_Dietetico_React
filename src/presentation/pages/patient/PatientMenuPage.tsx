@@ -203,39 +203,86 @@ export default function PatientMenuPage() {
         throw new Error('Error en Perfil de Paciente: ' + JSON.stringify(errorData))
       }
 
-      // 2. Create ObjetivoPaciente
-      const objResponse = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          paciente: pacienteData.id,
-          objetivo: fichaFormData.objetivo_choice,
-          fecha_inicio: new Date().toISOString().split('T')[0],
-          fecha_meta: fichaFormData.fecha_meta,
-          estado: 'EN_PROGRESO'
+      // 2. Fetch and Update or Create ObjetivoPaciente
+      let existingActiveGoal: any = null
+      try {
+        const objListRes = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/?page_size=100`, { headers })
+        if (objListRes.ok) {
+          const objListData = await objListRes.json()
+          const results = objListData.results || objListData
+          existingActiveGoal = (results || []).find(
+            (o: any) => (o.paciente === pacienteData.id || o.paciente_id === pacienteData.id) && o.estado === 'EN_PROGRESO'
+          )
+        }
+      } catch (err) {
+        console.error('Error finding active goal:', err)
+      }
+
+      let objResponse
+      if (existingActiveGoal) {
+        objResponse = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/${existingActiveGoal.id}/`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            objetivo: fichaFormData.objetivo_choice,
+            fecha_meta: fichaFormData.fecha_meta || null
+          })
         })
-      })
+      } else {
+        objResponse = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            paciente: pacienteData.id,
+            objetivo: fichaFormData.objetivo_choice,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            fecha_meta: fichaFormData.fecha_meta || null,
+            estado: 'EN_PROGRESO'
+          })
+        })
+      }
 
       if (!objResponse.ok) {
         const errorData = await objResponse.json()
         throw new Error('Error en Objetivo de Paciente: ' + JSON.stringify(errorData))
       }
 
-      // 3. Create SintomaDiario (optional failure tolerance)
+      // 3. Create or Update SintomaDiario (optional failure tolerance)
       try {
         const todayStr = new Date().toISOString().split('T')[0]
-        await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            paciente: pacienteData.id,
-            fecha: todayStr,
-            sintoma: fichaFormData.sintoma_choice,
-            notas: fichaFormData.sintoma_notas || 'Auto-registro inicial'
+        const sintListRes = await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/?page_size=100`, { headers })
+        let existingSintoma: any = null
+        if (sintListRes.ok) {
+          const sintListData = await sintListRes.json()
+          const results = sintListData.results || sintListData
+          existingSintoma = (results || []).find(
+            (s: any) => (s.paciente === pacienteData.id || s.paciente_id === pacienteData.id) && s.fecha === todayStr
+          )
+        }
+
+        if (existingSintoma) {
+          await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/${existingSintoma.id}/`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({
+              sintoma: fichaFormData.sintoma_choice,
+              notas: fichaFormData.sintoma_notas || 'Auto-registro actualizado'
+            })
           })
-        })
+        } else {
+          await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              paciente: pacienteData.id,
+              fecha: todayStr,
+              sintoma: fichaFormData.sintoma_choice,
+              notas: fichaFormData.sintoma_notas || 'Auto-registro inicial'
+            })
+          })
+        }
       } catch (sintErr) {
-        console.warn('Sintoma ya registrado hoy o error menor:', sintErr)
+        console.warn('Error reporting daily symptom:', sintErr)
       }
 
       alert('¡Información médica guardada con éxito!')
