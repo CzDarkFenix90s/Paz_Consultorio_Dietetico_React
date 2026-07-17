@@ -158,6 +158,23 @@ export default function PatientMenuPage() {
       return
     }
 
+    const cleanHeight = (val: string) => {
+      if (!val) return 0
+      const cleaned = parseFloat(val.replace(',', '.'))
+      if (isNaN(cleaned)) return 0
+      // If they entered height in meters (e.g. 1.59 or 1.8), convert to centimeters (159 or 180)
+      if (cleaned < 3) {
+        return Math.round(cleaned * 100)
+      }
+      return cleaned
+    }
+
+    const cleanWeight = (val: string) => {
+      if (!val) return 0
+      const cleaned = parseFloat(val.replace(',', '.'))
+      return isNaN(cleaned) ? 0 : cleaned
+    }
+
     try {
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = {
@@ -165,25 +182,29 @@ export default function PatientMenuPage() {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       }
 
+      const parsedHeight = cleanHeight(fichaFormData.height_cm)
+      const parsedWeight = cleanWeight(fichaFormData.current_weight)
+
       // 1. Update Paciente Profile
       const patchResponse = await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({
-          age: Number(fichaFormData.age) || 0,
-          current_weight: Number(fichaFormData.current_weight) || 0,
-          height_cm: Number(fichaFormData.height_cm) || 0,
+          age: parseInt(fichaFormData.age) || 0,
+          current_weight: parsedWeight,
+          height_cm: parsedHeight,
           goal: fichaFormData.goal,
           dietary_restrictions: fichaFormData.dietary_restrictions
         })
       })
 
       if (!patchResponse.ok) {
-        throw new Error('Error al actualizar perfil de paciente')
+        const errorData = await patchResponse.json()
+        throw new Error('Error en Perfil de Paciente: ' + JSON.stringify(errorData))
       }
 
       // 2. Create ObjetivoPaciente
-      await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
+      const objResponse = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -195,25 +216,34 @@ export default function PatientMenuPage() {
         })
       })
 
-      // 3. Create SintomaDiario
-      const todayStr = new Date().toISOString().split('T')[0]
-      await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          paciente: pacienteData.id,
-          fecha: todayStr,
-          sintoma: fichaFormData.sintoma_choice,
-          notas: fichaFormData.sintoma_notas || 'Auto-registro inicial'
+      if (!objResponse.ok) {
+        const errorData = await objResponse.json()
+        throw new Error('Error en Objetivo de Paciente: ' + JSON.stringify(errorData))
+      }
+
+      // 3. Create SintomaDiario (optional failure tolerance)
+      try {
+        const todayStr = new Date().toISOString().split('T')[0]
+        await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            paciente: pacienteData.id,
+            fecha: todayStr,
+            sintoma: fichaFormData.sintoma_choice,
+            notas: fichaFormData.sintoma_notas || 'Auto-registro inicial'
+          })
         })
-      })
+      } catch (sintErr) {
+        console.warn('Sintoma ya registrado hoy o error menor:', sintErr)
+      }
 
       alert('¡Información médica guardada con éxito!')
       setShowFichaModal(false)
       loadPatientProfile()
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      alert('Error al guardar la información')
+      alert(err.message || 'Error al guardar la información')
     }
   }
 
