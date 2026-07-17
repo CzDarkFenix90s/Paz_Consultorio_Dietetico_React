@@ -1,7 +1,8 @@
 // src/presentation/pages/patient/PatientMenuPage.tsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/useAuthStore'
+import { API_CONFIG } from '../../../infrastructure/config/api.config'
 import { 
   Bell, 
   CalendarCheck2, 
@@ -19,7 +20,9 @@ import {
   LogOut,
   Sparkles,
   Flame,
-  Camera
+  Camera,
+  Activity,
+  Plus
 } from 'lucide-react'
 
 const meals = [
@@ -43,12 +46,205 @@ export default function PatientMenuPage() {
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
 
+  // Dynamic Patient States
+  const [pacienteData, setPacienteData] = useState<any | null>(null)
+  const [waterLogToday, setWaterLogToday] = useState(0)
+  const [loadingProfile, setLoadingProfile] = useState(true)
+  const [showFichaModal, setShowFichaModal] = useState(false)
+
+  // Ficha Form State
+  const [fichaFormData, setFichaFormData] = useState({
+    age: '',
+    current_weight: '',
+    height_cm: '',
+    goal: '',
+    dietary_restrictions: '',
+    objetivo_choice: 'BAJAR_PESO',
+    fecha_meta: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString().split('T')[0],
+    sintoma_choice: 'EXCELENTE',
+    sintoma_notas: ''
+  })
+
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
 
+  const loadPatientProfile = async () => {
+    try {
+      setLoadingProfile(true)
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      
+      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/?page_size=100`, { headers })
+      if (response.ok) {
+        const data = await response.json()
+        const results = data.results || data
+        const myPatient = (results || []).find((p: any) => p.user_id === user?.id)
+        if (myPatient) {
+          setPacienteData(myPatient)
+          setFichaFormData(prev => ({
+            ...prev,
+            age: myPatient.age ? String(myPatient.age) : '',
+            current_weight: myPatient.current_weight ? String(myPatient.current_weight) : '',
+            height_cm: myPatient.height_cm ? String(myPatient.height_cm) : '',
+            goal: myPatient.goal || '',
+            dietary_restrictions: myPatient.dietary_restrictions || ''
+          }))
+          loadWaterLog(myPatient.id)
+        }
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingProfile(false)
+    }
+  }
+
+  const loadWaterLog = async (pacienteId: number) => {
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      
+      const response = await fetch(`${API_CONFIG.BASE_URL}/registros-agua/?page_size=100`, { headers })
+      if (response.ok) {
+        const data = await response.json()
+        const results = data.results || data
+        const todayStr = new Date().toISOString().split('T')[0]
+        
+        const totalMl = (results || [])
+          .filter((reg: any) => reg.paciente === pacienteId && reg.fecha === todayStr)
+          .reduce((sum: number, reg: any) => sum + (reg.cantidad_ml || 0), 0)
+        
+        setWaterLogToday(totalMl)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const handleAddWater = async () => {
+    if (!pacienteData) return
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      }
+      const todayStr = new Date().toISOString().split('T')[0]
+
+      const response = await fetch(`${API_CONFIG.BASE_URL}/registros-agua/`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          paciente: pacienteData.id,
+          fecha: todayStr,
+          cantidad_ml: 250
+        })
+      })
+
+      if (response.ok) {
+        setWaterLogToday(prev => prev + 250)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const handleSaveFicha = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!pacienteData) {
+      alert('No se pudo encontrar tu perfil de paciente.')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      }
+
+      // 1. Update Paciente Profile
+      const patchResponse = await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify({
+          age: Number(fichaFormData.age) || 0,
+          current_weight: Number(fichaFormData.current_weight) || 0,
+          height_cm: Number(fichaFormData.height_cm) || 0,
+          goal: fichaFormData.goal,
+          dietary_restrictions: fichaFormData.dietary_restrictions
+        })
+      })
+
+      if (!patchResponse.ok) {
+        throw new Error('Error al actualizar perfil de paciente')
+      }
+
+      // 2. Create ObjetivoPaciente
+      await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          paciente: pacienteData.id,
+          objetivo: fichaFormData.objetivo_choice,
+          fecha_inicio: new Date().toISOString().split('T')[0],
+          fecha_meta: fichaFormData.fecha_meta,
+          estado: 'EN_PROGRESO'
+        })
+      })
+
+      // 3. Create SintomaDiario
+      const todayStr = new Date().toISOString().split('T')[0]
+      await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          paciente: pacienteData.id,
+          fecha: todayStr,
+          sintoma: fichaFormData.sintoma_choice,
+          notas: fichaFormData.sintoma_notas || 'Auto-registro inicial'
+        })
+      })
+
+      alert('¡Información médica guardada con éxito!')
+      setShowFichaModal(false)
+      loadPatientProfile()
+    } catch (err) {
+      console.error(err)
+      alert('Error al guardar la información')
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id) {
+      loadPatientProfile()
+    }
+  }, [user])
+
   const initialLetter = user?.username?.[0]?.toUpperCase() || 'P'
+  const waterProgressPct = Math.min((waterLogToday / 2000) * 100, 100)
+
+  // IMC Calculation fallback helper
+  const calculateIMC = () => {
+    if (pacienteData?.bmi) return Number(pacienteData.bmi).toFixed(1)
+    const weight = Number(fichaFormData.current_weight)
+    const height = Number(fichaFormData.height_cm) / 100
+    if (weight && height) {
+      return (weight / (height * height)).toFixed(1)
+    }
+    return 'N/D'
+  }
+
+  if (loadingProfile) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent mb-4" />
+        <p className="text-sm font-semibold">Cargando tu consultorio inteligente...</p>
+      </div>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
@@ -74,7 +270,6 @@ export default function PatientMenuPage() {
             Consultorio <span className="text-emerald-400">Dietético</span>
           </div>
 
-          {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-8">
             <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition">Inicio</button>
             <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Mi Plan</button>
@@ -166,40 +361,74 @@ export default function PatientMenuPage() {
               </div>
             </div>
 
-            <button
-              onClick={handleLogout}
-              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-slate-950 transition shadow-lg shadow-rose-500/5"
-              title="Cerrar sesión"
-            >
-              <LogOut className="h-5 w-5" />
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowFichaModal(true)}
+                className="flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 transition shadow-lg shadow-emerald-500/20"
+              >
+                <Activity className="h-4.5 w-4.5" />
+                Actualizar Ficha Médica
+              </button>
+              
+              <button
+                onClick={handleLogout}
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-slate-950 transition shadow-lg"
+                title="Cerrar sesión"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </section>
+
+        {/* Warning Banner if profile not complete */}
+        {pacienteData && (!pacienteData.current_weight || !pacienteData.height_cm) && (
+          <section className="rounded-2xl border border-amber-500/20 bg-amber-500/15 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-amber-200">
+            <div>
+              <p className="font-bold text-base">⚠️ Ficha médica incompleta</p>
+              <p className="text-sm text-amber-300 mt-1">Por favor completa tu evaluación inicial (peso, altura) para poder calcular tu IMC y diseñar tu plan.</p>
+            </div>
+            <button
+              onClick={() => setShowFichaModal(true)}
+              className="rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 shrink-0 transition"
+            >
+              Completar Ficha
+            </button>
+          </section>
+        )}
 
         {/* Daily Summary Rings/Stats Grid */}
         <section className="grid gap-6 md:grid-cols-2">
           
-          {/* Water card with beautiful visual circular indicator */}
+          {/* Water card with dynamic tracking */}
           <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex items-center justify-between">
             <div className="space-y-2">
               <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">CONSUMO DE AGUA</p>
-              <div className="text-4xl font-extrabold text-white">1.2 <span className="text-xl font-medium text-slate-400">L</span></div>
-              <p className="text-xs text-slate-500 font-semibold">Meta diaria: 2.0 L</p>
+              <div className="text-4xl font-extrabold text-white">{(waterLogToday / 1000).toFixed(2)} <span className="text-xl font-medium text-slate-400">L</span></div>
+              <p className="text-xs text-slate-500 font-semibold">Meta diaria: 2.0 L ({waterLogToday} ml)</p>
+              <button 
+                onClick={handleAddWater}
+                className="mt-3 flex items-center gap-1.5 rounded-xl border border-sky-500/20 bg-sky-500/10 hover:bg-sky-500 hover:text-slate-950 font-bold px-3 py-1.5 text-xs text-sky-400 transition"
+              >
+                <Plus className="h-4 w-4" />
+                Registrar 250ml
+              </button>
             </div>
             
             {/* SVG Progress Circle */}
-            <div className="relative h-20 w-20 shrink-0">
-              <svg className="w-full h-full transform -rotate-95" viewBox="0 0 36 36">
+            <div className="relative h-24 w-24 shrink-0">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                 <path className="text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path className="text-sky-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray="60, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path className="text-sky-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray={`${waterProgressPct}, 100`} strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Droplets className="h-6 w-6 text-sky-500 animate-bounce" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <Droplets className="h-6 w-6 text-sky-500" />
+                <span className="text-[10px] font-bold text-sky-400 mt-0.5">{Math.round(waterProgressPct)}%</span>
               </div>
             </div>
           </article>
 
-          {/* Calories/Activity Summary */}
+          {/* Activity/Calories */}
           <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex items-center justify-between">
             <div className="space-y-2">
               <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">ACTIVIDAD FÍSICA</p>
@@ -208,7 +437,7 @@ export default function PatientMenuPage() {
             </div>
 
             <div className="relative h-20 w-20 shrink-0">
-              <svg className="w-full h-full transform -rotate-95" viewBox="0 0 36 36">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                 <path className="text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                 <path className="text-amber-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray="100, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               </svg>
@@ -217,7 +446,6 @@ export default function PatientMenuPage() {
               </div>
             </div>
           </article>
-
         </section>
 
         {/* Physical Progress Dashboard */}
@@ -226,34 +454,28 @@ export default function PatientMenuPage() {
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Progreso Antropométrico</h2>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
               <Sparkles className="h-3.5 w-3.5 animate-spin" />
-              Recomposición
+              {pacienteData?.goal ? pacienteData.goal : 'Sin meta registrada'}
             </span>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-3">
             <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
               <p className="text-xs font-bold text-slate-400">Peso Actual</p>
-              <div className="text-3xl font-extrabold text-white">78.5 <span className="text-base font-semibold text-slate-500">kg</span></div>
+              <div className="text-3xl font-extrabold text-white">
+                {pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} <span className="text-base font-semibold text-slate-500">kg</span>
+              </div>
             </div>
 
             <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
-              <p className="text-xs font-bold text-slate-400">Peso Objetivo</p>
-              <div className="text-3xl font-extrabold text-white">72.0 <span className="text-base font-semibold text-slate-500">kg</span></div>
+              <p className="text-xs font-bold text-slate-400">Estatura</p>
+              <div className="text-3xl font-extrabold text-white">
+                {pacienteData?.height_cm ? `${pacienteData.height_cm}` : '0.0'} <span className="text-base font-semibold text-slate-500">cm</span>
+              </div>
             </div>
 
             <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
               <p className="text-xs font-bold text-slate-400">Índice de Masa Corporal (IMC)</p>
-              <div className="text-3xl font-extrabold text-emerald-400">24.2</div>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-              <span>Progreso de Pérdida de Peso</span>
-              <span className="text-emerald-400">65% Completado</span>
-            </div>
-            <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full w-[65%] rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
+              <div className="text-3xl font-extrabold text-emerald-400">{calculateIMC()}</div>
             </div>
           </div>
         </section>
@@ -309,6 +531,155 @@ export default function PatientMenuPage() {
         </section>
 
       </div>
+
+      {/* Form Ficha Modal */}
+      {showFichaModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-slate-900 p-6 max-h-[90vh] overflow-y-auto space-y-6 shadow-2xl">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-extrabold text-white">Ficha Médica y Síntomas</h2>
+              <button 
+                onClick={() => setShowFichaModal(false)}
+                className="text-slate-400 hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveFicha} className="space-y-4">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase mb-3">Antropometría Básica</p>
+                <div className="grid gap-3 grid-cols-3">
+                  <label className="block">
+                    <span className="text-xs text-slate-400">Edad (años)</span>
+                    <input 
+                      type="number"
+                      required
+                      value={fichaFormData.age}
+                      onChange={e => setFichaFormData(prev => ({ ...prev, age: e.target.value }))}
+                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs text-slate-400">Peso (kg)</span>
+                    <input 
+                      type="number"
+                      step="0.01"
+                      required
+                      value={fichaFormData.current_weight}
+                      onChange={e => setFichaFormData(prev => ({ ...prev, current_weight: e.target.value }))}
+                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs text-slate-400">Altura (cm)</span>
+                    <input 
+                      type="number"
+                      step="0.1"
+                      required
+                      value={fichaFormData.height_cm}
+                      onChange={e => setFichaFormData(prev => ({ ...prev, height_cm: e.target.value }))}
+                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <label className="block">
+                <span className="text-xs text-slate-400">Restricciones Alimentarias (alergias, etc.)</span>
+                <input 
+                  type="text"
+                  placeholder="Ej: Ninguna, Sin gluten"
+                  value={fichaFormData.dietary_restrictions}
+                  onChange={e => setFichaFormData(prev => ({ ...prev, dietary_restrictions: e.target.value }))}
+                  className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-xs text-slate-400">Objetivo Clínico o de Salud</span>
+                <input 
+                  type="text"
+                  required
+                  placeholder="Ej: Bajar grasa corporal y mejorar condición física"
+                  value={fichaFormData.goal}
+                  onChange={e => setFichaFormData(prev => ({ ...prev, goal: e.target.value }))}
+                  className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                />
+              </label>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="block">
+                  <span className="text-xs text-slate-400">Objetivo (Tipo)</span>
+                  <select 
+                    value={fichaFormData.objetivo_choice}
+                    onChange={e => setFichaFormData(prev => ({ ...prev, objetivo_choice: e.target.value }))}
+                    className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                  >
+                    <option value="BAJAR_PESO">Bajar peso</option>
+                    <option value="GANAR_MASA">Ganar masa muscular</option>
+                    <option value="MANTENER_PESO">Mantener peso</option>
+                    <option value="REDUCIR_GRASA">Reducir grasa corporal</option>
+                    <option value="MEJORAR_SALUD">Mejorar salud general</option>
+                    <option value="MEJORAR_RENDIMIENTO">Mejorar rendimiento deportivo</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs text-slate-400">Fecha Meta del Objetivo</span>
+                  <input 
+                    type="date"
+                    required
+                    value={fichaFormData.fecha_meta}
+                    onChange={e => setFichaFormData(prev => ({ ...prev, fecha_meta: e.target.value }))}
+                    className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                  />
+                </label>
+              </div>
+
+              <div className="border-t border-white/5 pt-4 space-y-3">
+                <p className="text-xs font-bold text-slate-400 uppercase">Síntomas de Hoy</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="text-xs text-slate-400">¿Cómo te sientes hoy?</span>
+                    <select 
+                      value={fichaFormData.sintoma_choice}
+                      onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_choice: e.target.value }))}
+                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                    >
+                      <option value="EXCELENTE">Excelente</option>
+                      <option value="BUENA_ENERGIA">Buena energía</option>
+                      <option value="ANSIEDAD">Ansiedad</option>
+                      <option value="CANSANCIO">Cansancio</option>
+                      <option value="DOLOR_CABEZA">Dolor de cabeza</option>
+                      <option value="HAMBRE_EXCESIVA">Hambre excesiva</option>
+                      <option value="SUEÑO_MALO">Mal sueño</option>
+                      <option value="SUEÑO_BUENO">Buen sueño</option>
+                      <option value="DIGESTION">Problemas Digestivos</option>
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-xs text-slate-400">Notas sobre tus síntomas</span>
+                    <input 
+                      type="text"
+                      placeholder="Ej: Siento algo de pesadez o cansancio..."
+                      value={fichaFormData.sintoma_notas}
+                      onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_notas: e.target.value }))}
+                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full flex items-center justify-center rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3.5 transition shadow-lg shadow-emerald-500/20"
+              >
+                Guardar Ficha
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
       <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl p-2.5 md:hidden">

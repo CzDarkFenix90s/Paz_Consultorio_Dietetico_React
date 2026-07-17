@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePhotoStore } from '../../store/usePhotoStore'
-import { API_CONFIG } from '../../../infrastructure/config/api.config'
 //import { useAuthStore } from '../../store/useAuthStore'
 import { 
   ArrowLeft, 
@@ -71,11 +70,8 @@ export default function PatientProgressPhotosPage() {
 
   const getFullImageUrl = (url: string) => {
     if (!url) return ''
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url
-    }
-    const cleanBaseUrl = API_CONFIG.BASE_URL.replace('/api', '')
-    return `${cleanBaseUrl}${url}`
+    // Strip protocol and domain (if any) to make it a relative path starting with /
+    return url.replace(/^https?:\/\/[^\/]+/i, '')
   }
 
   return (

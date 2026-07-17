@@ -5,7 +5,7 @@ import { axiosClient } from '../http/axios-client'
 
 export class AxiosPlanRepository implements IPlanRepository {
   async getAll(): Promise<PlanNutricional[]> {
-    const response = await axiosClient.get('/planes/')
+    const response = await axiosClient.get('/planes/?page_size=100')
     if (response.data && typeof response.data === 'object' && 'results' in response.data) {
       return response.data.results as PlanNutricional[]
     }

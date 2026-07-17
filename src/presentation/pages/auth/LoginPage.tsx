@@ -34,19 +34,7 @@ export default function LoginPage() {
     }
   }
 
-  const fillCredentials = (userType: 'admin' | 'nutri' | 'paciente') => {
-    clearError()
-    if (userType === 'admin') {
-      setUsername('admin')
-      setPassword('Admin1234')
-    } else if (userType === 'nutri') {
-      setUsername('nutri_pro')
-      setPassword('Admin1234')
-    } else {
-      setUsername('john')
-      setPassword('12345678')
-    }
-  }
+
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#1b4332_0%,#2d6a4f_50%,#40916c_100%)] px-4 py-6 text-white sm:px-6 lg:px-8 flex items-center justify-center">
@@ -116,7 +104,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-4 text-base font-bold uppercase tracking-wider text-slate-950 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:opacity-50"
+              className="mt-2 w-full flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-4 text-base font-bold uppercase tracking-wider text-slate-950 shadow-lg shadow-emerald-500/25 transition duration-350 hover:bg-emerald-400 hover:shadow-emerald-500/45 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] disabled:opacity-50 disabled:translate-y-0"
             >
               {loading ? (
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
@@ -125,33 +113,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          <div className="mt-8 w-full border-t border-white/5 pt-6">
-            <p className="text-center text-xs font-bold uppercase tracking-widest text-slate-500">Prefijar Credenciales de Prueba:</p>
-            <div className="mt-4 grid gap-3 grid-cols-3">
-              <button
-                type="button"
-                onClick={() => fillCredentials('admin')}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold hover:bg-white/10 transition"
-              >
-                Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => fillCredentials('nutri')}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold hover:bg-white/10 transition"
-              >
-                Nutricionista
-              </button>
-              <button
-                type="button"
-                onClick={() => fillCredentials('paciente')}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold hover:bg-white/10 transition"
-              >
-                Paciente
-              </button>
-            </div>
-          </div>
 
           <p className="mt-8 text-sm font-medium text-slate-400">
             ¿Eres nuevo?{' '}
