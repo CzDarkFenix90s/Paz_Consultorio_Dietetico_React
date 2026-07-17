@@ -77,8 +77,29 @@ export default function AdminDashboard() {
   const [editingCrudItem, setEditingCrudItem] = useState<any | null>(null)
   const [crudFormData, setCrudFormData] = useState<Record<string, any>>({})
 
-  const isRoleAdmin = user?.role === 'admin'
+  // Nutricionistas list state for count badge
+  const [nutricionistasList, setNutricionistasList] = useState<any[]>([])
 
+  const fetchNutricionistasCount = async () => {
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const res = await fetch(`${API_CONFIG.BASE_URL}/nutricionistas/?page_size=100`, { headers })
+      if (res.ok) {
+        const data = await res.json()
+        const results = data.results || data
+        setNutricionistasList(Array.isArray(results) ? results : [])
+      }
+    } catch (err) {
+      console.error('Error fetching nutritionists count:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchNutricionistasCount()
+  }, [])
+
+  const isRoleAdmin = user?.role === 'admin'
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -228,7 +249,8 @@ export default function AdminDashboard() {
         loadFichaData(selectedPatientForFicha)
         fetchPacientes()
       } else {
-        alert('Error al guardar el seguimiento en el backend')
+        const errorDetails = await response.json()
+        alert('Error al guardar el seguimiento: ' + JSON.stringify(errorDetails))
       }
     } catch (err) {
       console.error(err)
@@ -360,6 +382,9 @@ export default function AdminDashboard() {
         const data = await response.json()
         const results = data.results || data
         setAdminCrudData(Array.isArray(results) ? results : [])
+        if (tab === 'nutricionistas') {
+          setNutricionistasList(Array.isArray(results) ? results : [])
+        }
       }
     } catch (err) {
       console.error(err)
@@ -599,6 +624,27 @@ export default function AdminDashboard() {
                 <Users className="h-5 w-5 shrink-0" />
                 Pacientes
               </button>
+
+              {isRoleAdmin && (
+                <button
+                  onClick={() => { setActiveTab('nutricionistas'); setSelectedPatientForChat(null); }}
+                  className={`flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm font-semibold transition ${
+                    activeTab === 'nutricionistas'
+                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                      : 'text-slate-300 hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5 shrink-0" />
+                    <span>Nutricionistas</span>
+                  </div>
+                  <span className={`inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-bold rounded-full ${
+                    activeTab === 'nutricionistas' ? 'bg-slate-950 text-emerald-400' : 'bg-white/10 text-slate-400'
+                  }`}>
+                    {nutricionistasList.length}
+                  </span>
+                </button>
+              )}
 
               <button
                 onClick={() => { setActiveTab('planes'); setSelectedPatientForChat(null); }}

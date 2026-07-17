@@ -161,6 +161,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     const refresh = localTokenStorage.getRefreshToken()
+    localTokenStorage.clear()
+    set({ user: null, isAuthenticated: false, error: null })
     if (refresh && refresh !== 'mock_refresh') {
       try {
         await logoutUseCase.execute(refresh)
@@ -168,8 +170,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         console.error('Logout error on backend', err)
       }
     }
-    localTokenStorage.clear()
-    set({ user: null, isAuthenticated: false, error: null })
   },
 
   clearError: () => set({ error: null }),
