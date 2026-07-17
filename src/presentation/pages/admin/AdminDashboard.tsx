@@ -343,9 +343,9 @@ export default function AdminDashboard() {
         headers,
         body: JSON.stringify({
           plan_nutricional: planId,
-          descripcion_rutina: newRutina.descripcion_rutina,
+          description: newRutina.descripcion_rutina,
           dias_semana: newRutina.dias_semana,
-          duracion_minutos: Number(newRutina.duracion_minutos)
+          duration_minutes: Number(newRutina.duracion_minutos)
         })
       })
 
@@ -1544,8 +1544,8 @@ export default function AdminDashboard() {
                             {patientRutinas.map((r: any) => (
                               <div key={r.id} className="p-3.5 rounded-xl border border-white/5 bg-slate-950/40 text-xs flex justify-between items-start">
                                 <div>
-                                  <p className="font-bold text-white">{r.descripcion_rutina}</p>
-                                  <p className="text-[10px] text-slate-400 mt-1">Días: {r.dias_semana} | Duración: {r.duracion_minutos} min</p>
+                                  <p className="font-bold text-white">{r.description || r.descripcion_rutina}</p>
+                                  <p className="text-[10px] text-slate-400 mt-1">Días: {r.dias_semana} | Duración: {r.duration_minutes || r.duracion_minutos} min</p>
                                 </div>
                               </div>
                             ))}
