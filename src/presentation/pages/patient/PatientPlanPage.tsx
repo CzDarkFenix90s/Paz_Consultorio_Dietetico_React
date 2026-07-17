@@ -169,6 +169,14 @@ export default function PatientPlanPage() {
             Mi Plan
           </div>
 
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/photos')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Progreso</button>
+            <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Chat</button>
+          </nav>
+
           <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-semibold text-emerald-700 shadow-sm">
             {initialLetter}
           </button>
@@ -449,7 +457,7 @@ export default function PatientPlanPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl p-2.5">
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl p-2.5 md:hidden">
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button

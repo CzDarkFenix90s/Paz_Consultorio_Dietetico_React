@@ -96,7 +96,8 @@ export const usePlanStore = create<PlanState>((set) => ({
     try {
       set({ loading: true, error: null })
       await createPlanUseCase.execute(data)
-      set({ loading: false })
+      const freshPlanes = await getPlanesUseCase.execute()
+      set({ planes: freshPlanes.length > 0 ? freshPlanes : mockPlanes, loading: false })
       return true
     } catch (err) {
       // Offline fallback success simulation
@@ -126,7 +127,8 @@ export const usePlanStore = create<PlanState>((set) => ({
     try {
       set({ loading: true, error: null })
       await updatePlanUseCase.execute(id, data)
-      set({ loading: false })
+      const freshPlanes = await getPlanesUseCase.execute()
+      set({ planes: freshPlanes.length > 0 ? freshPlanes : mockPlanes, loading: false })
       return true
     } catch (err) {
       // Offline fallback success simulation
@@ -142,10 +144,8 @@ export const usePlanStore = create<PlanState>((set) => ({
     try {
       set({ loading: true, error: null })
       await deletePlanUseCase.execute(id)
-      set((state) => ({
-        planes: state.planes.filter((p) => p.id !== id),
-        loading: false,
-      }))
+      const freshPlanes = await getPlanesUseCase.execute()
+      set({ planes: freshPlanes.length > 0 ? freshPlanes : mockPlanes, loading: false })
       return true
     } catch (err) {
       // Offline fallback success simulation

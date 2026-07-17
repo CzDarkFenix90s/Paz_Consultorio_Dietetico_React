@@ -78,7 +78,12 @@ export default function PatientPlansListPage() {
         setLoading(true)
         setErrorMessage('')
 
-        const response = await fetch(`${API_CONFIG.BASE_URL}/planes/?page_size=100`)
+        const token = localStorage.getItem('dietetic_access_token')
+        const response = await fetch(`${API_CONFIG.BASE_URL}/planes/?page_size=100`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`)
         }
@@ -152,6 +157,14 @@ export default function PatientPlansListPage() {
             </span>
             Planes disponibles
           </div>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-slate-900 transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-emerald-500 hover:text-emerald-600 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/photos')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-slate-900 transition">Progreso</button>
+            <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-slate-900 transition">Chat</button>
+          </nav>
 
           <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-sm font-semibold text-emerald-700 shadow-sm">J</button>
         </div>

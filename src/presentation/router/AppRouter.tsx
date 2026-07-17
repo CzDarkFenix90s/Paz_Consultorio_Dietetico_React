@@ -10,6 +10,8 @@ import PatientPlanPage from '../pages/patient/PatientPlanPage'
 import PatientRecipesPage from '../pages/patient/PatientRecipesPage'
 import PatientProgressPhotosPage from '../pages/patient/PatientProgressPhotosPage'
 import PatientChatPage from '../pages/patient/PatientChatPage'
+import PatientPlansListPage from '../pages/patient/PatientPlansListPage'
+import PatientPlanDetailPage from '../pages/patient/PatientPlanDetailPage'
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import PacienteFormPage from '../pages/admin/PacienteFormPage'
 import PlanFormPage from '../pages/admin/PlanFormPage'
@@ -138,6 +140,22 @@ export default function AppRouter() {
           element={
             <ProtectedRoute allowedRoles={['paciente']}>
               <PatientChatPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/plans"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientPlansListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/plans/:id"
+          element={
+            <ProtectedRoute allowedRoles={['paciente']}>
+              <PatientPlanDetailPage />
             </ProtectedRoute>
           }
         />

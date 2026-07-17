@@ -52,26 +52,22 @@ export default function AdminDashboard() {
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (activeTab === 'pacientes') {
-      fetchPacientes({
-        search: pacienteSearch,
-        status: pacienteStatus,
-      })
-    } else if (activeTab === 'planes') {
-      fetchPlanes()
-    } else {
-      // For chat tab, fetch patients list to populate contact list
-      fetchPacientes()
-    }
-  }, [activeTab, pacienteSearch, pacienteStatus])
+    fetchPacientes({
+      search: activeTab === 'pacientes' ? pacienteSearch : '',
+      status: activeTab === 'pacientes' ? pacienteStatus : '',
+    })
+    fetchPlanes()
+  }, [activeTab, pacienteSearch, pacienteStatus, fetchPacientes, fetchPlanes])
 
   // Load chat messages when patient is selected
   useEffect(() => {
     if (activeTab !== 'chat' || !selectedPatientForChat) return
 
-    async function loadChatMessages() {
+    let intervalId: any
+
+    async function loadChatMessages(showLoading = false) {
       try {
-        setLoadingChat(true)
+        if (showLoading) setLoadingChat(true)
         const token = localStorage.getItem('dietetic_access_token')
         const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
         
@@ -87,10 +83,14 @@ export default function AdminDashboard() {
           const isTheirs = msg.remitente_id === selectedPatientForChat.user_id && msg.destinatario_id === user?.id
           return isMine || isTheirs
         })
+        
+        // Sort chronologically (oldest first, newest last)
+        filtered.sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+        
         setChatMessages(filtered)
       } catch {
         // Offline chat simulator initial state
-        setChatMessages([
+        setChatMessages(prev => prev.length > 0 ? prev : [
           {
             id: 201,
             remitente_id: selectedPatientForChat.user_id,
@@ -101,10 +101,20 @@ export default function AdminDashboard() {
           }
         ])
       } finally {
-        setLoadingChat(false)
+        if (showLoading) setLoadingChat(false)
       }
     }
-    loadChatMessages()
+    
+    loadChatMessages(true)
+    
+    // Poll every 4 seconds
+    intervalId = setInterval(() => {
+      loadChatMessages(false)
+    }, 4000)
+    
+    return () => {
+      clearInterval(intervalId)
+    }
   }, [activeTab, selectedPatientForChat, user])
 
   // Scroll chat to bottom
@@ -221,6 +231,53 @@ export default function AdminDashboard() {
 
       {/* Main Content Area */}
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Statistics Metric Cards */}
+        <div className="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+              <Users className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Pacientes</p>
+              <h3 className="text-2xl font-black text-slate-800 mt-1">{pacientes.length}</h3>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-600">
+              <BookOpen className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Planes Activos</p>
+              <h3 className="text-2xl font-black text-slate-800 mt-1">{planes.filter(p => p.is_active).length}</h3>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+              <Activity className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Calorías Promedio</p>
+              <h3 className="text-2xl font-black text-slate-800 mt-1">
+                {planes.length > 0 
+                  ? Math.round(planes.reduce((acc, p) => acc + Number(p.target_calories || 0), 0) / planes.length)
+                  : 0} kcal
+              </h3>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-purple-600">
+              <MessageSquare className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Mensajería</p>
+              <h3 className="text-2xl font-black text-slate-800 mt-1">Activa</h3>
+            </div>
+          </div>
+        </div>
+
         {/* Navigation Tabs & Metrics */}
         <div className="grid gap-6 md:grid-cols-4 items-start">
           <aside className="md:col-span-1 space-y-4">
