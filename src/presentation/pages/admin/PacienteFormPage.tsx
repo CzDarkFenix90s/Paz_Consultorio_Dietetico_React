@@ -35,6 +35,23 @@ export default function PacienteFormPage() {
     }
   }, [id, isEdit])
 
+  const cleanHeight = (val: string) => {
+    if (!val) return null
+    const cleaned = parseFloat(String(val).replace(',', '.'))
+    if (isNaN(cleaned)) return null
+    // If they typed in meters (e.g. 1.59), convert to centimeters (159)
+    if (cleaned < 3) {
+      return Math.round(cleaned * 100)
+    }
+    return cleaned
+  }
+
+  const cleanWeight = (val: string) => {
+    if (!val) return null
+    const cleaned = parseFloat(String(val).replace(',', '.'))
+    return isNaN(cleaned) ? null : cleaned
+  }
+
   useEffect(() => {
     if (isEdit && activePaciente) {
       setFormData({
@@ -45,7 +62,7 @@ export default function PacienteFormPage() {
         goal: activePaciente.goal || 'PERDIDA_PESO',
         dietary_restrictions: activePaciente.dietary_restrictions || '',
         current_weight: activePaciente.current_weight ? String(activePaciente.current_weight) : '',
-        height_cm: activePaciente.height_cm ? String(activePaciente.height_cm) : '',
+        height_cm: activePaciente.height_cm ? String(Number(activePaciente.height_cm) > 3 ? Number(activePaciente.height_cm) / 100 : activePaciente.height_cm).replace('.', ',') : '',
         status: activePaciente.status || 'activo',
         medical_notes: activePaciente.medical_notes || '',
         user_id_input: activePaciente.user_id ? String(activePaciente.user_id) : '',
@@ -77,8 +94,8 @@ export default function PacienteFormPage() {
       age: formData.age ? Number(formData.age) : null,
       goal: formData.goal,
       dietary_restrictions: formData.dietary_restrictions.trim() || '',
-      current_weight: formData.current_weight ? Number(formData.current_weight) : null,
-      height_cm: formData.height_cm ? Number(formData.height_cm) : null,
+      current_weight: cleanWeight(formData.current_weight),
+      height_cm: cleanHeight(formData.height_cm),
       status: formData.status,
       medical_notes: formData.medical_notes.trim() || '',
       user_id_input: formData.user_id_input ? Number(formData.user_id_input) : null,

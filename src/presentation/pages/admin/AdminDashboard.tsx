@@ -454,7 +454,7 @@ export default function AdminDashboard() {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          destinatario_id: selectedPatientForChat.user_id,
+          destinatario: selectedPatientForChat.user_id,
           contenido: chatInputText.trim()
         })
       })
