@@ -87,7 +87,7 @@ export default function PatientMenuPage() {
             ...prev,
             age: myPatient.age ? String(myPatient.age) : '',
             current_weight: myPatient.current_weight ? String(myPatient.current_weight) : '',
-            height_cm: myPatient.height_cm ? String(myPatient.height_cm) : '',
+            height_cm: myPatient.height_cm ? String(Number(myPatient.height_cm) > 3 ? Number(myPatient.height_cm) / 100 : myPatient.height_cm).replace('.', ',') : '',
             goal: myPatient.goal || '',
             dietary_restrictions: myPatient.dietary_restrictions || ''
           }))
@@ -259,12 +259,23 @@ export default function PatientMenuPage() {
   // IMC Calculation fallback helper
   const calculateIMC = () => {
     if (pacienteData?.bmi) return Number(pacienteData.bmi).toFixed(1)
-    const weight = Number(fichaFormData.current_weight)
-    const height = Number(fichaFormData.height_cm) / 100
+    const weight = Number(fichaFormData.current_weight.replace(',', '.'))
+    const rawHeight = fichaFormData.height_cm.replace(',', '.')
+    let height = Number(rawHeight)
+    if (height > 3) height = height / 100 // convert to meters if cm
     if (weight && height) {
       return (weight / (height * height)).toFixed(1)
     }
     return 'N/D'
+  }
+
+  const formatHeight = (heightCm: any) => {
+    if (!heightCm) return '0.00'
+    const val = Number(heightCm)
+    if (isNaN(val)) return '0.00'
+    // If it's stored in cm (e.g. 159), divide by 100 to get meters (e.g. 1.59)
+    const meters = val > 3 ? val / 100 : val
+    return meters.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
 
   if (loadingProfile) {
@@ -499,7 +510,7 @@ export default function PatientMenuPage() {
             <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
               <p className="text-xs font-bold text-slate-400">Estatura</p>
               <div className="text-3xl font-extrabold text-white">
-                {pacienteData?.height_cm ? `${pacienteData.height_cm}` : '0.0'} <span className="text-base font-semibold text-slate-500">cm</span>
+                {formatHeight(pacienteData?.height_cm)} <span className="text-base font-semibold text-slate-500">m</span>
               </div>
             </div>
 
