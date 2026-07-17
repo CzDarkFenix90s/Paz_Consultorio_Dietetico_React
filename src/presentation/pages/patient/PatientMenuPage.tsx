@@ -8,8 +8,6 @@ import {
   CalendarCheck2, 
   ChevronRight, 
   Clock3, 
-  Droplets, 
-  Footprints, 
   House, 
   Menu, 
   MessageSquareText, 
@@ -17,11 +15,8 @@ import {
   UtensilsCrossed, 
   UserCircle2,
   LogOut,
-  Sparkles,
   Flame,
   Camera,
-  Activity,
-  Plus,
   ChefHat
 } from 'lucide-react'
 
@@ -37,7 +32,7 @@ const meals = [
 const bottomNav = [
   { label: 'Inicio', icon: House, active: true },
   { label: 'Mi Plan', icon: UtensilsCrossed, active: false },
-  { label: 'Progreso', icon: Footprints, active: false },
+  { label: 'Recetas', icon: ChefHat, active: false },
   { label: 'Chat', icon: MessageSquareText, active: false },
 ]
 
@@ -50,7 +45,6 @@ export default function PatientMenuPage() {
   const [pacienteData, setPacienteData] = useState<any | null>(null)
   const [waterLogToday, setWaterLogToday] = useState(0)
   const [loadingProfile, setLoadingProfile] = useState(true)
-  const [showFichaModal, setShowFichaModal] = useState(false)
 
   // Ficha Form State
   const [fichaFormData, setFichaFormData] = useState({
@@ -341,7 +335,6 @@ export default function PatientMenuPage() {
       }
 
       alert('¡Información médica guardada con éxito!')
-      setShowFichaModal(false)
       loadPatientProfile()
     } catch (err: any) {
       console.error(err)
@@ -391,15 +384,11 @@ export default function PatientMenuPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
+    <main className="min-h-screen bg-[#f3f4f6] text-slate-900 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(15px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulseGlow {
-          0%, 100% { box-shadow: 0 0 15px rgba(16,185,129,0.2); }
-          50% { box-shadow: 0 0 25px rgba(16,185,129,0.4); }
         }
         @keyframes float {
           0%, 100% { transform: translateY(0); }
@@ -412,47 +401,36 @@ export default function PatientMenuPage() {
         .animate-float {
           animation: float 3s ease-in-out infinite;
         }
-        .animate-glow {
-          animation: pulseGlow 2s infinite;
-        }
       `}</style>
 
-      {/* Glow ambient background elements */}
-      <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
-
-      {/* Premium Navbar */}
-      <header className="sticky top-0 z-30 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      {/* Floating white Navbar */}
+      <header className="sticky top-0 z-30 px-4 py-4 bg-[#f3f4f6]/60 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-full bg-white px-6 shadow-sm border border-slate-100">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] transition hover:bg-white/10"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-700 transition hover:bg-slate-100"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-white tracking-tight">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)] font-black text-base">
-              N
-            </span>
-            Nutri<span className="text-emerald-400">Tec</span>
+          <div className="flex items-center gap-2 text-xl font-black text-slate-900 tracking-widest uppercase">
+            Nutri<span className="text-emerald-500">Tec</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Recetas</button>
-            <button onClick={() => navigate('/patient/photos')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Progreso</button>
-            <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-600">
+            <button onClick={() => navigate('/patient/menu')} className="text-emerald-500 font-bold transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="hover:text-slate-900 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="hover:text-slate-900 transition">Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className="hover:text-slate-900 transition">Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10">
+            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100">
               <Bell className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-slate-950">1</span>
+              <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">1</span>
             </button>
-            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
               {userProfileData?.avatar_url ? (
                 <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
               ) : (
@@ -539,391 +517,89 @@ export default function PatientMenuPage() {
       </div>
 
       {/* Main Container */}
-      <div className="mx-auto max-w-[1200px] px-4 pt-8 space-y-8">
+      <div className="mx-auto max-w-[1600px] px-4 pt-6 space-y-8">
         
-        {/* Welcome Premium Card */}
-        <section className="animate-fade-in relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-6 sm:p-8 backdrop-blur-xl shadow-2xl flex flex-col md:flex-row gap-6 items-center justify-between">
-          <div className="absolute top-[-30%] right-[-10%] -z-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
+        {/* Rivian Hero Split Section */}
+        <section className="grid gap-6 lg:grid-cols-12 items-stretch">
           
-          <div className="space-y-5 flex-1">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_8px_20px_rgba(16,185,129,0.15)]">
-                <UserCircle2 className="h-10 w-10 animate-pulse" />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Bienvenido de vuelta,</p>
-                <h1 className="text-3xl font-extrabold tracking-tight text-white mt-1 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                  {user?.username}
-                </h1>
-              </div>
+          {/* Left Column: Heading and Brand Image */}
+          <div className="lg:col-span-7 flex flex-col justify-between rounded-3xl bg-white p-6 sm:p-8 shadow-sm border border-slate-100/80 min-h-[400px]">
+            <div className="space-y-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">NutriTec Dashboard</span>
+              <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+                Listo para tu <br />
+                <span className="text-emerald-500">transformación de salud</span>
+              </h1>
+              <p className="max-w-md text-sm text-slate-500 leading-relaxed font-semibold">
+                Bienvenido de vuelta, <span className="text-slate-800 font-extrabold">{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
+              </p>
             </div>
-            
-            <p className="text-sm text-slate-300 max-w-md">
-              Estamos aquí para ayudarte a cumplir tus metas de nutrición y salud. Revisa tu plan personalizado y registra tu progreso diario.
-            </p>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowFichaModal(true)}
-                className="animate-glow flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 transition shadow-lg shadow-emerald-500/20"
-              >
-                <Activity className="h-4.5 w-4.5" />
-                Actualizar Ficha Médica
-              </button>
-              
-              <button
-                onClick={handleLogout}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-slate-950 transition shadow-lg"
-                title="Cerrar sesión"
-              >
-                <LogOut className="h-5 w-5" />
-              </button>
+            <div className="mt-6 w-full h-56 relative rounded-2xl overflow-hidden border border-slate-100 shadow-sm animate-float bg-slate-50 shrink-0">
+              <img 
+                src="/assets/patient_banner.png" 
+                alt="Dashboard Banner" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent flex items-end p-4">
+                <p className="text-xs font-bold text-white drop-shadow">Nutrición Inteligente</p>
+              </div>
             </div>
           </div>
 
-          <div className="w-full md:w-80 lg:w-[26rem] h-48 md:h-52 relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl animate-float shrink-0 bg-slate-950/60">
-            <img 
-              src="/assets/patient_banner.png" 
-              alt="Dashboard Banner" 
-              className="w-full h-full object-cover opacity-90"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent flex items-end p-4">
-              <p className="text-xs font-bold text-emerald-400 drop-shadow">Estilo de vida saludable</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Warning Banner if profile not complete */}
-        {pacienteData && (!pacienteData.current_weight || !pacienteData.height_cm) && (
-          <section className="rounded-2xl border border-amber-500/20 bg-amber-500/15 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-amber-200">
-            <div>
-              <p className="font-bold text-base">⚠️ Ficha médica incompleta</p>
-              <p className="text-sm text-amber-300 mt-1">Por favor completa tu evaluación inicial (peso, altura) para poder calcular tu IMC y diseñar tu plan.</p>
-            </div>
-            <button
-              onClick={() => setShowFichaModal(true)}
-              className="rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 shrink-0 transition"
-            >
-              Completar Ficha
-            </button>
-          </section>
-        )}
-
-        {/* Daily Summary Rings/Stats Grid */}
-        <section className="grid gap-6 md:grid-cols-2">
-          
-          {/* Water card with dynamic tracking */}
-          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex items-center justify-between">
+          {/* Right Column: Keep up with NutriTec (Symptom Log Form) */}
+          <div className="lg:col-span-5 rounded-3xl bg-[#0c0d0e] p-6 sm:p-8 text-white shadow-xl flex flex-col justify-between">
             <div className="space-y-2">
-              <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">CONSUMO DE AGUA</p>
-              <div className="text-4xl font-extrabold text-white">{(waterLogToday / 1000).toFixed(2)} <span className="text-xl font-medium text-slate-400">L</span></div>
-              <p className="text-xs text-slate-500 font-semibold">Meta diaria: 2.0 L ({waterLogToday} ml)</p>
-              <button 
-                onClick={handleAddWater}
-                className="mt-3 flex items-center gap-1.5 rounded-xl border border-sky-500/20 bg-sky-500/10 hover:bg-sky-500 hover:text-slate-950 font-bold px-3 py-1.5 text-xs text-sky-400 transition"
-              >
-                <Plus className="h-4 w-4" />
-                Registrar 250ml
-              </button>
-            </div>
-            
-            {/* SVG Progress Circle */}
-            <div className="relative h-24 w-24 shrink-0">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                <path className="text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path className="text-sky-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray={`${waterProgressPct}, 100`} strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Droplets className="h-6 w-6 text-sky-500" />
-                <span className="text-[10px] font-bold text-sky-400 mt-0.5">{Math.round(waterProgressPct)}%</span>
-              </div>
-            </div>
-          </article>
-
-          {/* Activity/Calories */}
-          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex items-center justify-between">
-            <div className="space-y-2">
-              <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">ACTIVIDAD FÍSICA</p>
-              <div className="text-4xl font-extrabold text-white">Completado</div>
-              <p className="text-xs text-slate-500 font-semibold">Rutina cardiovascular de hoy</p>
+              <h2 className="text-2xl font-black tracking-tight">Mi Estado de Hoy</h2>
+              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                Ayuda a tu nutricionista a entender cómo evoluciona tu cuerpo registrando tus métricas y síntomas del día.
+              </p>
             </div>
 
-            <div className="relative h-20 w-20 shrink-0">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                <path className="text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path className="text-amber-500 transition-all duration-500" strokeWidth="3.2" strokeDasharray="100, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Footprints className="h-6 w-6 text-amber-500" />
-              </div>
-            </div>
-          </article>
-        </section>
-
-        {/* Interactive Recipes Banner Card */}
-        <section 
-          onClick={() => navigate('/patient/recipes')}
-          className="animate-fade-in cursor-pointer relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/40 p-6 md:p-8 backdrop-blur-md shadow-2xl hover:border-emerald-500/30 hover:bg-slate-900/60 transition group"
-          style={{ animationDelay: '250ms' }}
-        >
-          <div className="absolute top-0 right-0 bottom-0 w-full md:w-1/2 -z-10 overflow-hidden rounded-r-[2rem] md:rounded-l-none">
-            <img 
-              src="/assets/recipe_banner.png" 
-              alt="Recetas Saludables" 
-              className="w-full h-full object-cover opacity-30 md:opacity-75 transition duration-500 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent hidden md:block" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent md:hidden" />
-          </div>
-
-          <div className="max-w-md space-y-4 pr-0 md:pr-6">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-400">
-              <ChefHat className="h-4 w-4" />
-              NUEVO MÓDULO
-            </span>
-            <h2 className="text-2xl font-extrabold text-white group-hover:text-emerald-400 transition">Explora Recetas Rápidas y Nutritivas</h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Encuentra deliciosas opciones adaptadas a tu plan nutricional. Filtra por momento de comida, revisa calorías y prepara platos saludables en casa.
-            </p>
-            <div className="inline-flex items-center gap-2 text-emerald-400 font-bold text-sm group-hover:underline">
-              Explorar recetas
-              <ChevronRight className="h-4 w-4 transition group-hover:translate-x-1" />
-            </div>
-          </div>
-        </section>
-
-        {/* Physical Progress Dashboard */}
-        <section className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Progreso Antropométrico</h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
-              <Sparkles className="h-3.5 w-3.5 animate-spin" />
-              {pacienteData?.goal ? pacienteData.goal : 'Sin meta registrada'}
-            </span>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
-              <p className="text-xs font-bold text-slate-400">Peso Actual</p>
-              <div className="text-3xl font-extrabold text-white">
-                {pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} <span className="text-base font-semibold text-slate-500">kg</span>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
-              <p className="text-xs font-bold text-slate-400">Estatura</p>
-              <div className="text-3xl font-extrabold text-white">
-                {formatHeight(pacienteData?.height_cm)} <span className="text-base font-semibold text-slate-500">m</span>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 space-y-2">
-              <p className="text-xs font-bold text-slate-400">Índice de Masa Corporal (IMC)</p>
-              <div className="text-3xl font-extrabold text-emerald-400">{calculateIMC()}</div>
-            </div>
-          </div>
-        </section>
-
-        {/* Historial Antropométrico */}
-        <section className="rounded-3xl border border-white/5 bg-slate-900/20 p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white">Historial de Progreso Corporal (Mis Controles)</h3>
-            <span className="text-xs text-slate-400">Total de controles: {pacienteData?.seguimientos?.length || 0}</span>
-          </div>
-          <div className="overflow-x-auto rounded-2xl border border-white/5">
-            <table className="min-w-full text-xs text-left">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-bold">
-                <tr>
-                  <th className="px-4 py-3">Fecha</th>
-                  <th className="px-4 py-3">Peso</th>
-                  <th className="px-4 py-3">Cintura</th>
-                  <th className="px-4 py-3">Progreso / Nota del Nutricionista</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 bg-slate-950/20 text-slate-300">
-                {(pacienteData?.seguimientos || []).map((ev: any) => (
-                  <tr key={ev.id}>
-                    <td className="px-4 py-3">{new Date(ev.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3 font-bold text-white">{ev.weight_kg} kg</td>
-                    <td className="px-4 py-3">{ev.waist_cm ? `${ev.waist_cm} cm` : 'N/D'}</td>
-                    <td className="px-4 py-3 text-slate-400">{ev.notes || 'Control de rutina'}</td>
-                  </tr>
-                ))}
-                {(!pacienteData?.seguimientos || pacienteData.seguimientos.length === 0) && (
-                  <tr>
-                    <td colSpan={4} className="text-center py-6 text-slate-500">Aún no tienes controles registrados por tu nutricionista.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Meal & Next consultation Grid */}
-        <section className="grid gap-6 md:grid-cols-2">
-          
-          {/* Next Meal */}
-          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Siguiente Comida del Plan</h2>
-            
-            {meals.map((item) => (
-              <div key={item.title} className="flex items-center gap-4 rounded-2xl border border-white/5 bg-slate-950/40 p-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
-                  <item.icon className="h-6 w-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-bold text-white">{item.title}</h3>
-                  <div className="mt-1 flex items-center gap-3 text-xs font-semibold text-slate-400">
-                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-emerald-400" /> {item.time}</span>
-                    <span className="flex items-center gap-1"><Flame className="h-3.5 w-3.5 text-orange-400" /> {item.calories}</span>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-slate-600" />
-              </div>
-            ))}
-          </article>
-
-          {/* Consultation Alerts */}
-          <article className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-lg space-y-4 flex flex-col justify-between">
-            <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Cita Programada</h2>
-              <div className="mt-4 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400">
-                  <CalendarCheck2 className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Lunes, 24 de Julio</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">10:00 AM - Dra. Maria Cosio</p>
-                </div>
-              </div>
-            </div>
-            
-            <button 
-              onClick={() => navigate('/patient/chat')}
-              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3.5 text-sm font-bold text-slate-950 hover:brightness-110 transition shadow-md shadow-emerald-500/10 mt-4"
-            >
-              <MessageSquareText className="h-4.5 w-4.5" />
-              Chatear con Nutricionista
-            </button>
-          </article>
-
-        </section>
-
-      </div>
-
-      {/* Form Ficha Modal */}
-      {showFichaModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-slate-900 p-6 max-h-[90vh] overflow-y-auto space-y-6 shadow-2xl">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-extrabold text-white">Ficha Médica y Síntomas</h2>
-              <button 
-                onClick={() => setShowFichaModal(false)}
-                className="text-slate-400 hover:text-white font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveFicha} className="space-y-4">
-              <div>
-                <p className="text-xs font-bold text-slate-400 uppercase mb-3">Antropometría Básica</p>
-                <div className="grid gap-3 grid-cols-3">
+            <form onSubmit={handleSaveFicha} className="mt-6 space-y-4 flex-1 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="grid grid-cols-3 gap-2">
                   <label className="block">
-                    <span className="text-xs text-slate-400">Edad (años)</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Edad</span>
                     <input 
                       type="number"
                       required
                       value={fichaFormData.age}
                       onChange={e => setFichaFormData(prev => ({ ...prev, age: e.target.value }))}
-                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
                     />
                   </label>
                   <label className="block">
-                    <span className="text-xs text-slate-400">Peso (kg)</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Peso (kg)</span>
                     <input 
                       type="number"
                       step="0.01"
                       required
                       value={fichaFormData.current_weight}
                       onChange={e => setFichaFormData(prev => ({ ...prev, current_weight: e.target.value }))}
-                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
                     />
                   </label>
                   <label className="block">
-                    <span className="text-xs text-slate-400">Altura (cm)</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Altura (cm)</span>
                     <input 
                       type="number"
                       step="0.1"
                       required
                       value={fichaFormData.height_cm}
                       onChange={e => setFichaFormData(prev => ({ ...prev, height_cm: e.target.value }))}
-                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
                     />
                   </label>
                 </div>
-              </div>
 
-              <label className="block">
-                <span className="text-xs text-slate-400">Restricciones Alimentarias (alergias, etc.)</span>
-                <input 
-                  type="text"
-                  placeholder="Ej: Ninguna, Sin gluten"
-                  value={fichaFormData.dietary_restrictions}
-                  onChange={e => setFichaFormData(prev => ({ ...prev, dietary_restrictions: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-xs text-slate-400">Objetivo Clínico o de Salud</span>
-                <input 
-                  type="text"
-                  required
-                  placeholder="Ej: Bajar grasa corporal y mejorar condición física"
-                  value={fichaFormData.goal}
-                  onChange={e => setFichaFormData(prev => ({ ...prev, goal: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
-                />
-              </label>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block">
-                  <span className="text-xs text-slate-400">Objetivo (Tipo)</span>
-                  <select 
-                    value={fichaFormData.objetivo_choice}
-                    onChange={e => setFichaFormData(prev => ({ ...prev, objetivo_choice: e.target.value }))}
-                    className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
-                  >
-                    <option value="BAJAR_PESO">Bajar peso</option>
-                    <option value="GANAR_MASA">Ganar masa muscular</option>
-                    <option value="MANTENER_PESO">Mantener peso</option>
-                    <option value="REDUCIR_GRASA">Reducir grasa corporal</option>
-                    <option value="MEJORAR_SALUD">Mejorar salud general</option>
-                    <option value="MEJORAR_RENDIMIENTO">Mejorar rendimiento deportivo</option>
-                  </select>
-                </label>
-                <label className="block">
-                  <span className="text-xs text-slate-400">Fecha Meta del Objetivo</span>
-                  <input 
-                    type="date"
-                    required
-                    value={fichaFormData.fecha_meta}
-                    onChange={e => setFichaFormData(prev => ({ ...prev, fecha_meta: e.target.value }))}
-                    className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
-                  />
-                </label>
-              </div>
-
-              <div className="border-t border-white/5 pt-4 space-y-3">
-                <p className="text-xs font-bold text-slate-400 uppercase">Síntomas de Hoy</p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2">
                   <label className="block">
-                    <span className="text-xs text-slate-400">¿Cómo te sientes hoy?</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">¿Cómo te sientes?</span>
                     <select 
                       value={fichaFormData.sintoma_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-[#0c0d0e] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
                     >
                       <option value="EXCELENTE">Excelente</option>
                       <option value="BUENA_ENERGIA">Buena energía</option>
@@ -937,31 +613,236 @@ export default function PatientMenuPage() {
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-xs text-slate-400">Notas sobre tus síntomas</span>
-                    <input 
-                      type="text"
-                      placeholder="Ej: Siento algo de pesadez o cansancio..."
-                      value={fichaFormData.sintoma_notas}
-                      onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_notas: e.target.value }))}
-                      className="mt-1 w-full rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm text-white focus:border-emerald-500"
-                    />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Objetivo</span>
+                    <select 
+                      value={fichaFormData.objetivo_choice}
+                      onChange={e => setFichaFormData(prev => ({ ...prev, objetivo_choice: e.target.value }))}
+                      className="mt-1 w-full rounded-xl bg-[#0c0d0e] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                    >
+                      <option value="BAJAR_PESO">Bajar peso</option>
+                      <option value="GANAR_MASA">Ganar masa muscular</option>
+                      <option value="MANTENER_PESO">Mantener peso</option>
+                      <option value="REDUCIR_GRASA">Reducir grasa corporal</option>
+                      <option value="MEJORAR_SALUD">Mejorar salud general</option>
+                      <option value="MEJORAR_RENDIMIENTO">Rendimiento deportivo</option>
+                    </select>
                   </label>
                 </div>
+
+                <label className="block">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Notas sobre tus síntomas</span>
+                  <input 
+                    type="text"
+                    placeholder="Ej: Siento algo de cansancio por la tarde..."
+                    value={fichaFormData.sintoma_notas}
+                    onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_notas: e.target.value }))}
+                    className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                  />
+                </label>
               </div>
 
               <button 
                 type="submit"
-                className="w-full flex items-center justify-center rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3.5 transition shadow-lg shadow-emerald-500/20"
+                className="mt-6 w-full rounded-full bg-white text-slate-950 hover:bg-slate-100 font-extrabold text-xs uppercase tracking-widest py-3.5 transition"
               >
-                Guardar Ficha
+                Registrar Estado
               </button>
             </form>
           </div>
-        </div>
-      )}
+        </section>
+
+        {/* Warning Banner if profile not complete */}
+        {pacienteData && (!pacienteData.current_weight || !pacienteData.height_cm) && (
+          <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-amber-900">
+            <div>
+              <p className="font-bold text-base">⚠️ Ficha médica incompleta</p>
+              <p className="text-sm text-amber-700 mt-1">Por favor completa tu peso y altura en el panel derecho para poder calcular tu IMC y habilitar tu plan.</p>
+            </div>
+          </section>
+        )}
+
+        {/* Three visual cards (like the Rivian layout) */}
+        <section className="grid gap-6 md:grid-cols-3">
+          
+          {/* Card 1: Hidratación */}
+          <article className="overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col justify-between group h-[340px]">
+            <div className="relative h-44 overflow-hidden bg-slate-100">
+              <img 
+                src="https://images.unsplash.com/photo-1548839130-3fd96cd5cc4e?w=600&auto=format&fit=crop&q=80" 
+                alt="Hidratación" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute top-4 right-4 rounded-full bg-sky-500 text-white font-extrabold text-xs px-3 py-1">
+                {Math.round(waterProgressPct)}%
+              </div>
+            </div>
+
+            <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800">Seguimiento de Hidratación</h3>
+                <p className="text-xs text-slate-500 mt-0.5 font-semibold">Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
+              </div>
+
+              <button 
+                onClick={handleAddWater}
+                className="w-full rounded-full border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-xs py-2.5 transition"
+              >
+                + Registrar 250ml
+              </button>
+            </div>
+          </article>
+
+          {/* Card 2: Recetas */}
+          <article 
+            onClick={() => navigate('/patient/recipes')}
+            className="cursor-pointer overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col justify-between group h-[340px]"
+          >
+            <div className="relative h-44 overflow-hidden bg-slate-100">
+              <img 
+                src="/assets/recipe_banner.png" 
+                alt="Recetas" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute top-4 right-4 rounded-full bg-emerald-500 text-slate-950 font-extrabold text-[10px] px-3 py-1 uppercase tracking-wider">
+                Nutritivo
+              </div>
+            </div>
+
+            <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800">Recetas del Plan</h3>
+                <p className="text-xs text-slate-500 mt-0.5 font-semibold">Explora las comidas saludables diseñadas para tu plan de dieta.</p>
+              </div>
+
+              <div className="w-full flex items-center justify-between text-xs font-bold text-emerald-600 group-hover:underline">
+                <span>Ver catálogo de recetas</span>
+                <ChevronRight className="h-4 w-4" />
+              </div>
+            </div>
+          </article>
+
+          {/* Card 3: Progreso */}
+          <article className="overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col justify-between group h-[340px]">
+            <div className="relative h-44 overflow-hidden bg-slate-100">
+              <img 
+                src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=80" 
+                alt="Progreso" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute top-4 right-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 font-extrabold text-[10px] px-3 py-1 uppercase tracking-wider">
+                IMC {calculateIMC()}
+              </div>
+            </div>
+
+            <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Peso Actual</span>
+                  <span className="text-lg font-black text-slate-800">{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Estatura</span>
+                  <span className="text-lg font-black text-slate-800">{formatHeight(pacienteData?.height_cm)} m</span>
+                </div>
+              </div>
+
+              <span className="text-[10px] font-bold text-emerald-600 block leading-relaxed truncate">
+                Meta: {pacienteData?.goal ? pacienteData.goal : 'Sin registrar'}
+              </span>
+            </div>
+          </article>
+
+        </section>
+
+        {/* Historial Antropométrico */}
+        <section className="rounded-3xl bg-white border border-slate-100 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-extrabold text-slate-900">Historial de Progreso Corporal</h3>
+            <span className="text-xs font-semibold text-slate-400">Total de controles: {pacienteData?.seguimientos?.length || 0}</span>
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-slate-100">
+            <table className="min-w-full text-xs text-left">
+              <thead className="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-100">
+                <tr>
+                  <th className="px-4 py-3.5">Fecha</th>
+                  <th className="px-4 py-3.5">Peso</th>
+                  <th className="px-4 py-3.5">Cintura</th>
+                  <th className="px-4 py-3.5">Nota del Nutricionista</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 bg-white text-slate-600 font-semibold">
+                {(pacienteData?.seguimientos || []).map((ev: any) => (
+                  <tr key={ev.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-3.5">{new Date(ev.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3.5 font-bold text-slate-900">{ev.weight_kg} kg</td>
+                    <td className="px-4 py-3.5">{ev.waist_cm ? `${ev.waist_cm} cm` : 'N/D'}</td>
+                    <td className="px-4 py-3.5 text-slate-500">{ev.notes || 'Control de rutina'}</td>
+                  </tr>
+                ))}
+                {(!pacienteData?.seguimientos || pacienteData.seguimientos.length === 0) && (
+                  <tr>
+                    <td colSpan={4} className="text-center py-8 text-slate-400">Aún no tienes controles registrados por tu nutricionista.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Meal & Next consultation Grid */}
+        <section className="grid gap-6 md:grid-cols-2">
+          
+          {/* Next Meal */}
+          <article className="rounded-3xl bg-white border border-slate-100 p-6 shadow-sm space-y-4">
+            <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-400">Siguiente Comida del Plan</h2>
+            
+            {meals.map((item) => (
+              <div key={item.title} className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 border border-slate-100/50">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                  <item.icon className="h-6 w-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-sm font-bold text-slate-800">{item.title}</h3>
+                  <div className="mt-1 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-emerald-500" /> {item.time}</span>
+                    <span className="flex items-center gap-1"><Flame className="h-3.5 w-3.5 text-orange-500" /> {item.calories}</span>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-slate-400" />
+              </div>
+            ))}
+          </article>
+
+          {/* Consultation Alerts */}
+          <article className="rounded-3xl bg-white border border-slate-100 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+            <div>
+              <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-400">Cita Programada</h2>
+              <div className="mt-4 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
+                  <CalendarCheck2 className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-800">Lunes, 24 de Julio</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">10:00 AM - Dra. Maria Cosio</p>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => navigate('/patient/chat')}
+              className="w-full flex items-center justify-center gap-2 rounded-full bg-slate-950 hover:bg-slate-800 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white transition mt-4"
+            >
+              <MessageSquareText className="h-4 w-4" />
+              Chatear con Nutricionista
+            </button>
+          </article>
+
+        </section>
+
+      </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl p-2.5 md:hidden">
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-slate-200/50 bg-white/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden">
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -970,13 +851,13 @@ export default function PatientMenuPage() {
               onClick={() => {
                 if (label === 'Inicio') navigate('/patient/menu')
                 if (label === 'Mi Plan') navigate('/patient/plan')
-                if (label === 'Progreso') navigate('/patient/photos')
+                if (label === 'Recetas') navigate('/patient/recipes')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
                 active 
-                  ? 'text-emerald-400 bg-emerald-500/5' 
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'text-emerald-500 bg-emerald-500/5' 
+                  : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
               <Icon className="h-5 w-5" />

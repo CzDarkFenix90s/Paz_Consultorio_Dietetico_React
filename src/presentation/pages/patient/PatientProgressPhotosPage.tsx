@@ -15,13 +15,14 @@ import {
   FileText,
   House,
   UtensilsCrossed,
-  MessageSquareText
+  MessageSquareText,
+  ChefHat
 } from 'lucide-react'
 
 const bottomNav = [
   { label: 'Inicio', icon: House, active: false },
   { label: 'Mi Plan', icon: UtensilsCrossed, active: false },
-  { label: 'Progreso', icon: Camera, active: true },
+  { label: 'Recetas', icon: ChefHat, active: false },
   { label: 'Chat', icon: MessageSquareText, active: false },
 ]
 
@@ -101,7 +102,7 @@ export default function PatientProgressPhotosPage() {
           <nav className="hidden md:flex items-center gap-8">
             <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Inicio</button>
             <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/photos')} className="text-sm font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition">Progreso</button>
+            <button onClick={() => navigate('/patient/recipes')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Recetas</button>
             <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Chat</button>
           </nav>
 
@@ -256,7 +257,7 @@ export default function PatientProgressPhotosPage() {
               onClick={() => {
                 if (label === 'Inicio') navigate('/patient/menu')
                 if (label === 'Mi Plan') navigate('/patient/plan')
-                if (label === 'Progreso') navigate('/patient/photos')
+                if (label === 'Recetas') navigate('/patient/recipes')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
