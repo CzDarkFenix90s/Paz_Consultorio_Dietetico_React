@@ -122,7 +122,7 @@ export default function PatientPlanDetailPage() {
       if (response.ok) {
         const data = await response.json()
         const results = Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []
-        const patientObj = results.find((p: any) => p.user_id === user?.id) || results[0]
+        const patientObj = results.find((p: any) => p.user_id && Number(p.user_id) === Number(user?.id)) || results[0]
         setPacienteData(patientObj)
       }
     } catch (error) {
