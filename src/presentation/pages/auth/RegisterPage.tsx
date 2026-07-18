@@ -62,118 +62,110 @@ export default function RegisterPage() {
 
   return (
     <AuthShell
-      eyebrow="Módulo 3 · Registro"
+      eyebrow="Registro de Paciente"
       title="Crea tu cuenta y empieza a cuidar tu nutrición"
-      description="Regístrate como paciente con un flujo conectado en tiempo real al backend."
+      description="Únete a nuestra plataforma inteligente para recibir planes de alimentación, rutinas y chat directo con tu especialista."
       footerPrompt="¿Ya tienes una cuenta?"
       footerLinkLabel="Inicia sesión"
       footerLinkTo="/login"
     >
-      <div className="space-y-6">
-        <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Empezar</p>
-          <h2 className="mt-2 text-3xl font-semibold text-white">Registro</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Crea tu perfil en menos de un minuto.</p>
-        </div>
-
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-200">Nombre</span>
-              <input
-                type="text"
-                name="first_name"
-                value={formData.first_name}
-                onChange={handleInputChange}
-                placeholder="Ana"
-                className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/60 focus:bg-black/30"
-              />
-            </label>
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-200">Apellido</span>
-              <input
-                type="text"
-                name="last_name"
-                value={formData.last_name}
-                onChange={handleInputChange}
-                placeholder="Gómez"
-                className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/60 focus:bg-black/30"
-              />
-            </label>
-          </div>
-
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="grid gap-4 sm:grid-cols-2">
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-200">Nombre de Usuario *</span>
+            <span className="text-sm font-semibold text-slate-300">Nombre</span>
             <input
               type="text"
-              name="username"
-              required
-              value={formData.username}
+              name="first_name"
+              value={formData.first_name}
               onChange={handleInputChange}
-              placeholder="anagomez"
-              className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/60 focus:bg-black/30"
+              placeholder="Ana"
+              className="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/50"
             />
           </label>
-
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-200">Correo electrónico *</span>
+            <span className="text-sm font-semibold text-slate-300">Apellido</span>
             <input
-              type="email"
-              name="email"
-              required
-              value={formData.email}
+              type="text"
+              name="last_name"
+              value={formData.last_name}
               onChange={handleInputChange}
-              placeholder="you@example.com"
-              className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/60 focus:bg-black/30"
+              placeholder="Gómez"
+              className="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/50"
             />
           </label>
+        </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-200">Contraseña *</span>
-              <input
-                type="password"
-                name="password"
-                required
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Mínimo 8 caracteres"
-                className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/60 focus:bg-black/30"
-              />
-            </label>
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-200">Confirmar contraseña *</span>
-              <input
-                type="password"
-                name="password2"
-                required
-                value={formData.password2}
-                onChange={handleInputChange}
-                placeholder="Repite la contraseña"
-                className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/60 focus:bg-black/30"
-              />
-            </label>
-          </div>
+        <label className="block space-y-2">
+          <span className="text-sm font-semibold text-slate-300">Nombre de Usuario *</span>
+          <input
+            type="text"
+            name="username"
+            required
+            value={formData.username}
+            onChange={handleInputChange}
+            placeholder="anagomez"
+            className="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/50"
+          />
+        </label>
 
-          {(validationError || error) ? (
-            <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-400 whitespace-pre-line">
-              {validationError || error}
-            </p>
-          ) : null}
+        <label className="block space-y-2">
+          <span className="text-sm font-semibold text-slate-300">Correo electrónico *</span>
+          <input
+            type="email"
+            name="email"
+            required
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="you@example.com"
+            className="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/50"
+          />
+        </label>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-2 w-full flex items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-500 px-4 py-3.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:brightness-110 disabled:opacity-50"
-          >
-            {loading ? (
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-            ) : (
-              'Crear cuenta'
-            )}
-          </button>
-        </form>
-      </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block space-y-2">
+            <span className="text-sm font-semibold text-slate-300">Contraseña *</span>
+            <input
+              type="password"
+              name="password"
+              required
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Mínimo 8 caracteres"
+              className="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/50"
+            />
+          </label>
+          <label className="block space-y-2">
+            <span className="text-sm font-semibold text-slate-300">Confirmar contraseña *</span>
+            <input
+              type="password"
+              name="password2"
+              required
+              value={formData.password2}
+              onChange={handleInputChange}
+              placeholder="Repite la contraseña"
+              className="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-500/50"
+            />
+          </label>
+        </div>
+
+        {(validationError || error) ? (
+          <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-400 whitespace-pre-line">
+            {validationError || error}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-4 w-full flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-50"
+        >
+          {loading ? (
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
+          ) : (
+            'Crear cuenta'
+          )}
+        </button>
+      </form>
     </AuthShell>
   )
 }

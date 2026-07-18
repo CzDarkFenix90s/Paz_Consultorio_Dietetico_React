@@ -54,9 +54,11 @@ function VideoWithFallback({ src, poster, className, style }: { src: string; pos
   )
 }
 
-function ScrollRevealVideo({ number, title, subtitle, videoName, posterSrc }: any) {
+function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover, videoName, posterSrc }: any) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,10 +82,24 @@ function ScrollRevealVideo({ number, title, subtitle, videoName, posterSrc }: an
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Manage video playback state on hover to save bandwidth and cpu
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isHovered) {
+        videoRef.current.play().catch((err) => {
+          console.warn("Video playback was interrupted or blocked:", err)
+        })
+      } else {
+        videoRef.current.pause()
+        videoRef.current.currentTime = 0
+      }
+    }
+  }, [isHovered])
+
   // Calculate dynamic scale and parallax offset based on screen centering
   const distanceFromCenter = Math.abs(scrollProgress - 0.5) // 0 when centered, 0.5 when at edge
   const cardScale = Math.max(0.88, 1 - distanceFromCenter * 0.24) // smoothly scales between 0.88 and 1.00
-  const videoParallax = (scrollProgress - 0.5) * -70 // subtle 3D vertical depth translation
+  const videoParallax = (scrollProgress - 0.5) * -70 // vertical parallax translation
 
   const videoUrl = getMediaUrl(`videos/${videoName}`)
 
@@ -105,31 +121,56 @@ function ScrollRevealVideo({ number, title, subtitle, videoName, posterSrc }: an
             transform: `scale(${cardScale})`,
             transition: 'transform 0.1s ease-out'
           }}
-          className="flex-1 relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950 shadow-2xl origin-center"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="flex-1 relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950 shadow-2xl origin-center cursor-pointer group"
         >
-          <div className="w-full h-full overflow-hidden relative">
-            <VideoWithFallback 
-              src={videoUrl}
-              poster={posterSrc}
-              className="w-full h-full absolute inset-0 scale-110"
-              style={{
-                transform: `scale(1.15) translateY(${videoParallax}px)`,
-                transition: 'transform 0.1s ease-out'
-              }}
-            />
-          </div>
+          {/* Static Image (Poster) - visible by default, fades out slightly on hover */}
+          <img 
+            src={posterSrc} 
+            alt={title} 
+            className={`w-full h-full absolute inset-0 object-cover scale-110 transition-opacity duration-700 ease-in-out ${
+              isHovered ? 'opacity-30' : 'opacity-70'
+            }`}
+            style={{
+              transform: `scale(1.15) translateY(${videoParallax}px)`,
+              transition: 'transform 0.1s ease-out'
+            }}
+          />
+
+          {/* Video element - plays and fades in on hover */}
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            loop
+            muted
+            playsInline
+            className={`w-full h-full absolute inset-0 object-cover scale-110 transition-opacity duration-700 ease-in-out ${
+              isHovered ? 'opacity-90' : 'opacity-0 pointer-events-none'
+            }`}
+            style={{
+              transform: `scale(1.15) translateY(${videoParallax}px)`,
+              transition: 'transform 0.1s ease-out'
+            }}
+          />
           
-          {/* Overlay Gradients */}
+          {/* Overlay Gradients and Dynamic Text */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent flex flex-col justify-between p-8 pointer-events-none">
-            <div className="text-[10px] font-bold text-emerald-400 tracking-[0.25em] uppercase">
-              {subtitle}
+            {/* Dynamic subtitle */}
+            <div className={`text-[10px] font-bold tracking-[0.25em] uppercase transition-colors duration-500 ${
+              isHovered ? 'text-teal-300' : 'text-emerald-400'
+            }`}>
+              {isHovered ? subtitleHover : subtitle}
             </div>
             
+            {/* Dynamic title */}
             <div className="space-y-1">
-              <h3 className="text-2xl md:text-5xl font-black text-white tracking-tight uppercase leading-none">
-                {title}
+              <h3 className={`text-2xl md:text-5xl font-black tracking-tight uppercase leading-none transition-all duration-500 ${
+                isHovered ? 'text-emerald-400 scale-[1.02]' : 'text-white'
+              }`}>
+                {isHovered ? titleHover : title}
               </h3>
-              <p className="text-[10px] text-teal-300 tracking-wider uppercase font-medium">
+              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-medium">
                 NutriTec Consultorio Inteligente
               </p>
             </div>
@@ -140,7 +181,11 @@ function ScrollRevealVideo({ number, title, subtitle, videoName, posterSrc }: an
         <div className="w-24 text-right">
           <Link 
             to="/register"
-            className="inline-block rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs tracking-wider px-6 py-3 transition shadow-lg shadow-emerald-500/15 uppercase"
+            className={`inline-block rounded-full font-bold text-xs tracking-wider px-6 py-3 transition shadow-lg uppercase ${
+              isHovered 
+                ? 'bg-emerald-400 text-slate-950 shadow-emerald-500/30' 
+                : 'bg-emerald-500/80 text-slate-950/90 shadow-emerald-500/10'
+            }`}
           >
             Ver
           </Link>
@@ -302,22 +347,28 @@ export default function LandingPage() {
           <div className="space-y-4">
             <ScrollRevealVideo 
               number="01"
-              title="DIETAS MOLECULARES"
+              title="DIETAS"
+              titleHover="PLANES DE DIETA"
               subtitle="Cálculo analítico de macronutrientes"
+              subtitleHover="[ PROTEÍNAS · CARBOHIDRATOS · GRASAS ]"
               videoName="service_diet.mp4"
               posterSrc="/assets/service_diet.png"
             />
             <ScrollRevealVideo 
               number="02"
-              title="EVOLUCIÓN ANTROPOMÉTRICA"
+              title="EVALUACIÓN ANTROPOMÉTRICA"
+              titleHover="PROGRESO CORPORAL"
               subtitle="Control diario y composición corporal"
+              subtitleHover="[ PESO · COMPOSICIÓN · AGUA ]"
               videoName="service_progress.mp4"
               posterSrc="/assets/service_gym.png"
             />
             <ScrollRevealVideo 
               number="03"
-              title="RECETARIO INDUSTRIAL"
+              title="RECETAS"
+              titleHover="RECETARIO INTELIGENTE"
               subtitle="Instrucciones en video y porciones exactas"
+              subtitleHover="[ PASOS EN VIDEO · PORCIONES EXACTAS ]"
               videoName="service_recipes.mp4"
               posterSrc="/assets/service_recipe.png"
             />

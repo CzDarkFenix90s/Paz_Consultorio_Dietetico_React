@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { ShieldCheck, Zap, Layers } from 'lucide-react'
 
 type AuthShellProps = {
   eyebrow: string
@@ -21,50 +22,62 @@ export default function AuthShell({
   footerLinkTo,
 }: AuthShellProps) {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.16),_transparent_26%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.18),_transparent_28%),linear-gradient(180deg,_#07101d_0%,_#0b1322_42%,_#04070d_100%)] text-slate-100">
-      <div className="mx-auto grid min-h-screen max-w-7xl gap-10 px-4 py-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-12">
-        <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-black/25 backdrop-blur-xl sm:p-8 lg:p-10">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.12),transparent_35%,transparent_65%,rgba(255,255,255,0.05))]" />
-          <div className="relative flex h-full flex-col justify-between gap-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-300/80">{eyebrow}</p>
-              <h1 className="mt-4 max-w-xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                {title}
-              </h1>
-              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">{description}</p>
-            </div>
+    <main className="min-h-screen bg-slate-950 text-slate-100 relative overflow-hidden flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Background glow animations */}
+      <div className="absolute top-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[120px] pointer-events-none" />
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-                <div className="text-2xl font-semibold text-white">Secure</div>
-                <div className="mt-1 text-sm text-slate-400">JWT-ready auth flow</div>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-                <div className="text-2xl font-semibold text-white">Fast</div>
-                <div className="mt-1 text-sm text-slate-400">Simple entry points</div>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
-                <div className="text-2xl font-semibold text-white">Ready</div>
-                <div className="mt-1 text-sm text-slate-400">Connect to backend later</div>
-              </div>
+      <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[1fr_1fr] items-center">
+        
+        {/* Left column: Brand & Feature list */}
+        <section className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-slate-900/40 p-8 lg:p-12 shadow-2xl backdrop-blur-xl h-full flex flex-col justify-between min-h-[450px]">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-1 text-xs font-semibold text-emerald-400">
+              {eyebrow}
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white uppercase leading-[1.05]">
+              {title}
+            </h1>
+            <p className="text-slate-400 leading-relaxed max-w-lg">
+              {description}
+            </p>
+          </div>
+
+          <div className="grid gap-4 mt-8 sm:grid-cols-3">
+            <div className="rounded-3xl border border-white/5 bg-slate-950/50 p-5 hover:border-emerald-500/20 transition duration-300">
+              <ShieldCheck className="h-6 w-6 text-emerald-400 mb-2" />
+              <div className="text-sm font-bold text-white uppercase tracking-wider">Seguro</div>
+              <div className="mt-1 text-xs text-slate-500 leading-normal">Sesiones encriptadas con seguridad JWT.</div>
+            </div>
+            
+            <div className="rounded-3xl border border-white/5 bg-slate-950/50 p-5 hover:border-emerald-500/20 transition duration-300">
+              <Zap className="h-6 w-6 text-emerald-400 mb-2" />
+              <div className="text-sm font-bold text-white uppercase tracking-wider">Rápido</div>
+              <div className="mt-1 text-xs text-slate-500 leading-normal">Acceso inmediato sin esperas complejas.</div>
+            </div>
+            
+            <div className="rounded-3xl border border-white/5 bg-slate-950/50 p-5 hover:border-emerald-500/20 transition duration-300">
+              <Layers className="h-6 w-6 text-emerald-400 mb-2" />
+              <div className="text-sm font-bold text-white uppercase tracking-wider">Conectado</div>
+              <div className="mt-1 text-xs text-slate-500 leading-normal">Sincronización en tiempo real con tu nutricionista.</div>
             </div>
           </div>
         </section>
 
+        {/* Right column: Form Card */}
         <section className="flex items-center justify-center">
-          <div className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#0a1220]/90 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 sm:p-6">
-              {children}
+          <div className="w-full max-w-md rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-8 shadow-2xl backdrop-blur-xl">
+            {children}
 
-              <div className="mt-6 border-t border-white/10 pt-5 text-sm text-slate-300">
-                <span>{footerPrompt} </span>
-                <Link to={footerLinkTo} className="font-medium text-cyan-300 transition hover:text-cyan-200">
-                  {footerLinkLabel}
-                </Link>
-              </div>
+            <div className="mt-6 border-t border-white/5 pt-6 text-center text-sm text-slate-400">
+              <span>{footerPrompt} </span>
+              <Link to={footerLinkTo} className="font-bold text-emerald-400 transition hover:text-emerald-300 hover:underline underline-offset-4 decoration-2">
+                {footerLinkLabel}
+              </Link>
             </div>
           </div>
         </section>
+
       </div>
     </main>
   )
