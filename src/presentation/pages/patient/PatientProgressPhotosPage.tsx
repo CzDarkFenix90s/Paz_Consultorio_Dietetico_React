@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePhotoStore } from '../../store/usePhotoStore'
-//import { useAuthStore } from '../../store/useAuthStore'
 import { 
   ArrowLeft, 
   Camera, 
@@ -16,7 +15,9 @@ import {
   House,
   UtensilsCrossed,
   MessageSquareText,
-  ChefHat
+  ChefHat,
+  Sun,
+  Moon
 } from 'lucide-react'
 
 const bottomNav = [
@@ -36,6 +37,34 @@ export default function PatientProgressPhotosPage() {
   const [uploadSuccess, setUploadSuccess] = useState(false)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Dark/Light Theme state toggle
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
+
+  const toggleTheme = () => {
+    const newDark = !isDark
+    setIsDark(newDark)
+    if (newDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
+  // Load theme state on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    const hasDarkClass = document.documentElement.classList.contains('dark')
+    if (savedTheme === 'dark' && !hasDarkClass) {
+      document.documentElement.classList.add('dark')
+      setIsDark(true)
+    } else if (savedTheme === 'light' && hasDarkClass) {
+      document.documentElement.classList.remove('dark')
+      setIsDark(false)
+    }
+  }, [])
 
   useEffect(() => {
     fetchPhotos()
@@ -76,49 +105,60 @@ export default function PatientProgressPhotosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
+    <main className="min-h-screen bg-bg-main text-text-main pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950 transition-colors duration-300">
       {/* Ambient glows */}
       <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
 
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-card-border bg-header-bg backdrop-blur-md transition-colors duration-300">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/patient/menu')}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 transition"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
               title="Volver"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-sm font-bold text-white">Fotos de Progreso</h1>
-              <p className="text-[10px] text-slate-400">Historial visual de tu evolución física</p>
+              <h1 className="text-sm font-bold text-text-main uppercase">Fotos de Progreso</h1>
+              <p className="text-[9px] text-slate-400">Historial visual de tu evolución física</p>
             </div>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
-            <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className="hover:text-emerald-500 transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="hover:text-emerald-500 transition">Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
           </nav>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
-            <Camera className="h-3.5 w-3.5" />
-            Control Diario
-          </span>
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={toggleTheme}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              title="Alternar modo claro/oscuro"
+            >
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+            </button>
+
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
+              <Camera className="h-3.5 w-3.5" />
+              Control Diario
+            </span>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 grid gap-8 md:grid-cols-[1.2fr_1.8fr]">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 grid gap-8 md:grid-cols-[1.2fr_1.8fr]">
         
         {/* Upload Form */}
-        <section className="rounded-3xl border border-white/10 bg-slate-900/40 p-5 sm:p-6 backdrop-blur-md shadow-sm space-y-6 self-start">
+        <section className="rounded-3xl border border-card-border bg-card-bg p-5 sm:p-6 shadow-sm space-y-6 self-start transition-all duration-300">
           <div>
-            <h2 className="text-lg font-bold text-white">Subir Nueva Foto</h2>
+            <h2 className="text-lg font-bold text-text-main uppercase">Subir Nueva Foto</h2>
             <p className="text-xs text-slate-400 mt-1">Guarda una foto de progreso físico en el servidor local del consultorio.</p>
           </div>
 
@@ -126,7 +166,7 @@ export default function PatientProgressPhotosPage() {
             {/* File picker */}
             <div 
               onClick={() => fileInputRef.current?.click()}
-              className="group relative cursor-pointer border-2 border-dashed border-slate-700 rounded-2xl bg-slate-950/30 p-6 text-center hover:bg-emerald-500/5 hover:border-emerald-500/40 transition flex flex-col items-center justify-center min-h-[160px]"
+              className="group relative cursor-pointer border-2 border-dashed border-card-border rounded-2xl bg-input-bg p-6 text-center hover:bg-emerald-500/5 hover:border-emerald-500/40 transition flex flex-col items-center justify-center min-h-[160px]"
             >
               {previewUrl ? (
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-inner">
@@ -154,20 +194,20 @@ export default function PatientProgressPhotosPage() {
 
             <label className="block space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Descripción / Anotación</span>
-              <div className="flex items-start gap-3 rounded-2xl border border-white/5 bg-slate-950/30 px-4 py-3 focus-within:border-emerald-500/60 transition">
+              <div className="flex items-start gap-3 rounded-2xl border border-card-border bg-input-bg px-4 py-3 focus-within:border-emerald-500/60 transition-all duration-300">
                 <FileText className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />
                 <textarea
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Ej. Peso: 78.5kg. Ayuno mañana, semana 2."
-                  className="w-full bg-transparent text-xs outline-none placeholder:text-slate-500 text-slate-300 resize-none leading-relaxed"
+                  className="w-full bg-transparent text-xs outline-none placeholder:text-slate-500 text-text-main resize-none leading-relaxed"
                 />
               </div>
             </label>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-2xl bg-rose-500/10 border border-rose-500/20 p-4 text-rose-400 text-xs">
+              <div className="flex items-center gap-2 rounded-2xl bg-rose-500/10 border border-rose-500/20 p-4 text-rose-455 text-xs">
                 <AlertCircle className="h-5 w-5 shrink-0" />
                 <span>{error}</span>
               </div>
@@ -183,7 +223,7 @@ export default function PatientProgressPhotosPage() {
             <button
               type="submit"
               disabled={loading || !selectedFile}
-              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3.5 font-bold text-slate-950 hover:brightness-110 disabled:opacity-40 transition shadow-md shadow-emerald-500/10"
+              className="w-full flex items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-xs font-extrabold uppercase tracking-widest text-slate-950 hover:bg-emerald-400 disabled:opacity-40 transition shadow-lg shadow-emerald-500/10"
             >
               {loading ? (
                 <Loader className="h-5 w-5 animate-spin text-slate-950" />
@@ -198,9 +238,9 @@ export default function PatientProgressPhotosPage() {
         </section>
 
         {/* Photos Grid & Timeline */}
-        <section className="rounded-3xl border border-white/10 bg-slate-900/40 p-5 sm:p-6 backdrop-blur-md shadow-sm space-y-6">
+        <section className="rounded-3xl border border-card-border bg-card-bg p-5 sm:p-6 shadow-sm space-y-6 transition-all duration-300">
           <div>
-            <h2 className="text-lg font-bold text-white">Línea de Tiempo de Progreso</h2>
+            <h2 className="text-lg font-bold text-text-main uppercase">Línea de Tiempo de Progreso</h2>
             <p className="text-xs text-slate-400 mt-1">Imágenes físicas almacenadas de forma local en tu servidor Django.</p>
           </div>
 
@@ -215,7 +255,7 @@ export default function PatientProgressPhotosPage() {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2">
               {photos.map((photo) => (
-                <article key={photo.id} className="rounded-2xl border border-white/5 bg-slate-950/30 overflow-hidden shadow-inner flex flex-col hover:border-emerald-500/20 transition">
+                <article key={photo.id} className="rounded-2xl border border-card-border bg-input-bg overflow-hidden shadow-inner flex flex-col hover:border-emerald-500/40 transition-all duration-300">
                   <div className="aspect-[4/3] w-full relative bg-slate-900 overflow-hidden">
                     <img 
                       src={getFullImageUrl(photo.foto)} 
@@ -245,10 +285,10 @@ export default function PatientProgressPhotosPage() {
           )}
         </section>
 
-      </main>
+      </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl p-2.5 md:hidden">
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -262,8 +302,8 @@ export default function PatientProgressPhotosPage() {
               }}
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
                 active 
-                  ? 'text-emerald-400 bg-emerald-500/5' 
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'text-emerald-500 bg-emerald-500/5' 
+                  : 'text-slate-450 hover:text-emerald-500 hover:bg-slate-500/5'
               }`}
             >
               <Icon className="h-5 w-5" />
@@ -272,6 +312,6 @@ export default function PatientProgressPhotosPage() {
           ))}
         </div>
       </nav>
-    </div>
+    </main>
   )
 }

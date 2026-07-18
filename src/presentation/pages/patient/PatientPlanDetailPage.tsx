@@ -1,7 +1,20 @@
+// src/presentation/pages/patient/PatientPlanDetailPage.tsx
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { API_CONFIG } from '../../../infrastructure/config/api.config'
-import { ArrowLeft, CalendarDays, CheckCircle2, Clock3, LoaderCircle, ShieldPlus, Sparkles, UtensilsCrossed, Users } from 'lucide-react'
+import { 
+  ArrowLeft, 
+  CalendarDays, 
+  CheckCircle2, 
+  Clock3, 
+  LoaderCircle, 
+  ShieldPlus, 
+  Sparkles, 
+  UtensilsCrossed, 
+  Users,
+  Sun,
+  Moon
+} from 'lucide-react'
 
 type PlanItem = {
   id: number
@@ -69,6 +82,34 @@ export default function PatientPlanDetailPage() {
   const [plan, setPlan] = useState<PlanItem | null>(null)
   const [foods, setFoods] = useState<FoodItem[]>([])
 
+  // Dark/Light Theme state toggle
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
+
+  const toggleTheme = () => {
+    const newDark = !isDark
+    setIsDark(newDark)
+    if (newDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
+  // Load theme state on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    const hasDarkClass = document.documentElement.classList.contains('dark')
+    if (savedTheme === 'dark' && !hasDarkClass) {
+      document.documentElement.classList.add('dark')
+      setIsDark(true)
+    } else if (savedTheme === 'light' && hasDarkClass) {
+      document.documentElement.classList.remove('dark')
+      setIsDark(false)
+    }
+  }, [])
+
   useEffect(() => {
     let ignore = false
 
@@ -133,154 +174,164 @@ export default function PatientPlanDetailPage() {
   const foodTotal = useMemo(() => foods.length, [foods])
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
+    <main className="min-h-screen bg-bg-main text-text-main transition-colors duration-300 pb-28">
+      {/* Header */}
+      <header className="sticky top-0 z-30 border-b border-card-border bg-header-bg backdrop-blur-md transition-colors duration-300">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => navigate('/patient/plans')}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100 transition hover:bg-emerald-100"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner">
+          <div className="flex items-center gap-2 text-lg font-bold text-text-main uppercase">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
               <ShieldPlus className="h-5 w-5" />
             </span>
             Detalle del plan
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
-            <button onClick={() => navigate('/patient/menu')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-slate-905 transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="text-sm font-bold uppercase tracking-wider text-emerald-500 hover:text-emerald-600 transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-slate-900 transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-slate-900 transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className="hover:text-emerald-500 transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="hover:text-emerald-500 transition">Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
           </nav>
 
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-sm font-semibold text-emerald-700 shadow-sm">J</button>
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={toggleTheme}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              title="Alternar modo claro/oscuro"
+            >
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+            </button>
+          </div>
         </div>
       </header>
 
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="mb-6 flex items-center gap-3 rounded-[1.75rem] border border-slate-100 bg-white p-5 text-slate-500 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
-            <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600" />
+          <div className="mb-6 flex items-center gap-3 rounded-[1.75rem] border border-card-border bg-card-bg p-5 text-slate-400 shadow-sm transition-colors duration-300">
+            <LoaderCircle className="h-6 w-6 animate-spin text-emerald-500" />
             <div>
-              <p className="font-semibold text-slate-800">Cargando detalle del plan...</p>
+              <p className="font-semibold text-text-main">Cargando detalle del plan...</p>
               <p className="text-sm text-slate-500">Consultando el backend para mostrar la información actualizada.</p>
             </div>
           </div>
         ) : null}
 
-        <section className="rounded-[2rem] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.05)] sm:p-6 lg:p-8">
+        <section className="rounded-[2rem] bg-card-bg border border-card-border p-4 shadow-sm sm:p-6 lg:p-8 transition-all duration-300">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-300">Plan seleccionado</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-800">{plan?.name ?? 'Detalle no disponible'}</h1>
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-500">{plan?.description ?? 'Cargando información del backend...'}</p>
+            <div className="space-y-1">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-500">Plan seleccionado</p>
+              <h1 className="text-3xl font-black text-text-main uppercase tracking-tight">{plan?.name ?? 'Detalle no disponible'}</h1>
+              <p className="max-w-3xl text-sm leading-relaxed text-slate-400">{plan?.description ?? 'Cargando información del backend...'}</p>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <div className={`rounded-2xl px-4 py-3 ${plan?.is_active ? 'border border-emerald-100 bg-emerald-50' : 'border border-slate-100 bg-slate-50'}`}>
-                <div className={`text-xs font-semibold uppercase tracking-[0.2em] ${plan?.is_active ? 'text-emerald-600' : 'text-slate-400'}`}>Estado</div>
-                <div className={`mt-1 text-2xl font-semibold ${plan?.is_active ? 'text-emerald-700' : 'text-slate-700'}`}>{plan?.is_active ? 'Activo' : 'Inactivo'}</div>
+              <div className={`rounded-2xl px-4 py-3 ${plan?.is_active ? 'border border-emerald-500/25 bg-emerald-500/10' : 'border border-card-border bg-input-bg'}`}>
+                <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${plan?.is_active ? 'text-emerald-400' : 'text-slate-500'}`}>Estado</div>
+                <div className={`mt-1 text-2xl font-black ${plan?.is_active ? 'text-emerald-450' : 'text-text-main'}`}>{plan?.is_active ? 'Activo' : 'Inactivo'}</div>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Calorías</div>
-                <div className="mt-1 text-2xl font-semibold text-slate-800">{plan?.target_calories ?? 0} kcal</div>
+              <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
+                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Calorías</div>
+                <div className="mt-1 text-2xl font-black text-text-main">{plan?.target_calories ?? 0} kcal</div>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Costo</div>
-                <div className="mt-1 text-2xl font-semibold text-slate-800">{plan ? formatPrice(plan.estimated_cost) : 'S/ 0.00'}</div>
+              <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
+                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Costo</div>
+                <div className="mt-1 text-2xl font-black text-text-main">{plan ? formatPrice(plan.estimated_cost) : 'S/ 0.00'}</div>
               </div>
             </div>
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-4">
-            <article className="rounded-[1.5rem] bg-emerald-500 p-5 text-white shadow-[0_16px_40px_rgba(34,197,94,0.22)] md:col-span-2">
+            <article className="rounded-[1.5rem] bg-emerald-500 p-5 text-slate-950 shadow-lg shadow-emerald-500/15 md:col-span-2 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
-                  <Sparkles className="h-6 w-6" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+                  <Sparkles className="h-6 w-6 text-slate-950" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white/85">Objetivo</p>
-                  <h2 className="text-2xl font-semibold">{plan?.goal ?? 'Sin objetivo'}</h2>
+                  <p className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">Objetivo</p>
+                  <h2 className="text-xl font-black uppercase tracking-tight">{plan?.goal ?? 'Sin objetivo'}</h2>
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <div>
-                  <p className="text-sm text-white/80">Semanas</p>
-                  <div className="mt-1 text-xl font-semibold">{plan?.duration_weeks ?? 0}</div>
+              <div className="grid gap-3 grid-cols-3 text-center">
+                <div className="bg-white/10 rounded-2xl py-2">
+                  <p className="text-[9px] font-bold text-slate-900 uppercase">Semanas</p>
+                  <div className="mt-1 text-xl font-black">{plan?.duration_weeks ?? 0}</div>
                 </div>
-                <div>
-                  <p className="text-sm text-white/80">Alimentos</p>
-                  <div className="mt-1 text-xl font-semibold">{plan?.total_alimentos ?? foodTotal}</div>
+                <div className="bg-white/10 rounded-2xl py-2">
+                  <p className="text-[9px] font-bold text-slate-900 uppercase">Alimentos</p>
+                  <div className="mt-1 text-xl font-black">{plan?.total_alimentos ?? foodTotal}</div>
                 </div>
-                <div>
-                  <p className="text-sm text-white/80">Creado</p>
-                  <div className="mt-1 text-sm font-semibold leading-6">{plan ? formatDate(plan.created_at) : 'Fecha no disponible'}</div>
+                <div className="bg-white/10 rounded-2xl py-2">
+                  <p className="text-[9px] font-bold text-slate-900 uppercase">Creado</p>
+                  <div className="mt-1 text-xs font-bold leading-6 truncate">{plan ? formatDate(plan.created_at) : 'N/A'}</div>
                 </div>
               </div>
             </article>
 
-            <article className="rounded-[1.5rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100">
-              <p className="text-sm font-semibold text-slate-500">Resumen</p>
+            <article className="rounded-[1.5rem] bg-input-bg border border-card-border p-5 shadow-sm transition-all duration-300">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Resumen</p>
               <div className="mt-3 flex items-start gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-500">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/15 text-sky-400">
                   <CalendarDays className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-800">Plan nutricional</h3>
-                  <p className="mt-1 text-sm text-slate-500">{plan?.description ?? 'Cargando...'}</p>
+                  <h3 className="font-extrabold text-text-main uppercase text-xs">Plan nutricional</h3>
+                  <p className="mt-1 text-xs text-slate-400 leading-relaxed">{plan?.description ?? 'Cargando...'}</p>
                 </div>
               </div>
             </article>
 
-            <article className="rounded-[1.5rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100">
-              <p className="text-sm font-semibold text-slate-500">Alimentos activos</p>
+            <article className="rounded-[1.5rem] bg-input-bg border border-card-border p-5 shadow-sm transition-all duration-300">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Alimentos activos</p>
               <div className="mt-3 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-500">
                   <UtensilsCrossed className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-800">{foodTotal}</h3>
-                  <p className="mt-1 text-sm text-slate-500">Alimentos retornados por la API</p>
+                  <h3 className="font-extrabold text-text-main text-lg leading-tight">{foodTotal}</h3>
+                  <p className="mt-0.5 text-xs text-slate-500">Alimentos retornados por la API</p>
                 </div>
               </div>
             </article>
           </div>
 
           <div className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-            <section className="rounded-[1.75rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 sm:p-6">
+            <section className="rounded-[1.75rem] bg-input-bg border border-card-border p-5 shadow-sm transition-all duration-300 sm:p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-800">Alimentos programados</h2>
-                <div className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500">
-                  <Clock3 className="h-4 w-4" />
+                <h2 className="text-base font-extrabold text-text-main uppercase">Alimentos programados</h2>
+                <div className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 uppercase">
+                  <Clock3 className="h-4 w-4 text-emerald-500" />
                   Ordenados por secuencia
                 </div>
               </div>
 
               <div className="mt-5 space-y-4">
                 {foods.map((food) => (
-                  <article key={food.id} className="rounded-[1.5rem] border border-slate-100 bg-slate-50/70 p-4">
+                  <article key={food.id} className="rounded-[1.5rem] border border-card-border bg-card-bg p-4 transition-colors duration-300">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-start gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-600 shadow-sm">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-input-bg border border-card-border text-emerald-500 shadow-sm transition-colors duration-300">
                           <UtensilsCrossed className="h-5 w-5" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-800">{food.name ?? 'Alimento sin nombre'}</h3>
-                          <p className="mt-1 text-sm text-slate-500">{food.description ?? 'Sin descripción'}</p>
+                          <h3 className="font-extrabold text-text-main uppercase text-sm">{food.name ?? 'Alimento sin nombre'}</h3>
+                          <p className="mt-1 text-xs text-slate-450 leading-relaxed">{food.description ?? 'Sin descripción'}</p>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
-                        <span className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-100">Tipo: {food.meal_type ?? 'N/D'}</span>
-                        <span className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-100">Porción: {food.portion_grams ?? 0} g</span>
-                        <span className={`rounded-full px-3 py-1 ${food.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                      <div className="flex flex-wrap gap-2 text-[10px] font-bold">
+                        <span className="rounded-full bg-input-bg border border-card-border text-slate-400 px-3 py-1 transition-colors duration-300">Tipo: {food.meal_type ?? 'N/D'}</span>
+                        <span className="rounded-full bg-input-bg border border-card-border text-slate-400 px-3 py-1 transition-colors duration-300">Porción: {food.portion_grams ?? 0} g</span>
+                        <span className={`rounded-full px-3 py-1 ${food.is_active ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-450' : 'bg-slate-500/10 border border-card-border text-slate-500'}`}>
                           {food.is_active ? 'Activo' : 'Inactivo'}
                         </span>
                       </div>
@@ -289,7 +340,7 @@ export default function PatientPlanDetailPage() {
                 ))}
 
                 {foods.length === 0 ? (
-                  <div className="rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50/70 p-8 text-center text-slate-500">
+                  <div className="rounded-[1.5rem] border border-dashed border-card-border bg-card-bg p-8 text-center text-slate-500">
                     No hay alimentos retornados para este plan.
                   </div>
                 ) : null}
@@ -297,38 +348,38 @@ export default function PatientPlanDetailPage() {
             </section>
 
             <aside className="space-y-6">
-              <article className="rounded-[1.75rem] bg-emerald-500 p-5 text-white shadow-[0_16px_40px_rgba(34,197,94,0.22)]">
+              <article className="rounded-[1.75rem] bg-emerald-500 p-5 text-slate-950 shadow-lg shadow-emerald-500/15 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
-                    <CheckCircle2 className="h-6 w-6" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+                    <CheckCircle2 className="h-6 w-6 text-slate-950" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white/85">Estado</p>
-                    <h2 className="text-2xl font-semibold">{plan?.is_active ? 'Listo para usar' : 'Plan inactivo'}</h2>
+                    <p className="text-[10px] font-bold text-slate-900 uppercase">Estado</p>
+                    <h2 className="text-xl font-black uppercase tracking-tight">{plan?.is_active ? 'Listo para usar' : 'Plan inactivo'}</h2>
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm leading-6 text-white/85">
+                <p className="text-xs leading-relaxed text-slate-900 font-semibold">
                   Este detalle está enlazado al backend. Cuando el plan cambie en Django, esta pantalla mostrará los datos actualizados.
                 </p>
               </article>
 
-              <article className="rounded-[1.75rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100">
-                <h3 className="text-lg font-semibold text-slate-800">Fuentes consultadas</h3>
-                <div className="mt-4 space-y-3 text-sm text-slate-500">
-                  <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
+              <article className="rounded-[1.75rem] bg-input-bg border border-card-border p-5 shadow-sm transition-all duration-300">
+                <h3 className="text-sm font-extrabold text-text-main uppercase tracking-wider">Fuentes consultadas</h3>
+                <div className="mt-4 space-y-3 text-xs text-slate-500">
+                  <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
                     <ShieldPlus className="h-5 w-5 text-emerald-500" />
-                    <span><span className="font-semibold text-slate-700">GET /api/planes/{planId}/</span></span>
+                    <span><span className="font-bold text-slate-400">GET /api/planes/{planId}/</span></span>
                   </div>
-                  <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
+                  <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
                     <Users className="h-5 w-5 text-emerald-500" />
-                    <span><span className="font-semibold text-slate-700">GET /api/planes/{planId}/alimentos/</span></span>
+                    <span><span className="font-bold text-slate-400">GET /api/planes/{planId}/alimentos/</span></span>
                   </div>
                 </div>
               </article>
 
               {errorMessage ? (
-                <article className="rounded-[1.75rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800">
+                <article className="rounded-[1.75rem] border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-xs text-amber-300">
                   {errorMessage}
                 </article>
               ) : null}

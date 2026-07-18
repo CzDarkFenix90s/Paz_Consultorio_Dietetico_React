@@ -1,153 +1,208 @@
-import { useEffect, useMemo, useState } from 'react'
+// src/presentation/pages/patient/PatientRecipesPage.tsx
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/useAuthStore'
 import { API_CONFIG } from '../../../infrastructure/config/api.config'
-import { ArrowRight, ChefHat, Clock3, Filter, Flame, Heart, Menu, Search, UtensilsCrossed, Wheat, MessageSquareText } from 'lucide-react'
+import { 
+  Search, 
+  Filter, 
+  Heart, 
+  ArrowRight, 
+  Flame, 
+  Clock3, 
+  ChefHat, 
+  Wheat, 
+  Menu,
+  Sun,
+  Moon,
+  MessageSquareText,
+  UtensilsCrossed
+} from 'lucide-react'
 
-type RecipeApiItem = {
-  id: number
-  name: string
-  description?: string
-  meal_type?: string
-  portion_grams?: number
-  sequence?: number
-  is_active?: boolean
+// Profile Avatar secure URL resolution helper
+const getAvatarUrl = (url: string | null | undefined) => {
+  if (!url) return null
+  if (url.includes('localhost:8000')) {
+    return url.replace('http://localhost:8000', '')
+  }
+  if (url.startsWith('http://')) {
+    return url.replace('http://', 'https://')
+  }
+  return url
 }
 
-type ApiListResponse<T> = {
-  results?: T[]
-}
-
-type Recipe = {
+interface Recipe {
   id: number
   name: string
   subtitle: string
-  mealType: string
+  image: string
   kcal: number
   minutes: number
+  mealType: string
+  favorite: boolean
+  tag: string
+  difficulty: string
   ingredients: string[]
   steps: string[]
-  tag: string
-  favorite: boolean
-  difficulty: 'Fácil' | 'Media' | 'Alta'
-  image: string
 }
 
-function getRecipeImage(name: string): string {
-  const normalized = name.toLowerCase()
-  if (normalized.includes('huevo') || normalized.includes('desayuno')) {
-    return 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=80'
-  }
-  if (normalized.includes('pollo') || normalized.includes('fajita') || normalized.includes('res') || normalized.includes('carne')) {
-    return 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80'
-  }
-  if (normalized.includes('parfait') || normalized.includes('granola') || normalized.includes('yogur')) {
-    return 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&auto=format&fit=crop&q=80'
-  }
-  if (normalized.includes('calabacin') || normalized.includes('ensalada') || normalized.includes('crema') || normalized.includes('verdura')) {
-    return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80'
-  }
-  return 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=80'
+interface RecipeApiItem {
+  id: number
+  nombre: string
+  descripcion?: string
+  calorias?: number
+  tiempo_preparacion?: number
+  categoria_nombre?: string
+  momento_nombre?: string
+  imagen?: string
+  ingredientes?: string | string[]
+  pasos?: string | string[]
+}
+
+interface ApiListResponse<T> {
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
 }
 
 const fallbackRecipes: Recipe[] = [
   {
-    id: 1,
-    name: 'Huevos Revueltos con Aguacate',
-    subtitle: 'Desayuno equilibrado con proteína y grasas saludables',
-    mealType: 'Desayuno',
-    kcal: 320,
-    minutes: 15,
-    ingredients: ['2 huevos', '1/2 aguacate', 'tomate cherry', 'pan integral'],
-    steps: ['Batir los huevos', 'Cocinar a fuego medio', 'Servir con aguacate y tomate'],
-    tag: 'Energía rápida',
-    favorite: true,
-    difficulty: 'Fácil',
-    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 2,
-    name: 'Pechuga de Pollo con Verduras',
-    subtitle: 'Plato principal alto en proteína y bajo en grasa',
-    mealType: 'Proteínas',
-    kcal: 450,
-    minutes: 25,
-    ingredients: ['pechuga de pollo', 'brócoli', 'zanahoria', 'aceite de oliva'],
-    steps: ['Sazonar el pollo', 'Sellar a fuego medio', 'Saltear las verduras y emplatar'],
-    tag: 'Alta saciedad',
-    favorite: false,
-    difficulty: 'Media',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 3,
-    name: 'Pescado con Ensalada César',
-    subtitle: 'Cena ligera con verduras frescas y proteína magra',
-    mealType: 'Cena',
+    id: 101,
+    name: 'Fajitas de Res con Pimientos',
+    subtitle: 'Tiras de lomo fino salteadas al wok con pimientos tricolor, cebolla morada y sazón criollo bajo en grasa.',
+    image: '/assets/recipe_banner.png',
     kcal: 380,
     minutes: 20,
-    ingredients: ['filete de pescado', 'lechuga romana', 'crutones integrales', 'aderezo ligero'],
-    steps: ['Cocinar el pescado', 'Preparar la ensalada', 'Servir todo junto'],
-    tag: 'Ligero',
-    favorite: false,
+    mealType: 'Almuerzo',
+    favorite: true,
+    tag: 'Recomendado',
     difficulty: 'Fácil',
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80',
+    ingredients: ['200g lomo de res', '1 pimiento rojo', '1 pimiento verde', '1/2 cebolla', '1 cdta aceite de oliva', 'Sal y pimienta al gusto'],
+    steps: ['Corta la carne y los vegetales en tiras finas.', 'Calienta el aceite en un wok a fuego alto.', 'Saltea la carne por 5 minutos hasta que dore.', 'Agrega los pimientos y cebollas, saltea 5 minutos más.', 'Sazona con sal, pimienta y sirve de inmediato.']
   },
+  {
+    id: 102,
+    name: 'Crema de Calabacín Ligera',
+    subtitle: 'Sopa cremosa de calabacín tierno, puerro y un toque de queso ricotta bajo en grasa.',
+    image: 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&auto=format&fit=crop&q=80',
+    kcal: 180,
+    minutes: 15,
+    mealType: 'Cena',
+    favorite: false,
+    tag: 'Bajo en calorías',
+    difficulty: 'Fácil',
+    ingredients: ['2 calabacines medianos', '1 puerro', '1 taza caldo de verduras', '2 cdas ricotta light', 'Nuez moscada'],
+    steps: ['Pica el calabacín y el puerro.', 'Cocina en el caldo de verduras por 10 minutos hasta que estén suaves.', 'Licúa todo junto con el queso ricotta hasta obtener una textura tersa.', 'Sazona con nuez moscada, sal y pimienta al gusto.']
+  },
+  {
+    id: 103,
+    name: 'Parfait de Yogur y Granola',
+    subtitle: 'Capas de yogur griego natural, fresas frescas picadas y granola artesanal sin azúcar añadida.',
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&auto=format&fit=crop&q=80',
+    kcal: 220,
+    minutes: 5,
+    mealType: 'Desayuno',
+    favorite: true,
+    tag: 'Proteico',
+    difficulty: 'Fácil',
+    ingredients: ['200g yogur griego', '4 fresas medianas', '3 cdas granola integral', '1 chorrito de miel de agave'],
+    steps: ['Lava y pica las fresas en rodajas pequeñas.', 'En un vaso, coloca una base de yogur griego.', 'Añade una capa de fresas y una capa de granola.', 'Repite las capas y finaliza con un chorrito de miel de agave.']
+  }
 ]
 
-const filters = [
-  { label: 'Todos', value: 'all' },
-  { label: 'Desayuno', value: 'Desayuno' },
-  { label: 'Proteínas', value: 'Proteínas' },
-  { label: 'Cena', value: 'Cena' },
-]
+function buildRecipes(apiItems: RecipeApiItem[]): Recipe[] {
+  if (!apiItems || apiItems.length === 0) return fallbackRecipes
+  return apiItems.map((item, idx) => {
+    let listIngredients: string[] = ['Ingredientes variados']
+    if (typeof item.ingredientes === 'string') {
+      try {
+        const parsed = JSON.parse(item.ingredientes.replace(/'/g, '"'))
+        if (Array.isArray(parsed)) listIngredients = parsed
+      } catch {
+        listIngredients = item.ingredientes.split(',').map((x) => x.trim())
+      }
+    } else if (Array.isArray(item.ingredientes)) {
+      listIngredients = item.ingredientes
+    }
 
-function mealTypeLabel(value?: string) {
-  if (!value) return 'Sin categoría'
-  const normalized = value.toLowerCase()
-  if (normalized.includes('desayuno')) return 'Desayuno'
-  if (normalized.includes('almuerzo')) return 'Proteínas'
-  if (normalized.includes('cena')) return 'Cena'
-  if (normalized.includes('snack')) return 'Snacks'
-  return value
-}
-
-function buildRecipes(apiItems: RecipeApiItem[]) {
-  if (apiItems.length === 0) return fallbackRecipes
-
-  const byName = new Map(fallbackRecipes.map((recipe) => [recipe.name.toLowerCase(), recipe]))
-
-  return apiItems.map((item, index) => {
-    const fallback = byName.get(item.name.toLowerCase())
-    const mealType = mealTypeLabel(item.meal_type)
+    let listSteps: string[] = ['Pasos de preparación estándar']
+    if (typeof item.pasos === 'string') {
+      try {
+        const parsed = JSON.parse(item.pasos.replace(/'/g, '"'))
+        if (Array.isArray(parsed)) listSteps = parsed
+      } catch {
+        listSteps = item.pasos.split('.').map((x) => x.trim()).filter(Boolean)
+      }
+    } else if (Array.isArray(item.pasos)) {
+      listSteps = item.pasos
+    }
 
     return {
       id: item.id,
-      name: item.name,
-      subtitle: item.description ?? fallback?.subtitle ?? 'Receta disponible para tu plan',
-      mealType,
-      kcal: fallback?.kcal ?? Math.max(180, Math.round((item.portion_grams ?? 220) * 1.35)),
-      minutes: fallback?.minutes ?? (item.sequence ? 10 + item.sequence * 3 : 20 + index * 2),
-      ingredients: fallback?.ingredients ?? ['Ingrediente principal', 'Guarnición fresca', 'Condimentos naturales'],
-      steps: fallback?.steps ?? ['Preparar los ingredientes', 'Cocinar según indicación', 'Servir y disfrutar'],
-      tag: item.is_active ? 'Disponible' : 'Desactivado',
-      favorite: fallback?.favorite ?? item.id % 2 === 1,
-      difficulty: fallback?.difficulty ?? 'Fácil',
-      image: fallback?.image ?? getRecipeImage(item.name),
-    } satisfies Recipe
+      name: item.nombre,
+      subtitle: item.descripcion || 'Detalles y porciones sugeridas por tu nutricionista.',
+      image: item.imagen || fallbackRecipes[idx % fallbackRecipes.length].image,
+      kcal: item.calorias || 280,
+      minutes: item.tiempo_preparacion || 15,
+      mealType: item.momento_nombre || 'Almuerzo',
+      favorite: idx % 2 === 0,
+      tag: item.categoria_nombre || 'Nutritivo',
+      difficulty: 'Fácil',
+      ingredients: listIngredients,
+      steps: listSteps
+    }
   })
 }
 
 export default function PatientRecipesPage() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
+
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [selectedId, setSelectedId] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
-  const [recipes, setRecipes] = useState<Recipe[]>(fallbackRecipes)
-  const [selectedId, setSelectedId] = useState<number | null>(fallbackRecipes[0].id)
-  const [query, setQuery] = useState('')
-  const [activeFilter, setActiveFilter] = useState<'all' | 'Desayuno' | 'Proteínas' | 'Cena'>('all')
   const [errorMessage, setErrorMessage] = useState('')
+
+  const [query, setQuery] = useState('')
+  const [activeFilter, setActiveFilter] = useState<'all' | 'Desayuno' | 'Almuerzo' | 'Cena'>('all')
+
+  const filters = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Desayuno', value: 'Desayuno' },
+    { label: 'Almuerzo', value: 'Almuerzo' },
+    { label: 'Cena', value: 'Cena' }
+  ]
+
   const [userProfileData, setUserProfileData] = useState<any | null>(null)
+
+  // Dark/Light Theme state toggle
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
+
+  const toggleTheme = () => {
+    const newDark = !isDark
+    setIsDark(newDark)
+    if (newDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
+  // Load theme state on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    const hasDarkClass = document.documentElement.classList.contains('dark')
+    if (savedTheme === 'dark' && !hasDarkClass) {
+      document.documentElement.classList.add('dark')
+      setIsDark(true)
+    } else if (savedTheme === 'light' && hasDarkClass) {
+      document.documentElement.classList.remove('dark')
+      setIsDark(false)
+    }
+  }, [])
 
   const loadUserProfile = async () => {
     try {
@@ -244,76 +299,88 @@ export default function PatientRecipesPage() {
     }
   }, [filteredRecipes, recipes, selectedRecipe])
 
+  const avatarUrlResolved = getAvatarUrl(userProfileData?.avatar_url)
+
   return (
-    <main className="min-h-screen bg-[#f6f8fb] text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
+    <main className="min-h-screen bg-bg-main text-text-main transition-colors duration-300 pb-28">
+      {/* Floating Navbar Header */}
+      <header className="sticky top-0 z-30 border-b border-card-border bg-header-bg backdrop-blur-md transition-colors duration-300">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => navigate('/patient/menu')}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100 transition hover:bg-emerald-100"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-slate-800 tracking-tight">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)] font-black text-base">
-              N
-            </span>
+          <div className="flex items-center gap-2 text-xl font-black text-text-main tracking-widest uppercase transition-colors duration-300">
             Nutri<span className="text-emerald-500">Tec</span>
           </div>
 
-          <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-            {userProfileData?.avatar_url ? (
-              <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
-            ) : (
-              initialLetter
-            )}
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={toggleTheme}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              title="Alternar modo claro/oscuro"
+            >
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+            </button>
+
+            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              {avatarUrlResolved ? (
+                <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                initialLetter
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1600px] px-4 py-5 pb-28 sm:px-6 lg:px-8">
-        <section className="rounded-[2rem] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.05)] sm:p-6 lg:p-8">
+      {/* Main Content Grid */}
+      <div className="mx-auto max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8">
+        <section className="rounded-[2.5rem] bg-card-bg border border-card-border p-6 shadow-sm transition-all duration-300 sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-300">Menú saludable</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-800">Explora recetas rápidas y nutritivas</h1>
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-500">
+            <div className="space-y-1">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-500">Menú saludable</p>
+              <h1 className="text-3xl font-black text-text-main tracking-tight uppercase">Explora recetas rápidas y nutritivas</h1>
+              <p className="max-w-3xl text-sm leading-relaxed text-slate-400">
                 Puedes buscar por nombre, filtrar por momento de comida y revisar los detalles antes de elegir una receta para tu plan.
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
-              <article className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">Recetas</div>
-                <div className="mt-1 text-2xl font-semibold text-emerald-700">{recipes.length}</div>
+            <div className="grid gap-3 grid-cols-3">
+              <article className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Recetas</div>
+                <div className="mt-1 text-2xl font-black text-emerald-400">{recipes.length}</div>
               </article>
-              <article className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Filtradas</div>
-                <div className="mt-1 text-2xl font-semibold text-slate-800">{filteredRecipes.length}</div>
+              <article className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 text-center transition-colors duration-300">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Filtradas</div>
+                <div className="mt-1 text-2xl font-black text-text-main">{filteredRecipes.length}</div>
               </article>
-              <article className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Favoritas</div>
-                <div className="mt-1 text-2xl font-semibold text-slate-800">{recipes.filter((recipe) => recipe.favorite).length}</div>
+              <article className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 text-center transition-colors duration-300">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Favoritas</div>
+                <div className="mt-1 text-2xl font-black text-text-main">{recipes.filter((recipe) => recipe.favorite).length}</div>
               </article>
             </div>
           </div>
 
           <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-center">
-            <div className="flex-1 rounded-[1.5rem] bg-[#f7f9fc] px-4 py-4 shadow-[0_6px_20px_rgba(15,23,42,0.04)] ring-1 ring-slate-100">
+            <div className="flex-1 rounded-2xl bg-input-bg border border-card-border px-4 py-3.5 transition-all duration-300">
               <div className="flex items-center gap-3 text-slate-400">
-                <Search className="h-5 w-5" />
+                <Search className="h-5 w-5 text-slate-500" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Buscar recetas..."
-                  className="w-full bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-300"
+                  className="w-full bg-transparent text-sm font-medium text-text-main outline-none placeholder:text-slate-500"
                 />
               </div>
             </div>
 
-            <button className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.5rem] bg-emerald-500 text-white shadow-[0_12px_28px_rgba(34,197,94,0.25)] transition hover:bg-emerald-600">
+            <button className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-400">
               <Filter className="h-6 w-6" />
             </button>
           </div>
@@ -324,8 +391,10 @@ export default function PatientRecipesPage() {
                 key={filter.value}
                 type="button"
                 onClick={() => setActiveFilter(filter.value as typeof activeFilter)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  activeFilter === filter.value ? 'bg-emerald-500 text-white shadow-[0_10px_24px_rgba(34,197,94,0.22)]' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                  activeFilter === filter.value 
+                    ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/15' 
+                    : 'bg-input-bg text-slate-400 border border-card-border hover:bg-slate-500/10'
                 }`}
               >
                 {filter.label}
@@ -334,7 +403,7 @@ export default function PatientRecipesPage() {
           </div>
 
           {loading ? (
-            <div className="mt-8 rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50/70 p-10 text-center text-slate-500">
+            <div className="mt-8 rounded-3xl border border-dashed border-card-border bg-input-bg/50 p-10 text-center text-slate-400">
               Cargando recetas desde el backend...
             </div>
           ) : null}
@@ -345,22 +414,24 @@ export default function PatientRecipesPage() {
                 <article
                   key={recipe.id}
                   onClick={() => setSelectedId(recipe.id)}
-                  className={`cursor-pointer rounded-[1.75rem] border p-4 transition sm:p-5 ${
-                    selectedRecipe?.id === recipe.id ? 'border-emerald-200 bg-emerald-50/60 shadow-[0_12px_26px_rgba(34,197,94,0.08)]' : 'border-slate-100 bg-white shadow-[0_12px_26px_rgba(15,23,42,0.04)] hover:border-emerald-100'
+                  className={`cursor-pointer rounded-[1.75rem] border p-4 transition-all duration-300 sm:p-5 ${
+                    selectedRecipe?.id === recipe.id 
+                      ? 'border-emerald-500 bg-emerald-500/5 shadow-md shadow-emerald-500/5' 
+                      : 'border-card-border bg-card-bg hover:border-emerald-500/40'
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-card-border bg-input-bg transition-colors duration-300">
                       <img src={recipe.image} alt={recipe.name} className="h-full w-full object-cover" />
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="truncate text-lg font-semibold text-slate-800">{recipe.name}</h2>
-                        <span className="rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-emerald-600 ring-1 ring-emerald-100">{recipe.tag}</span>
+                        <h2 className="truncate text-base font-extrabold text-text-main uppercase tracking-tight">{recipe.name}</h2>
+                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-400">{recipe.tag}</span>
                       </div>
-                      <p className="mt-1 line-clamp-2 text-sm text-slate-500">{recipe.subtitle}</p>
-                      <div className="mt-3 flex flex-wrap gap-3 text-sm font-semibold text-slate-500">
+                      <p className="mt-1 line-clamp-2 text-xs text-slate-400 leading-normal">{recipe.subtitle}</p>
+                      <div className="mt-3 flex flex-wrap gap-4 text-xs font-semibold text-slate-400">
                         <span className="inline-flex items-center gap-1.5"><Flame className="h-4 w-4 text-emerald-500" />{recipe.kcal} kcal</span>
                         <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4 text-emerald-500" />{recipe.minutes} min</span>
                         <span className="inline-flex items-center gap-1.5"><ChefHat className="h-4 w-4 text-emerald-500" />{recipe.mealType}</span>
@@ -368,76 +439,76 @@ export default function PatientRecipesPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <Heart className={`h-5 w-5 ${recipe.favorite ? 'fill-red-500 text-red-500' : 'text-slate-300'}`} />
-                      <ArrowRight className="h-5 w-5 text-slate-300" />
+                      <Heart className={`h-5 w-5 ${recipe.favorite ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
+                      <ArrowRight className="h-5 w-5 text-slate-500" />
                     </div>
                   </div>
                 </article>
               ))}
 
               {filteredRecipes.length === 0 ? (
-                <div className="rounded-[1.75rem] border border-dashed border-slate-200 bg-slate-50/70 p-8 text-center text-slate-500">
+                <div className="rounded-3xl border border-dashed border-card-border bg-input-bg/50 p-8 text-center text-slate-500">
                   No hay recetas que coincidan con tu búsqueda.
                 </div>
               ) : null}
 
-              {errorMessage ? <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">{errorMessage}</div> : null}
+              {errorMessage ? <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">{errorMessage}</div> : null}
             </section>
 
             <aside className="space-y-6">
-              <article className="overflow-hidden rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_16px_40px_rgba(15,23,42,0.06)] relative group/detail">
+              <article className="overflow-hidden rounded-[1.75rem] bg-card-bg border border-card-border shadow-sm relative group/detail transition-all duration-300">
                 {selectedRecipe?.image && (
-                  <div className="w-full h-48 relative overflow-hidden">
+                  <div className="w-full h-48 relative overflow-hidden bg-slate-900">
                     <img 
                       src={selectedRecipe.image} 
                       alt={selectedRecipe.name} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover/detail:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-550 group-hover/detail:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                     
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Receta seleccionada</p>
-                      <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5">{selectedRecipe.name}</h2>
+                      <p className="font-mono text-[9px] tracking-widest uppercase text-emerald-400">Receta seleccionada</p>
+                      <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5 uppercase">{selectedRecipe.name}</h2>
                     </div>
                   </div>
                 )}
                 
                 <div className="p-5 space-y-4">
-                  <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+                  <p className="text-xs text-slate-400 leading-relaxed font-semibold">
                     {selectedRecipe?.subtitle ?? 'Selecciona una receta para ver su detalle.'}
                   </p>
 
                   <div className="grid grid-cols-3 gap-3 text-center text-xs font-bold">
-                    <div className="rounded-2xl bg-slate-50 border border-slate-100/60 px-3 py-3">
-                      <div className="text-lg font-black text-slate-800">{selectedRecipe?.kcal ?? 0}</div>
-                      <div className="text-slate-400">kcal</div>
+                    <div className="rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
+                      <div className="text-lg font-black text-text-main">{selectedRecipe?.kcal ?? 0}</div>
+                      <div className="text-slate-500">kcal</div>
                     </div>
-                    <div className="rounded-2xl bg-slate-50 border border-slate-100/60 px-3 py-3">
-                      <div className="text-lg font-black text-slate-800">{selectedRecipe?.minutes ?? 0}</div>
-                      <div className="text-slate-400">min</div>
+                    <div className="rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
+                      <div className="text-lg font-black text-text-main">{selectedRecipe?.minutes ?? 0}</div>
+                      <div className="text-slate-500">min</div>
                     </div>
-                    <div className="rounded-2xl bg-slate-50 border border-slate-100/60 px-3 py-3">
-                      <div className="text-lg font-black text-slate-800">{selectedRecipe?.difficulty ?? 'Fácil'}</div>
-                      <div className="text-slate-400">Nivel</div>
+                    <div className="rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
+                      <div className="text-lg font-black text-text-main">{selectedRecipe?.difficulty ?? 'Fácil'}</div>
+                      <div className="text-slate-500">Nivel</div>
                     </div>
                   </div>
                 </div>
               </article>
 
-              <article className="rounded-[1.75rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100">
+              <article className="rounded-[1.75rem] bg-card-bg border border-card-border p-5 shadow-sm transition-all duration-300">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-500">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-400">
                     <Wheat className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-500">Ingredientes</p>
-                    <h3 className="font-semibold text-slate-800">Lista base</h3>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ingredientes</p>
+                    <h3 className="font-extrabold text-text-main uppercase">Lista base</h3>
                   </div>
                 </div>
 
-                <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                <ul className="mt-4 space-y-2 text-xs text-slate-300">
                   {(selectedRecipe?.ingredients ?? []).map((ingredient) => (
-                    <li key={ingredient} className="flex items-center gap-2 rounded-2xl bg-slate-50 px-3 py-2">
+                    <li key={ingredient} className="flex items-center gap-2 rounded-2xl bg-input-bg border border-card-border px-3 py-2 transition-colors duration-300">
                       <span className="h-2 w-2 rounded-full bg-emerald-500" />
                       {ingredient}
                     </li>
@@ -445,22 +516,22 @@ export default function PatientRecipesPage() {
                 </ul>
               </article>
 
-              <article className="rounded-[1.75rem] bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.06)] ring-1 ring-slate-100">
+              <article className="rounded-[1.75rem] bg-card-bg border border-card-border p-5 shadow-sm transition-all duration-300">
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-lg font-semibold text-slate-800">Preparación</h3>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
+                  <h3 className="text-base font-extrabold text-text-main uppercase">Preparación</h3>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
                     <Flame className="h-4 w-4 text-emerald-500" />
                     {selectedRecipe?.mealType ?? 'N/A'}
                   </span>
                 </div>
 
-                <ol className="mt-4 space-y-3 text-sm text-slate-600">
+                <ol className="mt-4 space-y-3 text-xs text-slate-300">
                   {(selectedRecipe?.steps ?? []).map((step, index) => (
-                    <li key={step} className="flex gap-3 rounded-2xl bg-slate-50 px-3 py-3">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
+                    <li key={step} className="flex gap-3 rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-slate-950">
                         {index + 1}
                       </span>
-                      <span>{step}</span>
+                      <span className="leading-relaxed">{step}</span>
                     </li>
                   ))}
                 </ol>
@@ -470,8 +541,9 @@ export default function PatientRecipesPage() {
         </section>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto grid max-w-[1600px] grid-cols-5 px-2 py-2 sm:px-6 lg:px-8">
+      {/* Floating Bottom Nav Dock (Extremely Premium) */}
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5">
+        <div className="grid grid-cols-5 items-center">
           {[
             { label: 'Inicio', icon: Menu, href: '/patient/menu', active: false },
             { label: 'Mi Plan', icon: UtensilsCrossed, href: '/patient/plan', active: false },
@@ -483,10 +555,14 @@ export default function PatientRecipesPage() {
               key={label}
               type="button"
               onClick={() => navigate(href)}
-              className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-2 text-xs font-semibold transition ${active ? 'text-emerald-600' : 'text-slate-300'}`}
+              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
+                active 
+                  ? 'text-emerald-500 bg-emerald-500/5 font-extrabold' 
+                  : 'text-slate-450 hover:text-emerald-500 hover:bg-slate-500/5'
+              }`}
             >
-              <Icon className="h-6 w-6" />
-              {label}
+              <Icon className="h-5 w-5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
             </button>
           ))}
         </div>
