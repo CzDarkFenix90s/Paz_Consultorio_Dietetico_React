@@ -24,13 +24,23 @@ import {
 // Profile Avatar secure URL resolution helper
 const getAvatarUrl = (url: string | null | undefined) => {
   if (!url || url === 'null' || url === 'None' || url.endsWith('/None') || url.endsWith('/null') || url === '/media/') return null
-  if (url.includes('localhost:8000')) {
-    return url.replace('http://localhost:8000', '')
+  
+  let resolvedUrl = url.trim()
+  if (resolvedUrl.includes('localhost:8000')) {
+    resolvedUrl = resolvedUrl.replace('http://localhost:8000', '')
   }
-  if (url.startsWith('http://')) {
-    return url.replace('http://', 'https://')
+  if (resolvedUrl.startsWith('http://')) {
+    resolvedUrl = resolvedUrl.replace('http://', 'https://')
   }
-  return url
+  
+  if (!resolvedUrl.startsWith('http') && !resolvedUrl.startsWith('/')) {
+    if (resolvedUrl.startsWith('media/')) {
+      resolvedUrl = '/' + resolvedUrl
+    } else {
+      resolvedUrl = '/media/' + resolvedUrl
+    }
+  }
+  return resolvedUrl
 }
 
 interface Message {
