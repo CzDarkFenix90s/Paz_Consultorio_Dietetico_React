@@ -1,6 +1,6 @@
-// src/presentation/pages/patient/PatientPlanDetailPage.tsx
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAuthStore } from '../../store/useAuthStore'
 import { API_CONFIG } from '../../../infrastructure/config/api.config'
 import { 
   ArrowLeft, 
@@ -75,6 +75,7 @@ function formatDate(dateValue: string) {
 export default function PatientPlanDetailPage() {
   const navigate = useNavigate()
   const params = useParams()
+  const { user } = useAuthStore()
   const planId = params.id ?? ''
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
@@ -117,10 +118,11 @@ export default function PatientPlanDetailPage() {
     try {
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/`, { headers })
+      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/?page_size=200`, { headers })
       if (response.ok) {
         const data = await response.json()
-        const patientObj = data.results ? data.results[0] : data[0]
+        const results = Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []
+        const patientObj = results.find((p: any) => p.user_id === user?.id) || results[0]
         setPacienteData(patientObj)
       }
     } catch (error) {
@@ -129,8 +131,10 @@ export default function PatientPlanDetailPage() {
   }
 
   useEffect(() => {
-    loadPatientProfile()
-  }, [])
+    if (user?.id) {
+      loadPatientProfile()
+    }
+  }, [user])
 
   const handleSelectPlan = async () => {
     if (!pacienteData || !plan) return

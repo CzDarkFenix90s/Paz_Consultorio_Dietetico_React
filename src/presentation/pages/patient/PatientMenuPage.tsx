@@ -117,10 +117,11 @@ export default function PatientMenuPage() {
     try {
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/`, { headers })
+      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/?page_size=200`, { headers })
       if (response.ok) {
         const data = await response.json()
-        const patientObj = data.results ? data.results[0] : data[0]
+        const results = Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []
+        const patientObj = results.find((p: any) => p.user_id === user?.id) || results[0]
         if (patientObj) {
           setPacienteData(patientObj)
           setFichaFormData(prev => ({
