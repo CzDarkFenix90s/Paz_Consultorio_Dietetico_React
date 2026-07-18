@@ -18,7 +18,7 @@ const getMediaUrl = (path: string) => {
 }
 
 // Custom Video Player that falls back gracefully to a poster image if not found on the backend
-function VideoWithFallback({ src, poster, className }: { src: string; poster: string; className?: string }) {
+function VideoWithFallback({ src, poster, className, style }: { src: string; poster: string; className?: string; style?: React.CSSProperties }) {
   const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
@@ -31,6 +31,7 @@ function VideoWithFallback({ src, poster, className }: { src: string; poster: st
         src={poster} 
         alt="Visual" 
         className={`${className} object-cover`}
+        style={style}
       />
     )
   }
@@ -48,80 +49,103 @@ function VideoWithFallback({ src, poster, className }: { src: string; poster: st
         setHasError(true)
       }}
       className={`${className} object-cover`}
+      style={style}
     />
   )
 }
 
-function FadeInProjectSection({ number, title, subtitle, videoName, posterSrc }: any) {
-  const [isVisible, setIsVisible] = useState(false)
-  const domRef = useRef<HTMLDivElement>(null)
+function ScrollRevealVideo({ number, title, subtitle, videoName, posterSrc }: any) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsVisible(entry.isIntersecting)
-        })
-      },
-      { threshold: 0.15 }
-    )
-    if (domRef.current) {
-      observer.observe(domRef.current)
+    const handleScroll = () => {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const windowHeight = window.innerHeight
+      
+      // Calculate where the element is relative to the viewport
+      const entryPoint = windowHeight
+      const exitPoint = -rect.height
+      const totalDistance = entryPoint - exitPoint
+      const currentDistance = windowHeight - rect.top
+      
+      let progress = currentDistance / totalDistance
+      progress = Math.max(0, Math.min(1, progress)) // clamp between 0 and 1
+      setScrollProgress(progress)
     }
-    return () => {
-      if (domRef.current) {
-        observer.unobserve(domRef.current)
-      }
-    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // Initial calculation
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Calculate dynamic scale and parallax offset based on screen centering
+  const distanceFromCenter = Math.abs(scrollProgress - 0.5) // 0 when centered, 0.5 when at edge
+  const cardScale = Math.max(0.88, 1 - distanceFromCenter * 0.24) // smoothly scales between 0.88 and 1.00
+  const videoParallax = (scrollProgress - 0.5) * -70 // subtle 3D vertical depth translation
 
   const videoUrl = getMediaUrl(`videos/${videoName}`)
 
   return (
     <div 
-      ref={domRef}
-      className={`transition-all duration-[1200ms] ease-out transform ${
-        isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-24 scale-[0.97]'
-      } flex flex-col md:flex-row items-center gap-8 border-b border-emerald-500/10 py-20`}
+      ref={containerRef}
+      className="w-full border-b border-emerald-500/10 py-16 flex flex-col items-center overflow-hidden"
     >
-      {/* Left Index */}
-      <div className="hidden md:block w-16 text-left text-sm font-extrabold text-emerald-400 tracking-wider">
-        {number}
-      </div>
-
-      {/* Widescreen Video Card Container */}
-      <div className="flex-1 relative aspect-[21/9] w-full overflow-hidden rounded-3xl border border-white/5 bg-slate-900/40 group">
-        <VideoWithFallback 
-          src={videoUrl}
-          poster={posterSrc}
-          className="w-full h-full opacity-60 group-hover:opacity-85 transition-opacity duration-700 ease-out"
-        />
+      <div className="max-w-7xl w-full px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-8">
         
-        {/* Overlay Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent flex flex-col justify-between p-8">
-          <div className="text-[10px] font-bold text-emerald-400 tracking-[0.25em] uppercase">
-            {subtitle}
+        {/* Left Index */}
+        <div className="hidden md:block w-16 text-left text-sm font-extrabold text-emerald-400 tracking-wider">
+          {number}
+        </div>
+
+        {/* Widescreen Video Card Container with Smooth Scale-on-Scroll */}
+        <div 
+          style={{ 
+            transform: `scale(${cardScale})`,
+            transition: 'transform 0.1s ease-out'
+          }}
+          className="flex-1 relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950 shadow-2xl origin-center"
+        >
+          <div className="w-full h-full overflow-hidden relative">
+            <VideoWithFallback 
+              src={videoUrl}
+              poster={posterSrc}
+              className="w-full h-full absolute inset-0 scale-110"
+              style={{
+                transform: `scale(1.15) translateY(${videoParallax}px)`,
+                transition: 'transform 0.1s ease-out'
+              }}
+            />
           </div>
           
-          <div className="space-y-1">
-            <h3 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight uppercase leading-none">
-              {title}
-            </h3>
-            <p className="text-[10px] text-teal-300 tracking-wider uppercase font-medium">
-              NutriTec Consultorio Inteligente
-            </p>
+          {/* Overlay Gradients */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent flex flex-col justify-between p-8 pointer-events-none">
+            <div className="text-[10px] font-bold text-emerald-400 tracking-[0.25em] uppercase">
+              {subtitle}
+            </div>
+            
+            <div className="space-y-1">
+              <h3 className="text-2xl md:text-5xl font-black text-white tracking-tight uppercase leading-none">
+                {title}
+              </h3>
+              <p className="text-[10px] text-teal-300 tracking-wider uppercase font-medium">
+                NutriTec Consultorio Inteligente
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Right Action Button */}
-      <div className="w-24 text-right">
-        <Link 
-          to="/register"
-          className="inline-block rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs tracking-wider px-6 py-3 transition shadow-lg shadow-emerald-500/15 uppercase"
-        >
-          Ver
-        </Link>
+        {/* Right Action Button */}
+        <div className="w-24 text-right">
+          <Link 
+            to="/register"
+            className="inline-block rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs tracking-wider px-6 py-3 transition shadow-lg shadow-emerald-500/15 uppercase"
+          >
+            Ver
+          </Link>
+        </div>
+
       </div>
     </div>
   )
@@ -274,23 +298,23 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Fade-in widescreen video items with IntersectionObserver */}
-          <div className="space-y-6">
-            <FadeInProjectSection 
+          {/* Scale-on-scroll and parallax video items */}
+          <div className="space-y-4">
+            <ScrollRevealVideo 
               number="01"
               title="DIETAS MOLECULARES"
               subtitle="Cálculo analítico de macronutrientes"
               videoName="service_diet.mp4"
               posterSrc="/assets/service_diet.png"
             />
-            <FadeInProjectSection 
+            <ScrollRevealVideo 
               number="02"
               title="EVOLUCIÓN ANTROPOMÉTRICA"
               subtitle="Control diario y composición corporal"
               videoName="service_progress.mp4"
               posterSrc="/assets/service_gym.png"
             />
-            <FadeInProjectSection 
+            <ScrollRevealVideo 
               number="03"
               title="RECETARIO INDUSTRIAL"
               subtitle="Instrucciones en video y porciones exactas"
