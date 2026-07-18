@@ -17,16 +17,24 @@ import {
   LogOut,
   Flame,
   Camera,
-  ChefHat
+  ChefHat,
+  Sun,
+  Moon
 } from 'lucide-react'
 
 const meals = [
   {
     title: 'Almuerzo: Pechuga a la plancha con quinua',
-    time: '13:30 PM',
-    calories: '550 kcal',
-    icon: UtensilsCrossed,
+    time: '13:00 PM',
+    calories: '450 kcal',
+    icon: UtensilsCrossed
   },
+  {
+    title: 'Media Tarde: Frutos secos y manzana verde',
+    time: '16:30 PM',
+    calories: '180 kcal',
+    icon: ChefHat
+  }
 ]
 
 const bottomNav = [
@@ -61,6 +69,34 @@ export default function PatientMenuPage() {
 
   const [userProfileData, setUserProfileData] = useState<any | null>(null)
 
+  // Theme state switcher
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
+
+  const toggleTheme = () => {
+    const newDark = !isDark
+    setIsDark(newDark)
+    if (newDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
+  // Load theme state on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    const hasDarkClass = document.documentElement.classList.contains('dark')
+    if (savedTheme === 'dark' && !hasDarkClass) {
+      document.documentElement.classList.add('dark')
+      setIsDark(true)
+    } else if (savedTheme === 'light' && hasDarkClass) {
+      document.documentElement.classList.remove('dark')
+      setIsDark(false)
+    }
+  }, [])
+
   const loadUserProfile = async () => {
     try {
       const token = localStorage.getItem('dietetic_access_token')
@@ -68,107 +104,59 @@ export default function PatientMenuPage() {
       const response = await fetch(`${API_CONFIG.BASE_URL}/profiles/`, { headers })
       if (response.ok) {
         const data = await response.json()
-        const results = data.results || data
-        if (Array.isArray(results) && results.length > 0) {
-          setUserProfileData(results[0])
-        }
+        const userProf = data.results ? data.results[0] : data[0]
+        setUserProfileData(userProf)
       }
-    } catch (err) {
-      console.error('Error loading user profile:', err)
+    } catch (error) {
+      console.error('Error loading user profile:', error)
     }
-  }
-
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !userProfileData) return
-
-    // Limit file size to 2MB
-    if (file.size > 2 * 1024 * 1024) {
-      alert('La imagen no debe superar los 2MB.')
-      return
-    }
-
-    try {
-      const token = localStorage.getItem('dietetic_access_token')
-      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      
-      const formData = new FormData()
-      formData.append('avatar', file)
-
-      const response = await fetch(`${API_CONFIG.BASE_URL}/profiles/${userProfileData.id}/`, {
-        method: 'PATCH',
-        headers,
-        body: formData
-      })
-
-      if (response.ok) {
-        alert('Foto de perfil actualizada con éxito.')
-        loadUserProfile()
-      } else {
-        const errDetails = await response.json()
-        alert('Error al actualizar la foto de perfil: ' + JSON.stringify(errDetails))
-      }
-    } catch (err) {
-      console.error('Error uploading avatar:', err)
-      alert('Error de conexión al subir la imagen.')
-    }
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
   }
 
   const loadPatientProfile = async () => {
     try {
-      setLoadingProfile(true)
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      
-      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/?page_size=100`, { headers })
+      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/`, { headers })
       if (response.ok) {
         const data = await response.json()
-        const results = data.results || data
-        const myPatient = (results || []).find((p: any) => p.user_id === user?.id)
-        if (myPatient) {
-          setPacienteData(myPatient)
+        const patientObj = data.results ? data.results[0] : data[0]
+        if (patientObj) {
+          setPacienteData(patientObj)
           setFichaFormData(prev => ({
             ...prev,
-            age: myPatient.age ? String(myPatient.age) : '',
-            current_weight: myPatient.current_weight ? String(myPatient.current_weight) : '',
-            height_cm: myPatient.height_cm ? String(Number(myPatient.height_cm) > 3 ? Number(myPatient.height_cm) / 100 : myPatient.height_cm).replace('.', ',') : '',
-            goal: myPatient.goal || '',
-            dietary_restrictions: myPatient.dietary_restrictions || ''
+            age: patientObj.age ? patientObj.age.toString() : '',
+            current_weight: patientObj.current_weight ? patientObj.current_weight.toString() : '',
+            height_cm: patientObj.height_cm ? patientObj.height_cm.toString() : '',
+            goal: patientObj.goal || '',
+            dietary_restrictions: patientObj.dietary_restrictions || ''
           }))
-          loadWaterLog(myPatient.id)
+          loadWaterLog(patientObj.id)
         }
       }
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      console.error('Error loading patient data:', error)
     } finally {
       setLoadingProfile(false)
     }
   }
 
-  const loadWaterLog = async (pacienteId: number) => {
+  const loadWaterLog = async (patientId: number) => {
     try {
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      
       const response = await fetch(`${API_CONFIG.BASE_URL}/registros-agua/?page_size=100`, { headers })
       if (response.ok) {
         const data = await response.json()
         const results = data.results || data
         const todayStr = new Date().toISOString().split('T')[0]
-        
-        const totalMl = (results || [])
-          .filter((reg: any) => reg.paciente === pacienteId && reg.fecha === todayStr)
-          .reduce((sum: number, reg: any) => sum + (reg.cantidad_ml || 0), 0)
-        
-        setWaterLogToday(totalMl)
+        const todayLog = (results || []).filter(
+          (log: any) => (log.paciente === patientId || log.paciente_id === patientId) && log.fecha === todayStr
+        )
+        const totalWater = todayLog.reduce((sum: number, log: any) => sum + parseFloat(log.cantidad_ml || 0), 0)
+        setWaterLogToday(totalWater)
       }
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      console.error('Error loading water log:', error)
     }
   }
 
@@ -176,65 +164,43 @@ export default function PatientMenuPage() {
     if (!pacienteData) return
     try {
       const token = localStorage.getItem('dietetic_access_token')
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      }
+      const headers: HeadersInit = token ? {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } : { 'Content-Type': 'application/json' }
+      
       const todayStr = new Date().toISOString().split('T')[0]
-
       const response = await fetch(`${API_CONFIG.BASE_URL}/registros-agua/`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
           paciente: pacienteData.id,
-          fecha: todayStr,
-          cantidad_ml: 250
+          cantidad_ml: 250.0,
+          fecha: todayStr
         })
       })
-
       if (response.ok) {
         setWaterLogToday(prev => prev + 250)
       }
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      console.error('Error logging water intake:', error)
     }
   }
 
   const handleSaveFicha = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!pacienteData) {
-      alert('No se pudo encontrar tu perfil de paciente.')
-      return
-    }
-
-    const cleanHeight = (val: string) => {
-      if (!val) return 0
-      const cleaned = parseFloat(val.replace(',', '.'))
-      if (isNaN(cleaned)) return 0
-      // If they entered height in meters (e.g. 1.59 or 1.8), convert to centimeters (159 or 180)
-      if (cleaned < 3) {
-        return Math.round(cleaned * 100)
-      }
-      return cleaned
-    }
-
-    const cleanWeight = (val: string) => {
-      if (!val) return 0
-      const cleaned = parseFloat(val.replace(',', '.'))
-      return isNaN(cleaned) ? 0 : cleaned
-    }
-
+    if (!pacienteData) return
     try {
       const token = localStorage.getItem('dietetic_access_token')
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      }
+      const headers: HeadersInit = token ? {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } : { 'Content-Type': 'application/json' }
 
-      const parsedHeight = cleanHeight(fichaFormData.height_cm)
-      const parsedWeight = cleanWeight(fichaFormData.current_weight)
+      const parsedWeight = parseFloat(fichaFormData.current_weight.replace(',', '.'))
+      const parsedHeight = parseFloat(fichaFormData.height_cm.replace(',', '.'))
 
-      // 1. Update Paciente Profile
+      // 1. Update patient model (weight & height)
       const patchResponse = await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
         method: 'PATCH',
         headers,
@@ -267,9 +233,8 @@ export default function PatientMenuPage() {
         console.error('Error finding active goal:', err)
       }
 
-      let objResponse
       if (existingActiveGoal) {
-        objResponse = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/${existingActiveGoal.id}/`, {
+        await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/${existingActiveGoal.id}/`, {
           method: 'PATCH',
           headers,
           body: JSON.stringify({
@@ -278,44 +243,38 @@ export default function PatientMenuPage() {
           })
         })
       } else {
-        objResponse = await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
+        await fetch(`${API_CONFIG.BASE_URL}/objetivos-paciente/`, {
           method: 'POST',
           headers,
           body: JSON.stringify({
             paciente: pacienteData.id,
             objetivo: fichaFormData.objetivo_choice,
-            fecha_inicio: new Date().toISOString().split('T')[0],
             fecha_meta: fichaFormData.fecha_meta || null,
             estado: 'EN_PROGRESO'
           })
         })
       }
 
-      if (!objResponse.ok) {
-        const errorData = await objResponse.json()
-        throw new Error('Error en Objetivo de Paciente: ' + JSON.stringify(errorData))
-      }
-
-      // 3. Create or Update SintomaDiario (optional failure tolerance)
+      // 3. Log daily symptoms entry (SintomaDiario)
       try {
-        const todayStr = new Date().toISOString().split('T')[0]
         const sintListRes = await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/?page_size=100`, { headers })
+        const todayStr = new Date().toISOString().split('T')[0]
         let existingSintoma: any = null
         if (sintListRes.ok) {
-          const sintListData = await sintListRes.json()
-          const results = sintListData.results || sintListData
-          existingSintoma = (results || []).find(
-            (s: any) => (s.paciente === pacienteData.id || s.paciente_id === pacienteData.id) && s.fecha === todayStr
-          )
+          const listData = await sintListRes.ok ? await sintListRes.json() : []
+          const list = listData.results || listData
+          existingSintoma = (list || []).find((s: any) => s.fecha === todayStr)
         }
 
         if (existingSintoma) {
           await fetch(`${API_CONFIG.BASE_URL}/sintomas-diarios/${existingSintoma.id}/`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers,
             body: JSON.stringify({
+              paciente: pacienteData.id,
               sintoma: fichaFormData.sintoma_choice,
-              notas: fichaFormData.sintoma_notas || 'Auto-registro actualizado'
+              fecha: todayStr,
+              notas: fichaFormData.sintoma_notas
             })
           })
         } else {
@@ -324,29 +283,56 @@ export default function PatientMenuPage() {
             headers,
             body: JSON.stringify({
               paciente: pacienteData.id,
-              fecha: todayStr,
               sintoma: fichaFormData.sintoma_choice,
-              notas: fichaFormData.sintoma_notas || 'Auto-registro inicial'
+              fecha: todayStr,
+              notas: fichaFormData.sintoma_notas
             })
           })
         }
-      } catch (sintErr) {
-        console.warn('Error reporting daily symptom:', sintErr)
+      } catch (err) {
+        console.error('Symptoms logging encountered a silent error:', err)
       }
 
-      alert('¡Información médica guardada con éxito!')
+      alert('Ficha diaria registrada de manera exitosa.')
       loadPatientProfile()
-    } catch (err: any) {
-      console.error(err)
-      alert(err.message || 'Error al guardar la información')
+    } catch (error) {
+      console.error('Error saving patient profile checklist:', error)
+      alert('Error guardando perfil: ' + error)
+    }
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0 || !userProfileData) return
+    const file = e.target.files[0]
+    const formData = new FormData()
+    formData.append('avatar', file)
+
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const response = await fetch(`${API_CONFIG.BASE_URL}/profiles/${userProfileData.id}/`, {
+        method: 'PATCH',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        body: formData
+      })
+      if (response.ok) {
+        loadUserProfile()
+        alert('Foto de perfil actualizada.')
+      } else {
+        alert('Error al subir la imagen. Verifica el formato.')
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error)
     }
   }
 
   useEffect(() => {
-    if (user?.id) {
-      loadPatientProfile()
-      loadUserProfile()
-    }
+    loadUserProfile()
+    loadPatientProfile()
   }, [user])
 
   const initialLetter = user?.username?.[0]?.toUpperCase() || 'P'
@@ -384,7 +370,7 @@ export default function PatientMenuPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f3f4f6] text-slate-900 pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950">
+    <main className="min-h-screen bg-bg-main text-text-main pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950 transition-colors duration-300">
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(15px); }
@@ -403,30 +389,39 @@ export default function PatientMenuPage() {
         }
       `}</style>
 
-      {/* Floating white Navbar */}
-      <header className="sticky top-0 z-30 px-4 py-4 bg-[#f3f4f6]/60 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-full bg-white px-6 shadow-sm border border-slate-100">
+      {/* Floating white/dark Navbar */}
+      <header className="sticky top-0 z-30 px-4 py-4 bg-header-bg backdrop-blur-md transition-colors duration-300">
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-full bg-card-bg px-6 shadow-sm border border-card-border transition-all duration-300">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-700 transition hover:bg-slate-100"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-slate-900 tracking-widest uppercase">
+          <div className="flex items-center gap-2 text-xl font-black text-text-main tracking-widest uppercase transition-colors duration-300">
             Nutri<span className="text-emerald-500">Tec</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-600">
+          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
             <button onClick={() => navigate('/patient/menu')} className="text-emerald-500 font-bold transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="hover:text-slate-900 transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="hover:text-slate-900 transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="hover:text-slate-900 transition">Chat</button>
+            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="hover:text-emerald-500 transition">Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={toggleTheme}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              title="Alternar modo claro/oscuro"
+            >
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+            </button>
+
+            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10">
               <Bell className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">1</span>
             </button>
@@ -519,23 +514,22 @@ export default function PatientMenuPage() {
       {/* Main Container */}
       <div className="mx-auto max-w-[1600px] px-4 pt-6 space-y-8">
         
-        {/* Rivian Hero Split Section */}
-        <section className="grid gap-6 lg:grid-cols-12 items-stretch">
-          
-          {/* Left Column: Heading and Brand Image */}
-          <div className="lg:col-span-7 flex flex-col justify-between rounded-3xl bg-white p-6 sm:p-8 shadow-sm border border-slate-100/80 min-h-[400px]">
+        {/* Welcome Section & Quick log */}
+        <section className="grid gap-6 lg:grid-cols-12 items-stretch animate-fade-in">
+          {/* Left Column: Welcome box */}
+          <div className="lg:col-span-7 rounded-3xl bg-card-bg border border-card-border p-6 sm:p-8 shadow-sm flex flex-col justify-between h-full transition-all duration-300">
             <div className="space-y-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">NutriTec Dashboard</span>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+              <span className="text-[10px] font-bold tracking-[0.2em] text-emerald-500 uppercase">NutriTec Dashboard</span>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-text-main leading-tight uppercase">
                 Listo para tu <br />
                 <span className="text-emerald-500">transformación de salud</span>
               </h1>
-              <p className="max-w-md text-sm text-slate-500 leading-relaxed font-semibold">
-                Bienvenido de vuelta, <span className="text-slate-800 font-extrabold">{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
+              <p className="max-w-md text-sm text-slate-400 leading-relaxed font-semibold">
+                Bienvenido de vuelta, <span className="text-text-main font-extrabold">{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
               </p>
             </div>
 
-            <div className="mt-6 w-full h-56 relative rounded-2xl overflow-hidden border border-slate-100 shadow-sm animate-float bg-slate-50 shrink-0">
+            <div className="mt-6 w-full h-56 relative rounded-2xl overflow-hidden border border-card-border shadow-sm animate-float bg-input-bg shrink-0 transition-all duration-300">
               <img 
                 src="/assets/patient_banner.png" 
                 alt="Dashboard Banner" 
@@ -548,7 +542,7 @@ export default function PatientMenuPage() {
           </div>
 
           {/* Right Column: Keep up with NutriTec (Symptom Log Form) */}
-          <div className="lg:col-span-5 rounded-3xl bg-[#0c0d0e] p-6 sm:p-8 text-white shadow-xl flex flex-col justify-between">
+          <div className="lg:col-span-5 rounded-3xl bg-card-bg border border-card-border p-6 sm:p-8 text-text-main shadow-xl flex flex-col justify-between transition-all duration-300">
             <div className="space-y-2">
               <h2 className="text-2xl font-black tracking-tight">Mi Estado de Hoy</h2>
               <p className="text-xs text-slate-400 font-semibold leading-relaxed">
@@ -566,7 +560,7 @@ export default function PatientMenuPage() {
                       required
                       value={fichaFormData.age}
                       onChange={e => setFichaFormData(prev => ({ ...prev, age: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
                     />
                   </label>
                   <label className="block">
@@ -577,7 +571,7 @@ export default function PatientMenuPage() {
                       required
                       value={fichaFormData.current_weight}
                       onChange={e => setFichaFormData(prev => ({ ...prev, current_weight: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
                     />
                   </label>
                   <label className="block">
@@ -588,7 +582,7 @@ export default function PatientMenuPage() {
                       required
                       value={fichaFormData.height_cm}
                       onChange={e => setFichaFormData(prev => ({ ...prev, height_cm: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
                     />
                   </label>
                 </div>
@@ -599,7 +593,7 @@ export default function PatientMenuPage() {
                     <select 
                       value={fichaFormData.sintoma_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#0c0d0e] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
                     >
                       <option value="EXCELENTE">Excelente</option>
                       <option value="BUENA_ENERGIA">Buena energía</option>
@@ -617,7 +611,7 @@ export default function PatientMenuPage() {
                     <select 
                       value={fichaFormData.objetivo_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, objetivo_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#0c0d0e] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
                     >
                       <option value="BAJAR_PESO">Bajar peso</option>
                       <option value="GANAR_MASA">Ganar masa muscular</option>
@@ -636,14 +630,14 @@ export default function PatientMenuPage() {
                     placeholder="Ej: Siento algo de cansancio por la tarde..."
                     value={fichaFormData.sintoma_notas}
                     onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_notas: e.target.value }))}
-                    className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-2.5 text-xs text-white outline-none focus:border-emerald-500"
+                    className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
                   />
                 </label>
               </div>
 
               <button 
                 type="submit"
-                className="mt-6 w-full rounded-full bg-white text-slate-950 hover:bg-slate-100 font-extrabold text-xs uppercase tracking-widest py-3.5 transition"
+                className="mt-6 w-full rounded-full bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-extrabold text-xs uppercase tracking-widest py-3.5 transition shadow-lg shadow-emerald-500/10"
               >
                 Registrar Estado
               </button>
@@ -653,10 +647,10 @@ export default function PatientMenuPage() {
 
         {/* Warning Banner if profile not complete */}
         {pacienteData && (!pacienteData.current_weight || !pacienteData.height_cm) && (
-          <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-amber-900">
+          <section className="rounded-2xl border border-amber-200/20 bg-amber-500/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-amber-300">
             <div>
               <p className="font-bold text-base">⚠️ Ficha médica incompleta</p>
-              <p className="text-sm text-amber-700 mt-1">Por favor completa tu peso y altura en el panel derecho para poder calcular tu IMC y habilitar tu plan.</p>
+              <p className="text-sm text-slate-400 mt-1">Por favor completa tu peso y altura en el panel derecho para poder calcular tu IMC y habilitar tu plan.</p>
             </div>
           </section>
         )}
@@ -665,8 +659,8 @@ export default function PatientMenuPage() {
         <section className="grid gap-6 md:grid-cols-3">
           
           {/* Card 1: Hidratación */}
-          <article className="overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col justify-between group h-[340px]">
-            <div className="relative h-44 overflow-hidden bg-slate-100">
+          <article className="overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300">
+            <div className="relative h-44 overflow-hidden bg-slate-800">
               <img 
                 src="https://images.unsplash.com/photo-1548839130-3fd96cd5cc4e?w=600&auto=format&fit=crop&q=80" 
                 alt="Hidratación" 
@@ -679,13 +673,13 @@ export default function PatientMenuPage() {
 
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-base font-extrabold text-slate-800">Seguimiento de Hidratación</h3>
-                <p className="text-xs text-slate-500 mt-0.5 font-semibold">Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
+                <h3 className="text-base font-extrabold text-text-main">Seguimiento de Hidratación</h3>
+                <p className="text-xs text-slate-400 mt-0.5 font-semibold">Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
               </div>
 
               <button 
                 onClick={handleAddWater}
-                className="w-full rounded-full border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-xs py-2.5 transition"
+                className="w-full rounded-full border border-sky-500/20 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-bold text-xs py-2.5 transition"
               >
                 + Registrar 250ml
               </button>
@@ -695,9 +689,9 @@ export default function PatientMenuPage() {
           {/* Card 2: Recetas */}
           <article 
             onClick={() => navigate('/patient/recipes')}
-            className="cursor-pointer overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col justify-between group h-[340px]"
+            className="cursor-pointer overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300"
           >
-            <div className="relative h-44 overflow-hidden bg-slate-100">
+            <div className="relative h-44 overflow-hidden bg-slate-850">
               <img 
                 src="/assets/recipe_banner.png" 
                 alt="Recetas" 
@@ -710,11 +704,11 @@ export default function PatientMenuPage() {
 
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-base font-extrabold text-slate-800">Recetas del Plan</h3>
-                <p className="text-xs text-slate-500 mt-0.5 font-semibold">Explora las comidas saludables diseñadas para tu plan de dieta.</p>
+                <h3 className="text-base font-extrabold text-text-main">Recetas del Plan</h3>
+                <p className="text-xs text-slate-400 mt-0.5 font-semibold">Explora las comidas saludables diseñadas para tu plan de dieta.</p>
               </div>
 
-              <div className="w-full flex items-center justify-between text-xs font-bold text-emerald-600 group-hover:underline">
+              <div className="w-full flex items-center justify-between text-xs font-bold text-emerald-500 group-hover:underline">
                 <span>Ver catálogo de recetas</span>
                 <ChevronRight className="h-4 w-4" />
               </div>
@@ -722,14 +716,14 @@ export default function PatientMenuPage() {
           </article>
 
           {/* Card 3: Progreso */}
-          <article className="overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col justify-between group h-[340px]">
-            <div className="relative h-44 overflow-hidden bg-slate-100">
+          <article className="overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300">
+            <div className="relative h-44 overflow-hidden bg-slate-850">
               <img 
                 src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=80" 
                 alt="Progreso" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute top-4 right-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 font-extrabold text-[10px] px-3 py-1 uppercase tracking-wider">
+              <div className="absolute top-4 right-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 font-extrabold text-[10px] px-3 py-1 uppercase tracking-wider">
                 IMC {calculateIMC()}
               </div>
             </div>
@@ -738,15 +732,15 @@ export default function PatientMenuPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase block">Peso Actual</span>
-                  <span className="text-lg font-black text-slate-800">{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
+                  <span className="text-lg font-black text-text-main">{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
                 </div>
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase block">Estatura</span>
-                  <span className="text-lg font-black text-slate-800">{formatHeight(pacienteData?.height_cm)} m</span>
+                  <span className="text-lg font-black text-text-main">{formatHeight(pacienteData?.height_cm)} m</span>
                 </div>
               </div>
 
-              <span className="text-[10px] font-bold text-emerald-600 block leading-relaxed truncate">
+              <span className="text-[10px] font-bold text-emerald-500 block leading-relaxed truncate">
                 Meta: {pacienteData?.goal ? pacienteData.goal : 'Sin registrar'}
               </span>
             </div>
@@ -755,28 +749,28 @@ export default function PatientMenuPage() {
         </section>
 
         {/* Historial Antropométrico */}
-        <section className="rounded-3xl bg-white border border-slate-100 p-6 sm:p-8 shadow-sm space-y-4">
+        <section className="rounded-3xl bg-card-bg border border-card-border p-6 sm:p-8 shadow-sm space-y-4 transition-all duration-300">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-extrabold text-slate-900">Historial de Progreso Corporal</h3>
+            <h3 className="text-lg font-extrabold text-text-main">Historial de Progreso Corporal</h3>
             <span className="text-xs font-semibold text-slate-400">Total de controles: {pacienteData?.seguimientos?.length || 0}</span>
           </div>
-          <div className="overflow-x-auto rounded-2xl border border-slate-100">
+          <div className="overflow-x-auto rounded-2xl border border-card-border">
             <table className="min-w-full text-xs text-left">
-              <thead className="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-100">
+              <thead className="bg-input-bg text-slate-450 uppercase font-bold border-b border-card-border">
                 <tr>
-                  <th className="px-4 py-3.5">Fecha</th>
-                  <th className="px-4 py-3.5">Peso</th>
-                  <th className="px-4 py-3.5">Cintura</th>
-                  <th className="px-4 py-3.5">Nota del Nutricionista</th>
+                  <th className="px-4 py-3.5 text-slate-400">Fecha</th>
+                  <th className="px-4 py-3.5 text-slate-400">Peso</th>
+                  <th className="px-4 py-3.5 text-slate-400">Cintura</th>
+                  <th className="px-4 py-3.5 text-slate-400">Nota del Nutricionista</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white text-slate-600 font-semibold">
+              <tbody className="divide-y divide-card-border bg-card-bg text-slate-400 font-semibold">
                 {(pacienteData?.seguimientos || []).map((ev: any) => (
-                  <tr key={ev.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={ev.id} className="hover:bg-slate-500/5 transition-colors">
                     <td className="px-4 py-3.5">{new Date(ev.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3.5 font-bold text-slate-900">{ev.weight_kg} kg</td>
+                    <td className="px-4 py-3.5 font-bold text-text-main">{ev.weight_kg} kg</td>
                     <td className="px-4 py-3.5">{ev.waist_cm ? `${ev.waist_cm} cm` : 'N/D'}</td>
-                    <td className="px-4 py-3.5 text-slate-500">{ev.notes || 'Control de rutina'}</td>
+                    <td className="px-4 py-3.5 text-slate-400">{ev.notes || 'Control de rutina'}</td>
                   </tr>
                 ))}
                 {(!pacienteData?.seguimientos || pacienteData.seguimientos.length === 0) && (
@@ -793,16 +787,16 @@ export default function PatientMenuPage() {
         <section className="grid gap-6 md:grid-cols-2">
           
           {/* Next Meal */}
-          <article className="rounded-3xl bg-white border border-slate-100 p-6 shadow-sm space-y-4">
+          <article className="rounded-3xl bg-card-bg border border-card-border p-6 shadow-sm space-y-4 transition-all duration-300">
             <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-400">Siguiente Comida del Plan</h2>
             
             {meals.map((item) => (
-              <div key={item.title} className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 border border-slate-100/50">
+              <div key={item.title} className="flex items-center gap-4 rounded-2xl bg-input-bg p-4 border border-card-border transition-all duration-300">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
                   <item.icon className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-bold text-slate-800">{item.title}</h3>
+                  <h3 className="truncate text-sm font-bold text-text-main">{item.title}</h3>
                   <div className="mt-1 flex items-center gap-3 text-xs font-semibold text-slate-400">
                     <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-emerald-500" /> {item.time}</span>
                     <span className="flex items-center gap-1"><Flame className="h-3.5 w-3.5 text-orange-500" /> {item.calories}</span>
@@ -814,7 +808,7 @@ export default function PatientMenuPage() {
           </article>
 
           {/* Consultation Alerts */}
-          <article className="rounded-3xl bg-white border border-slate-100 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+          <article className="rounded-3xl bg-card-bg border border-card-border p-6 shadow-sm space-y-4 flex flex-col justify-between transition-all duration-300">
             <div>
               <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-400">Cita Programada</h2>
               <div className="mt-4 flex items-center gap-4">
@@ -822,7 +816,7 @@ export default function PatientMenuPage() {
                   <CalendarCheck2 className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-800">Lunes, 24 de Julio</h3>
+                  <h3 className="text-base font-extrabold text-text-main">Lunes, 24 de Julio</h3>
                   <p className="text-xs text-slate-400 mt-0.5">10:00 AM - Dra. Maria Cosio</p>
                 </div>
               </div>
@@ -830,7 +824,7 @@ export default function PatientMenuPage() {
             
             <button 
               onClick={() => navigate('/patient/chat')}
-              className="w-full flex items-center justify-center gap-2 rounded-full bg-slate-950 hover:bg-slate-800 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white transition mt-4"
+              className="w-full flex items-center justify-center gap-2 rounded-full bg-text-main hover:bg-slate-500/15 hover:text-emerald-500 py-3.5 text-xs font-extrabold uppercase tracking-widest text-bg-main border border-card-border transition mt-4"
             >
               <MessageSquareText className="h-4 w-4" />
               Chatear con Nutricionista
@@ -842,7 +836,7 @@ export default function PatientMenuPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-slate-200/50 bg-white/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden">
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -857,7 +851,7 @@ export default function PatientMenuPage() {
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
                 active 
                   ? 'text-emerald-500 bg-emerald-500/5' 
-                  : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'
+                  : 'text-slate-400 hover:text-emerald-500 hover:bg-slate-500/5'
               }`}
             >
               <Icon className="h-5 w-5" />

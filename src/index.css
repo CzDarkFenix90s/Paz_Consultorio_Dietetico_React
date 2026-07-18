@@ -29,6 +29,38 @@
   --font-sans: "Outfit", sans-serif;
   --font-serif: "Playfair Display", serif;
   --font-mono: "Space Mono", monospace;
+
+  /* Theme color mapping variables */
+  --color-bg-main: var(--color-bg-main);
+  --color-text-main: var(--color-text-main);
+  --color-card-bg: var(--color-card-bg);
+  --color-card-border: var(--color-card-border);
+  --color-card-text: var(--color-card-text);
+  --color-header-bg: var(--color-header-bg);
+  --color-input-bg: var(--color-input-bg);
+  --color-input-border: var(--color-input-border);
+}
+
+:root {
+  --color-bg-main: #f3f4f6;
+  --color-text-main: #0f172a;
+  --color-card-bg: #ffffff;
+  --color-card-border: #f1f5f9;
+  --color-card-text: #1e293b;
+  --color-header-bg: rgba(243, 244, 246, 0.6);
+  --color-input-bg: #f8fafc;
+  --color-input-border: #cbd5e1;
+}
+
+:root.dark, html.dark {
+  --color-bg-main: #020617;
+  --color-text-main: #f8fafc;
+  --color-card-bg: #0b1329;
+  --color-card-border: rgba(255, 255, 255, 0.05);
+  --color-card-text: #f1f5f9;
+  --color-header-bg: rgba(2, 6, 23, 0.6);
+  --color-input-bg: #030712;
+  --color-input-border: rgba(255, 255, 255, 0.1);
 }
 
 @layer base {
