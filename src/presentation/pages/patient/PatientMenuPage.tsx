@@ -22,6 +22,18 @@ import {
   Moon
 } from 'lucide-react'
 
+// Profile Avatar secure URL resolution helper
+const getAvatarUrl = (url: string | null | undefined) => {
+  if (!url || url === 'null' || url === 'None' || url.endsWith('/None') || url.endsWith('/null') || url === '/media/') return null
+  if (url.includes('localhost:8000')) {
+    return url.replace('http://localhost:8000', '')
+  }
+  if (url.startsWith('http://')) {
+    return url.replace('http://', 'https://')
+  }
+  return url
+}
+
 const meals = [
   {
     title: 'Almuerzo: Pechuga a la plancha con quinua',
@@ -428,8 +440,8 @@ export default function PatientMenuPage() {
               <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">1</span>
             </button>
             <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-              {userProfileData?.avatar_url ? (
-                <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+              {getAvatarUrl(userProfileData?.avatar_url) ? (
+                <img src={getAvatarUrl(userProfileData?.avatar_url)!} alt="Profile" className="h-full w-full object-cover" />
               ) : (
                 initialLetter
               )}
@@ -460,10 +472,10 @@ export default function PatientMenuPage() {
                   htmlFor="avatar-upload-sidebar"
                   className="cursor-pointer block overflow-hidden relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)] hover:border-emerald-500/50 transition-colors"
                 >
-                  {userProfileData?.avatar_url ? (
-                    <img src={userProfileData.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+                  {getAvatarUrl(userProfileData?.avatar_url) ? (
+                    <img src={getAvatarUrl(userProfileData?.avatar_url)!} alt="Profile" className="h-full w-full object-cover" />
                   ) : (
-                    <UserCircle2 className="h-10 w-10" />
+                    <UserCircle2 className="h-10 w-10 text-slate-400" />
                   )}
                   <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center text-[10px] font-bold text-emerald-400 text-center px-1">
                     Cambiar Foto

@@ -23,7 +23,7 @@ import {
 
 // Profile Avatar secure URL resolution helper
 const getAvatarUrl = (url: string | null | undefined) => {
-  if (!url) return null
+  if (!url || url === 'null' || url === 'None' || url.endsWith('/None') || url.endsWith('/null') || url === '/media/') return null
   if (url.includes('localhost:8000')) {
     return url.replace('http://localhost:8000', '')
   }
@@ -98,6 +98,7 @@ export default function PatientPlanPage() {
   const [activePlan, setActivePlan] = useState<NutritionPlan | null>(null)
   const [foods, setFoods] = useState<any[]>([])
   const [userProfileData, setUserProfileData] = useState<any | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string>('')
 
   // Dark/Light Theme state toggle
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
@@ -151,20 +152,25 @@ export default function PatientPlanPage() {
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
       
       // 1. Fetch current subscriptions for patient
-      const subResponse = await fetch(`${API_CONFIG.BASE_URL}/suscripciones/`, { headers })
+      const subResponse = await fetch(`${API_CONFIG.BASE_URL}/suscripciones/?_t=${Date.now()}`, { headers })
+      let dbg = `GET /suscripciones/ status: ${subResponse.status}. `
       if (subResponse.ok) {
         const subData = await subResponse.json()
         const subs = Array.isArray(subData.results) ? subData.results : Array.isArray(subData) ? subData : []
+        dbg += `Returned ${subs.length} items. `
         const activeSub = subs.find((s: any) => s.estado === 'activo')
         
         if (activeSub && activeSub.plan) {
           const planId = activeSub.plan
+          dbg += `Active sub plan ID: ${planId}. `
           
           // 2. Fetch plan details and foods in parallel
           const [planResponse, foodsResponse] = await Promise.all([
             fetch(`${API_CONFIG.BASE_URL}/planes/${planId}/`, { headers }),
             fetch(`${API_CONFIG.BASE_URL}/planes/${planId}/alimentos/`, { headers })
           ])
+          
+          dbg += `planResponse: ${planResponse.status}, foodsResponse: ${foodsResponse.status}. `
           
           if (planResponse.ok) {
             const planDetails = await planResponse.json()
@@ -184,15 +190,22 @@ export default function PatientPlanPage() {
               const foodItems = Array.isArray(foodsData) ? foodsData : Array.isArray(foodsData.results) ? foodsData.results : []
               setFoods(foodItems)
             }
+            setDebugInfo('')
             return
           }
+        } else {
+          dbg += 'No active subscription (estado === "activo") found in results list. '
         }
+      } else {
+        dbg += `Error response body: ${await subResponse.text()}. `
       }
       
+      setDebugInfo(dbg)
       setActivePlan(null)
       setFoods([])
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading active diet plan:', error)
+      setDebugInfo(`JS Exception: ${error?.message || error}. `)
       setActivePlan(null)
       setFoods([])
     } finally {
@@ -376,6 +389,11 @@ export default function PatientPlanPage() {
                 Activar Plan Demo Offline
               </button>
             </div>
+            {debugInfo && (
+              <div className="text-[11px] font-mono text-rose-400 bg-rose-500/5 border border-rose-500/10 rounded-2xl p-4 max-w-lg mt-4 text-left leading-relaxed">
+                <strong>Debug Info:</strong> {debugInfo}
+              </div>
+            )}
           </section>
         ) : (
           <section className="rounded-[2.5rem] border border-card-border bg-card-bg p-6 sm:p-8 backdrop-blur-xl shadow-sm space-y-8 transition-all duration-300">

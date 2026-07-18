@@ -23,7 +23,7 @@ import {
 
 // Profile Avatar secure URL resolution helper
 const getAvatarUrl = (url: string | null | undefined) => {
-  if (!url) return null
+  if (!url || url === 'null' || url === 'None' || url.endsWith('/None') || url.endsWith('/null') || url === '/media/') return null
   if (url.includes('localhost:8000')) {
     return url.replace('http://localhost:8000', '')
   }
