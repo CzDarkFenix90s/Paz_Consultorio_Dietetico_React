@@ -11,7 +11,6 @@ import {
   MessageSquareText, 
   LogOut, 
   House, 
-  Camera,
   ArrowRight,
   CalendarDays,
   Target,
@@ -94,7 +93,6 @@ const bottomNav = [
   { label: 'Inicio', icon: House, active: false },
   { label: 'Mi Plan', icon: UtensilsCrossed, active: true },
   { label: 'Recetas', icon: ChefHat, active: false },
-  { label: 'Progreso', icon: Camera, active: false },
   { label: 'Chat', icon: MessageSquareText, active: false },
 ]
 
@@ -353,9 +351,6 @@ export default function PatientPlanPage() {
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
             <ChefHat className="h-5 w-5" /> Recetas
           </button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/photos') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
-            <Camera className="h-5 w-5" /> Seguimiento
-          </button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
             <MessageSquareText className="h-5 w-5" /> Soporte
           </button>
@@ -602,7 +597,7 @@ export default function PatientPlanPage() {
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
       <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
-        <div className="grid grid-cols-5 items-center">
+        <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
               key={label}
@@ -611,7 +606,6 @@ export default function PatientPlanPage() {
                 if (label === 'Inicio') navigate('/patient/menu')
                 if (label === 'Mi Plan') navigate('/patient/plan')
                 if (label === 'Recetas') navigate('/patient/recipes')
-                if (label === 'Progreso') navigate('/patient/photos')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${

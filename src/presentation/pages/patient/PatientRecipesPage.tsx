@@ -17,8 +17,7 @@ import {
   Moon,
   MessageSquareText,
   UtensilsCrossed,
-  House,
-  Camera
+  House
 } from 'lucide-react'
 
 // Profile Avatar secure URL resolution helper
@@ -563,12 +562,11 @@ export default function PatientRecipesPage() {
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
       <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5">
-        <div className="grid grid-cols-5 items-center">
+        <div className="grid grid-cols-4 items-center">
           {[
             { label: 'Inicio', icon: House, href: '/patient/menu', active: false },
             { label: 'Mi Plan', icon: UtensilsCrossed, href: '/patient/plan', active: false },
             { label: 'Recetas', icon: ChefHat, href: '/patient/recipes', active: true },
-            { label: 'Progreso', icon: Camera, href: '/patient/photos', active: false },
             { label: 'Chat', icon: MessageSquareText, href: '/patient/chat', active: false },
           ].map(({ label, icon: Icon, href, active }) => (
             <button
