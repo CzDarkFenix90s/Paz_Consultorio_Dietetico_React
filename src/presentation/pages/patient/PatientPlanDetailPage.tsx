@@ -60,11 +60,7 @@ const fallbackFoods: FoodItem[] = [
   { id: 2, name: 'Pechuga con ensalada', description: 'Almuerzo principal', meal_type: 'ALMUERZO', portion_grams: 350, sequence: 2, is_active: true },
 ]
 
-function formatPrice(value: string) {
-  const number = Number(value)
-  if (Number.isNaN(number)) return `S/ ${value}`
-  return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(number)
-}
+
 
 function formatDate(dateValue: string) {
   const date = new Date(dateValue)
@@ -300,10 +296,6 @@ export default function PatientPlanDetailPage() {
               <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Calorías</div>
                 <div className="mt-1 text-2xl font-black text-text-main">{plan?.target_calories ?? 0} kcal</div>
-              </div>
-              <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
-                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Costo</div>
-                <div className="mt-1 text-2xl font-black text-text-main">{plan ? formatPrice(plan.estimated_cost) : 'S/ 0.00'}</div>
               </div>
             </div>
           </div>

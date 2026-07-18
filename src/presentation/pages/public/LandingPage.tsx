@@ -216,7 +216,7 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const heroVideoUrl = getMediaUrl('videos/hero_loop.mp4')
+  const heroVideoUrl = getMediaUrl('videos/1.mp4')
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-hidden">
@@ -368,7 +368,7 @@ export default function LandingPage() {
               titleHover="PLANES DE DIETA"
               subtitle="Cálculo analítico de macronutrientes"
               subtitleHover="[ PROTEÍNAS · CARBOHIDRATOS · GRASAS ]"
-              videoName="service_diet.mp4"
+              videoName="2.mp4"
               posterSrc="/assets/service_diet.png"
             />
             <ScrollRevealVideo 
@@ -377,7 +377,7 @@ export default function LandingPage() {
               titleHover="PROGRESO CORPORAL"
               subtitle="Control diario y composición corporal"
               subtitleHover="[ PESO · COMPOSICIÓN · AGUA ]"
-              videoName="service_progress.mp4"
+              videoName="3.mp4"
               posterSrc="/assets/service_gym.png"
             />
             <ScrollRevealVideo 
@@ -386,7 +386,7 @@ export default function LandingPage() {
               titleHover="RECETARIO INTELIGENTE"
               subtitle="Instrucciones en video y porciones exactas"
               subtitleHover="[ PASOS EN VIDEO · PORCIONES EXACTAS ]"
-              videoName="service_recipes.mp4"
+              videoName="4.mp4"
               posterSrc="/assets/service_recipe.png"
             />
           </div>

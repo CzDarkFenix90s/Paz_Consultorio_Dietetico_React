@@ -680,11 +680,11 @@ export default function PatientMenuPage() {
           <article className="overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300">
             <div className="relative h-44 overflow-hidden bg-slate-800">
               <img 
-                src="https://images.unsplash.com/photo-1548839130-3fd96cd5cc4e?w=600&auto=format&fit=crop&q=80" 
+                src="/assets/hydration_banner.png" 
                 alt="Hidratación" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute top-4 right-4 rounded-full bg-sky-500 text-white font-extrabold text-xs px-3 py-1">
+              <div className="absolute top-4 right-4 rounded-full bg-sky-500 text-slate-950 font-extrabold text-xs px-3 py-1">
                 {Math.round(waterProgressPct)}%
               </div>
             </div>

@@ -5,7 +5,6 @@ import { API_CONFIG } from '../../../infrastructure/config/api.config'
 import { 
   ArrowLeft, 
   ArrowRight, 
-  BadgeDollarSign, 
   CheckCircle2, 
   Filter, 
   LoaderCircle, 
@@ -38,20 +37,8 @@ type PlanFilter = 'all' | 'active' | 'inactive'
 
 const fallbackPlans: PlanItem[] = [
   {
-    id: 1,
-    name: 'Plan Balance Saludable',
-    description: 'Plan enfocado en educación alimentaria, control de porciones y adherencia gradual.',
-    goal: 'Mejorar composición corporal',
-    target_calories: 1850,
-    duration_weeks: 8,
-    estimated_cost: '250.00',
-    is_active: true,
-    total_alimentos: 24,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    name: 'Plan Descenso Activo',
+    id: 99,
+    name: 'Plan de Pérdida de Peso Demo',
     description: 'Diseñado para reducción de peso con comidas balanceadas y control de energía.',
     goal: 'Pérdida de peso',
     target_calories: 1600,
@@ -62,12 +49,6 @@ const fallbackPlans: PlanItem[] = [
     created_at: new Date().toISOString(),
   },
 ]
-
-function formatPrice(value: string) {
-  const number = Number(value)
-  if (Number.isNaN(number)) return `S/ ${value}`
-  return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(number)
-}
 
 function formatDate(dateValue: string) {
   const date = new Date(dateValue)
@@ -313,14 +294,10 @@ export default function PatientPlansListPage() {
                         </button>
                       </div>
 
-                      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
                         <div className="rounded-2xl bg-input-bg border border-card-border px-4 py-3 transition-colors duration-300">
                           <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Calorías</div>
                           <div className="mt-1 text-lg font-black text-text-main">{plan.target_calories} kcal</div>
-                        </div>
-                        <div className="rounded-2xl bg-input-bg border border-card-border px-4 py-3 transition-colors duration-300">
-                          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Costo</div>
-                          <div className="mt-1 text-lg font-black text-text-main">{formatPrice(plan.estimated_cost)}</div>
                         </div>
                         <div className="rounded-2xl bg-input-bg border border-card-border px-4 py-3 transition-colors duration-300">
                           <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Creado</div>
@@ -344,7 +321,7 @@ export default function PatientPlansListPage() {
                 <article className="rounded-[1.75rem] bg-emerald-500 p-5 text-slate-950 shadow-lg shadow-emerald-500/15 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
-                      <BadgeDollarSign className="h-6 w-6 text-slate-950" />
+                      <UtensilsCrossed className="h-6 w-6 text-slate-950" />
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-900 uppercase">Plan seleccionado</p>
