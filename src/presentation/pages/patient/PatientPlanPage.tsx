@@ -13,16 +13,12 @@ import {
   House, 
   Camera,
   ArrowRight,
-  Flame,
   CalendarDays,
   Target,
   Sparkles,
-  CheckCircle2,
-  Circle,
   Star,
   Sun,
-  Moon,
-  UserCircle2
+  Moon
 } from 'lucide-react'
 
 // Profile Avatar secure URL resolution helper
@@ -69,7 +65,7 @@ interface NutritionPlan {
 const fallbackMealPlan: MealItem[] = [
   { title: 'Desayuno', time: '08:00 AM', detail: 'Avena con fresas, chía y yogur griego sin azúcar.', status: 'Completado' },
   { title: 'Media mañana', time: '10:30 AM', detail: 'Una manzana verde + 10 almendras tostadas.', status: 'Pendiente' },
-  { title: 'Almuerzo', time: '13:30 PM', detail: 'Pechuga a la plancha con ensalada verde y quinua.', status: 'Programado' }
+  { title: 'Almuerzo', time: '13:30 PM', detail: 'Pechuga a la plancha con encalada verde y quinua.', status: 'Programado' }
 ]
 
 const fallbackRoutineDays: RoutineDay[] = [
@@ -100,6 +96,7 @@ export default function PatientPlanPage() {
   const [loading, setLoading] = useState(true)
   
   const [activePlan, setActivePlan] = useState<NutritionPlan | null>(null)
+  const [foods, setFoods] = useState<any[]>([])
   const [userProfileData, setUserProfileData] = useState<any | null>(null)
 
   // Dark/Light Theme state toggle
@@ -152,26 +149,52 @@ export default function PatientPlanPage() {
       setLoading(true)
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/`, { headers })
-      if (response.ok) {
-        const data = await response.json()
-        const patientObj = data.results ? data.results[0] : data[0]
-        if (patientObj && patientObj.plan_activo) {
-          const plan = patientObj.plan_activo
-          setActivePlan({
-            id: plan.id,
-            name: plan.nombre || 'Plan Nutricional',
-            calories: plan.calorias ? `${plan.calorias} kcal` : '1500 kcal',
-            week: 'Semana 1 de 4',
-            progress: 45,
-            hydration: '1.2 L / 2.0 L',
-            nextConsult: 'Lunes, 24 de Julio - 10:00 AM',
-            nutricionista: 'Dra. Maria Cosio'
-          })
+      
+      // 1. Fetch current subscriptions for patient
+      const subResponse = await fetch(`${API_CONFIG.BASE_URL}/suscripciones/`, { headers })
+      if (subResponse.ok) {
+        const subData = await subResponse.json()
+        const subs = Array.isArray(subData.results) ? subData.results : Array.isArray(subData) ? subData : []
+        const activeSub = subs.find((s: any) => s.estado === 'activo')
+        
+        if (activeSub && activeSub.plan) {
+          const planId = activeSub.plan
+          
+          // 2. Fetch plan details and foods in parallel
+          const [planResponse, foodsResponse] = await Promise.all([
+            fetch(`${API_CONFIG.BASE_URL}/planes/${planId}/`, { headers }),
+            fetch(`${API_CONFIG.BASE_URL}/planes/${planId}/alimentos/`, { headers })
+          ])
+          
+          if (planResponse.ok) {
+            const planDetails = await planResponse.json()
+            setActivePlan({
+              id: planDetails.id,
+              name: planDetails.name || planDetails.nombre || 'Plan Nutricional',
+              calories: planDetails.target_calories ? `${planDetails.target_calories} kcal` : '1500 kcal',
+              week: `Semana 1 de ${planDetails.duration_weeks || 4}`,
+              progress: 45,
+              hydration: '1.2 L / 2.0 L',
+              nextConsult: 'Lunes, 24 de Julio - 10:00 AM',
+              nutricionista: 'Dra. Maria Cosio'
+            })
+            
+            if (foodsResponse.ok) {
+              const foodsData = await foodsResponse.json()
+              const foodItems = Array.isArray(foodsData) ? foodsData : Array.isArray(foodsData.results) ? foodsData.results : []
+              setFoods(foodItems)
+            }
+            return
+          }
         }
       }
+      
+      setActivePlan(null)
+      setFoods([])
     } catch (error) {
       console.error('Error loading active diet plan:', error)
+      setActivePlan(null)
+      setFoods([])
     } finally {
       setLoading(false)
     }
@@ -195,6 +218,7 @@ export default function PatientPlanPage() {
       nextConsult: 'Lunes, 24 de Julio - 10:00 AM',
       nutricionista: 'Dra. Maria Cosio'
     })
+    setFoods([])
   }
 
   const handleLogout = () => {
@@ -261,64 +285,62 @@ export default function PatientPlanPage() {
         </div>
       </header>
 
-      {/* Sidebar Drawer */}
-      <div className={`fixed inset-0 z-40 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
-        <button type="button" aria-label="Cerrar menú" className={`absolute inset-0 bg-slate-950/60 backdrop-blur-[3px] transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setMenuOpen(false)} />
-        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden bg-slate-900 border-r border-white/5 shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="relative flex min-h-[260px] flex-col justify-between bg-gradient-to-b from-emerald-950 to-slate-900 px-6 pb-8 pt-7 text-white">
-            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
-              <PanelLeftClose className="h-5 w-5" />
+      {/* Drawer Sidebar Menu (Mobile) */}
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 transform border-r border-card-border bg-card-bg/95 backdrop-blur-xl p-6 shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between border-b border-card-border pb-5">
+          <div className="text-lg font-black text-text-main tracking-widest uppercase">
+            Nutri<span className="text-emerald-500">Tec</span>
+          </div>
+          <button type="button" onClick={() => setMenuOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-450 hover:bg-slate-550/10 transition">
+            <PanelLeftClose className="h-4 w-4" />
+          </button>
+        </div>
+
+        <nav className="mt-8 space-y-2.5">
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/menu') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
+            <House className="h-5 w-5" /> Inicio
+          </button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className="flex w-full items-center gap-3.5 rounded-2xl bg-emerald-500/10 px-4 py-3.5 text-sm font-bold text-emerald-450 transition">
+            <UtensilsCrossed className="h-5 w-5" /> Mi Plan
+          </button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
+            <ChefHat className="h-5 w-5" /> Recetas
+          </button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/photos') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
+            <Camera className="h-5 w-5" /> Seguimiento
+          </button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
+            <MessageSquareText className="h-5 w-5" /> Soporte
+          </button>
+
+          <div className="pt-6 border-t border-card-border">
+            <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-rose-500 hover:bg-rose-500/5 transition">
+              <LogOut className="h-5 w-5" /> Cerrar sesión
             </button>
+          </div>
+        </nav>
+      </div>
 
-            <div className="flex flex-col items-start gap-5">
-              <div className="overflow-hidden flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)]">
-                {avatarUrlResolved ? (
-                  <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
-                ) : (
-                  <UserCircle2 className="h-10 w-10" />
-                )}
-              </div>
-              <div>
-                <p className="text-xl font-bold tracking-tight text-white">{user?.username}</p>
-                <span className="mt-2.5 inline-flex rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">Paciente</span>
-              </div>
+      {/* Hero Welcome banner */}
+      <div className="mx-auto max-w-[1200px] px-4 pt-8">
+        <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-slate-950 p-6 sm:p-10 border border-slate-800 text-white shadow-xl">
+          <div className="absolute right-0 top-0 -z-10 h-72 w-72 rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3.5 py-1 text-xs font-bold text-emerald-400 uppercase tracking-widest border border-emerald-500/20">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+                Plan Activo
+              </span>
+              <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl text-slate-100">Plan Nutricional del Paciente</h1>
+              <p className="max-w-2xl text-sm leading-relaxed text-slate-400">Revisa tu cronograma de alimentación diario, rutinas físicas sugeridas por tu nutricionista y logros desbloqueados.</p>
             </div>
+            {activePlan && (
+              <button onClick={() => navigate('/patient/plans')} className="inline-flex items-center gap-2 self-start rounded-full bg-emerald-500 px-6 py-3.5 text-xs font-black uppercase tracking-widest text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400">
+                Cambiar de Plan
+              </button>
+            )}
           </div>
-
-          <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
-            <nav className="space-y-2">
-              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">Mi Salud</p>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <House className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Inicio</span>
-              </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className="flex w-full items-center gap-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3.5 text-left text-sm font-bold text-emerald-400">
-                <UtensilsCrossed className="h-5 w-5 shrink-0" />
-                <span>Mi Plan</span>
-              </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <ChefHat className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Recetas</span>
-              </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/photos') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <Camera className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Seguimiento</span>
-              </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <MessageSquareText className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Soporte por Chat</span>
-              </button>
-            </nav>
-
-            <nav className="space-y-2">
-              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">Cuenta</p>
-              <button type="button" onClick={handleLogout} className="flex w-full items-center gap-4 rounded-2xl border border-rose-500/10 px-4 py-3.5 text-left text-sm font-semibold text-rose-400 hover:bg-rose-500/5 transition">
-                <LogOut className="h-5 w-5 shrink-0 text-rose-400" />
-                <span>Cerrar sesión</span>
-              </button>
-            </nav>
-          </div>
-        </aside>
+        </section>
       </div>
 
       {/* Main Content Area */}
@@ -359,80 +381,52 @@ export default function PatientPlanPage() {
           <section className="rounded-[2.5rem] border border-card-border bg-card-bg p-6 sm:p-8 backdrop-blur-xl shadow-sm space-y-8 transition-all duration-300">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-emerald-500">Plan Nutricional Activo</p>
-                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-text-main uppercase">Dieta, Nutrición y Progreso</h1>
+                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Plan en curso</span>
+                <h2 className="text-2xl font-bold text-text-main leading-tight">{activePlan.name}</h2>
                 <p className="mt-2.5 text-sm text-slate-400">Control de metas de salud supervisado por: <span className="font-bold text-emerald-500">{activePlan.nutricionista}</span>.</p>
               </div>
 
-              <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4.5 py-2.5 text-sm font-bold text-emerald-400 shadow-sm shadow-emerald-500/5">
-                <Sparkles className="h-4.5 w-4.5 animate-spin" />
-                Seguimiento Médico Activo
-              </span>
+              {/* Status metrics grid */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
+                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Plan</span>
+                  <div className="mt-1 font-bold text-text-main text-sm">{activePlan.name}</div>
+                </div>
+                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
+                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Calorías</span>
+                  <div className="mt-1 font-bold text-text-main text-sm">{activePlan.calories}</div>
+                </div>
+                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
+                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Duración</span>
+                  <div className="mt-1 font-bold text-emerald-455 text-sm">{activePlan.week}</div>
+                </div>
+                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
+                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Agua</span>
+                  <div className="mt-1 font-bold text-sky-400 text-sm">{activePlan.hydration}</div>
+                </div>
+              </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-4">
-              <article className="rounded-3xl border border-card-border bg-input-bg p-6 shadow-md md:col-span-2 space-y-5 relative overflow-hidden transition-all duration-300">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-md">
-                    <Target className="h-5.5 w-5.5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-550 tracking-wider uppercase">Plan Asignado</p>
-                    <h2 className="text-xl font-bold text-text-main leading-tight">{activePlan.name}</h2>
-                  </div>
-                </div>
+            {/* Adherence progress bar */}
+            <div className="rounded-2xl border border-card-border bg-input-bg p-4 space-y-2 transition-all duration-300">
+              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide">
+                <span className="text-slate-450">Adherencia del Plan actual</span>
+                <span>{activePlan.progress}%</span>
+              </div>
+              <div className="h-3 w-full rounded-full bg-card-bg border border-card-border p-0.5 transition-all duration-300">
+                <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: `${activePlan.progress}%` }} />
+              </div>
+            </div>
 
-                <div className="grid gap-4 grid-cols-3 text-center">
-                  <div className="rounded-2xl border border-card-border bg-card-bg py-2.5 transition-all duration-300">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase">Calorías</p>
-                    <div className="mt-1 font-bold text-text-main text-sm">{activePlan.calories}</div>
-                  </div>
-                  <div className="rounded-2xl border border-card-border bg-card-bg py-2.5 transition-all duration-300">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase">Estado</p>
-                    <div className="mt-1 font-bold text-emerald-450 text-sm">{activePlan.week}</div>
-                  </div>
-                  <div className="rounded-2xl border border-card-border bg-card-bg py-2.5 transition-all duration-300">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase">Hidratación</p>
-                    <div className="mt-1 font-bold text-sky-400 text-sm">{activePlan.hydration}</div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-                    <span>Adherencia General</span>
-                    <span>{activePlan.progress}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-slate-500/10 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: `${activePlan.progress}%` }} />
-                  </div>
-                </div>
-              </article>
-
-              <article className="rounded-3xl border border-card-border bg-input-bg p-5 space-y-2 flex flex-col justify-between shadow-inner transition-all duration-300">
+            {/* Next Consultation banner */}
+            <div className="flex flex-col gap-4 rounded-3xl border border-emerald-500/10 bg-emerald-500/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500"><CalendarDays className="h-5 w-5" /></div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">PRÓXIMO CONTROL</p>
-                  <div className="mt-3 flex items-start gap-2.5">
-                    <CalendarDays className="h-5 w-5 text-sky-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-bold text-text-main text-xs leading-snug">{activePlan.nextConsult}</h3>
-                      <p className="mt-1 text-[10px] text-slate-500">Evaluación antropométrica y física.</p>
-                    </div>
-                  </div>
+                  <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Próxima Consulta Programada</span>
+                  <h3 className="font-bold text-text-main text-xs leading-snug">{activePlan.nextConsult}</h3>
                 </div>
-              </article>
-
-              <article className="rounded-3xl border border-card-border bg-input-bg p-5 space-y-2 flex flex-col justify-between shadow-inner transition-all duration-300">
-                <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">LÍMITE DIARIO</p>
-                  <div className="mt-3 flex items-center gap-2.5">
-                    <Flame className="h-5 w-5 text-orange-400 shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-text-main text-sm">{activePlan.calories}</h3>
-                      <p className="text-[10px] text-slate-500 mt-0.5">Fraccionado en comidas.</p>
-                    </div>
-                  </div>
-                </div>
-              </article>
+              </div>
             </div>
 
             {/* Interactive Custom Tabs */}
@@ -464,20 +458,37 @@ export default function PatientPlanPage() {
                   <div className="space-y-4">
                     <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-500">Menú Recomendado por Nutricionista</h2>
                     <div className="space-y-3">
-                      {fallbackMealPlan.map((item) => (
-                        <article key={item.title} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4 hover:border-emerald-500/40 transition duration-300">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500"><UtensilsCrossed className="h-5 w-5" /></div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <h3 className="truncate font-bold text-sm text-text-main">{item.title}</h3>
-                              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-655" />
-                              <span className="text-xs text-slate-500">{item.time}</span>
+                      {foods.length > 0 ? (
+                        foods.map((food) => (
+                          <article key={food.id} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4 hover:border-emerald-500/40 transition duration-300">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500"><UtensilsCrossed className="h-5 w-5" /></div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="truncate font-bold text-sm text-text-main uppercase">{food.name || 'Alimento'}</h3>
+                                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-655" />
+                                <span className="text-xs text-slate-500">{food.meal_type || 'Momento'}</span>
+                              </div>
+                              <p className="mt-1 text-xs text-slate-400 leading-normal">{food.description || 'Sin descripción'}</p>
                             </div>
-                            <p className="mt-1 text-xs text-slate-400 leading-normal">{item.detail}</p>
-                          </div>
-                          <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-500">{item.status}</span>
-                        </article>
-                      ))}
+                            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-500">{food.portion_grams || 0} g</span>
+                          </article>
+                        ))
+                      ) : (
+                        fallbackMealPlan.map((item) => (
+                          <article key={item.title} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4 hover:border-emerald-500/40 transition duration-300">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500"><UtensilsCrossed className="h-5 w-5" /></div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="truncate font-bold text-sm text-text-main">{item.title}</h3>
+                                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-655" />
+                                <span className="text-xs text-slate-500">{item.time}</span>
+                              </div>
+                              <p className="mt-1 text-xs text-slate-400 leading-normal">{item.detail}</p>
+                            </div>
+                            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-500">{item.status}</span>
+                          </article>
+                        ))
+                      )}
                     </div>
                   </div>
                 ) : null}
@@ -488,13 +499,16 @@ export default function PatientPlanPage() {
                     <div className="space-y-3">
                       {fallbackRoutineDays.map((item) => (
                         <article key={item.day} className="flex items-center justify-between rounded-2xl border border-card-border bg-card-bg p-4">
-                          <div className="flex items-center gap-4">
-                            <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.completed ? 'bg-emerald-500/10 text-emerald-500' : 'bg-input-bg text-slate-550'}`}>
-                              {item.completed ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
+                          <div className="flex items-center gap-3">
+                            <span className={`h-2.5 w-2.5 rounded-full ${item.completed ? 'bg-emerald-500' : 'bg-slate-600'}`} />
+                            <div>
+                              <h3 className="font-bold text-sm text-text-main">{item.day}</h3>
+                              <p className="text-xs text-slate-400">{item.activity}</p>
                             </div>
-                            <div><h3 className="font-bold text-sm text-text-main">{item.day}</h3><p className="mt-1 text-xs text-slate-400">{item.activity}</p></div>
                           </div>
-                          <span className={`rounded-full px-3 py-1 text-[10px] font-bold ${item.completed ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-500' : 'bg-input-bg border border-card-border text-slate-500'}`}>{item.completed ? 'Completado' : 'Pendiente'}</span>
+                          <span className={`rounded-xl px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${item.completed ? 'bg-emerald-500/15 text-emerald-450' : 'bg-slate-500/15 text-slate-450'}`}>
+                            {item.completed ? 'Completado' : 'Pendiente'}
+                          </span>
                         </article>
                       ))}
                     </div>
@@ -503,15 +517,15 @@ export default function PatientPlanPage() {
 
                 {activeTab === 'logros' ? (
                   <div className="space-y-4">
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-500">Avance y Logros Desbloqueados</h2>
-                    <div className="space-y-3">
+                    <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-500">Medallas y Logros unlocked</h2>
+                    <div className="grid gap-3 sm:grid-cols-2">
                       {fallbackAchievements.map((item) => (
-                        <article key={item.title} className="rounded-2xl border border-card-border bg-card-bg p-4 flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500"><Star className="h-5 w-5" /></div>
-                            <h3 className="font-bold text-xs text-text-main">{item.title}</h3>
+                        <article key={item.title} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500"><Star className="h-5 w-5" /></div>
+                          <div>
+                            <h3 className="font-bold text-xs text-text-main uppercase tracking-wide">{item.title}</h3>
+                            <p className="mt-0.5 text-xs font-semibold text-amber-500">{item.points}</p>
                           </div>
-                          <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-550">{item.points}</span>
                         </article>
                       ))}
                     </div>
@@ -520,20 +534,12 @@ export default function PatientPlanPage() {
               </section>
 
               <aside className="space-y-6">
-                <article className="rounded-3xl border border-emerald-500/20 bg-card-bg p-6 shadow-sm space-y-4 transition-all duration-300">
-                  <h2 className="text-base font-extrabold text-text-main uppercase">Subir Foto de Avance</h2>
-                  <p className="text-xs text-slate-400 leading-normal">
-                    Registra tu evolución corporal cargando una imagen directamente al servidor local.
-                  </p>
-                  <button type="button" onClick={() => navigate('/patient/photos')} className="w-full flex items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-xs font-extrabold uppercase tracking-widest text-slate-950 hover:bg-emerald-400 transition shadow-lg shadow-emerald-500/10">Subir Foto de Progreso <ArrowRight className="h-4 w-4" /></button>
-                </article>
-
                 <article className="rounded-3xl border border-card-border bg-input-bg p-5 space-y-3 transition-all duration-300">
                   <h2 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Resumen Semanal</h2>
                   <div className="space-y-2 text-xs text-slate-400">
-                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Calorías diarias</span><span className="font-bold text-text-main">1,850 kcal</span></div>
-                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Comidas del día</span><span className="font-bold text-text-main">4 programadas</span></div>
-                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Hidratación</span><span className="font-bold text-text-main">1.2 / 2.0 L</span></div>
+                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Calorías diarias</span><span className="font-bold text-text-main">{activePlan.calories}</span></div>
+                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Comidas del día</span><span className="font-bold text-text-main">{foods.length || 4} programadas</span></div>
+                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Hidratación</span><span className="font-bold text-text-main">{activePlan.hydration}</span></div>
                   </div>
                 </article>
               </aside>
