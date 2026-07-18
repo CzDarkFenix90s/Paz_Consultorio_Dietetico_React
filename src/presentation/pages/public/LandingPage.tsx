@@ -12,7 +12,7 @@ import {
 // Helper to resolve media files from Django backend
 const getMediaUrl = (path: string) => {
   if (import.meta.env.PROD) {
-    return `https://paz-dietetica.uaeftt-ute.site/media/${path}`
+    return `/media/${path}`
   }
   return `http://localhost:8000/media/${path}`
 }
