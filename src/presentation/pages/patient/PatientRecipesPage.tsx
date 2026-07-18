@@ -16,7 +16,9 @@ import {
   Sun,
   Moon,
   MessageSquareText,
-  UtensilsCrossed
+  UtensilsCrossed,
+  House,
+  Camera
 } from 'lucide-react'
 
 // Profile Avatar secure URL resolution helper
@@ -318,6 +320,14 @@ export default function PatientRecipesPage() {
             Nutri<span className="text-emerald-500">Tec</span>
           </div>
 
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className="hover:text-emerald-500 transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="text-emerald-500 font-bold transition">Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
+          </nav>
+
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button 
@@ -545,10 +555,10 @@ export default function PatientRecipesPage() {
       <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5">
         <div className="grid grid-cols-5 items-center">
           {[
-            { label: 'Inicio', icon: Menu, href: '/patient/menu', active: false },
+            { label: 'Inicio', icon: House, href: '/patient/menu', active: false },
             { label: 'Mi Plan', icon: UtensilsCrossed, href: '/patient/plan', active: false },
             { label: 'Recetas', icon: ChefHat, href: '/patient/recipes', active: true },
-            { label: 'Progreso', icon: Wheat, href: '/patient/photos', active: false },
+            { label: 'Progreso', icon: Camera, href: '/patient/photos', active: false },
             { label: 'Chat', icon: MessageSquareText, href: '/patient/chat', active: false },
           ].map(({ label, icon: Icon, href, active }) => (
             <button

@@ -6,13 +6,11 @@ import {
   ArrowLeft, 
   ArrowRight, 
   BadgeDollarSign, 
-  CalendarDays, 
   CheckCircle2, 
   Filter, 
   LoaderCircle, 
   Search, 
   ShieldPlus, 
-  Sparkles, 
   UtensilsCrossed, 
   XCircle,
   Sun,
@@ -369,24 +367,6 @@ export default function PatientPlansListPage() {
                       </div>
                     </div>
                   ) : null}
-                </article>
-
-                <article className="rounded-[1.75rem] bg-input-bg border border-card-border p-5 shadow-sm transition-all duration-300">
-                  <h3 className="text-sm font-extrabold text-text-main uppercase tracking-wider">Qué trae la API</h3>
-                  <div className="mt-4 space-y-3 text-xs text-slate-500">
-                    <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
-                      <CalendarDays className="h-5 w-5 text-emerald-500" />
-                      <span>Planes paginados desde <span className="font-bold text-slate-400">/api/planes/</span></span>
-                    </div>
-                    <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
-                      <Sparkles className="h-5 w-5 text-emerald-500" />
-                      <span>Campos reales: nombre, objetivo, calorías, costo y semanas</span>
-                    </div>
-                    <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                      <span>Fallback local si el backend no responde</span>
-                    </div>
-                  </div>
                 </article>
               </aside>
             </div>

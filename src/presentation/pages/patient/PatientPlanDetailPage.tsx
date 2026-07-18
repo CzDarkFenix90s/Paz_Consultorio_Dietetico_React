@@ -11,7 +11,6 @@ import {
   ShieldPlus, 
   Sparkles, 
   UtensilsCrossed, 
-  Users,
   Sun,
   Moon
 } from 'lucide-react'
@@ -82,6 +81,9 @@ export default function PatientPlanDetailPage() {
   const [plan, setPlan] = useState<PlanItem | null>(null)
   const [foods, setFoods] = useState<FoodItem[]>([])
 
+  const [pacienteData, setPacienteData] = useState<any | null>(null)
+  const [loadingSelect, setLoadingSelect] = useState(false)
+
   // Dark/Light Theme state toggle
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
 
@@ -109,6 +111,59 @@ export default function PatientPlanDetailPage() {
       setIsDark(false)
     }
   }, [])
+
+  // Load patient profile to support plan selection
+  const loadPatientProfile = async () => {
+    try {
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/`, { headers })
+      if (response.ok) {
+        const data = await response.json()
+        const patientObj = data.results ? data.results[0] : data[0]
+        setPacienteData(patientObj)
+      }
+    } catch (error) {
+      console.error('Error loading patient data for selection:', error)
+    }
+  }
+
+  useEffect(() => {
+    loadPatientProfile()
+  }, [])
+
+  const handleSelectPlan = async () => {
+    if (!pacienteData || !plan) return
+    try {
+      setLoadingSelect(true)
+      const token = localStorage.getItem('dietetic_access_token')
+      const headers: HeadersInit = token ? {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } : { 'Content-Type': 'application/json' }
+
+      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify({
+          plan_activo: plan.id
+        })
+      })
+
+      if (response.ok) {
+        alert(`¡Plan "${plan.name}" activado correctamente en tu perfil!`)
+        navigate('/patient/plan')
+      } else {
+        const errData = await response.json()
+        alert('No se pudo activar el plan: ' + JSON.stringify(errData))
+      }
+    } catch (err) {
+      console.error('Error selecting active diet plan:', err)
+      alert('Error de red al activar el plan.')
+    } finally {
+      setLoadingSelect(false)
+    }
+  }
 
   useEffect(() => {
     let ignore = false
@@ -235,8 +290,8 @@ export default function PatientPlanDetailPage() {
 
             <div className="flex flex-wrap gap-3">
               <div className={`rounded-2xl px-4 py-3 ${plan?.is_active ? 'border border-emerald-500/25 bg-emerald-500/10' : 'border border-card-border bg-input-bg'}`}>
-                <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${plan?.is_active ? 'text-emerald-400' : 'text-slate-500'}`}>Estado</div>
-                <div className={`mt-1 text-2xl font-black ${plan?.is_active ? 'text-emerald-450' : 'text-text-main'}`}>{plan?.is_active ? 'Activo' : 'Inactivo'}</div>
+                <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${plan?.is_active ? 'text-emerald-450' : 'text-slate-500'}`}>Estado</div>
+                <div className={`mt-1 text-2xl font-black ${plan?.is_active ? 'text-emerald-400' : 'text-text-main'}`}>{plan?.is_active ? 'Activo' : 'Inactivo'}</div>
               </div>
               <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Calorías</div>
@@ -324,7 +379,7 @@ export default function PatientPlanDetailPage() {
                         </div>
                         <div>
                           <h3 className="font-extrabold text-text-main uppercase text-sm">{food.name ?? 'Alimento sin nombre'}</h3>
-                          <p className="mt-1 text-xs text-slate-450 leading-relaxed">{food.description ?? 'Sin descripción'}</p>
+                          <p className="mt-1 text-xs text-slate-455 leading-relaxed">{food.description ?? 'Sin descripción'}</p>
                         </div>
                       </div>
 
@@ -348,6 +403,25 @@ export default function PatientPlanDetailPage() {
             </section>
 
             <aside className="space-y-6">
+              {/* Premium Activation Button */}
+              {plan && (
+                <button
+                  type="button"
+                  onClick={handleSelectPlan}
+                  disabled={loadingSelect}
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 py-4 text-xs font-black uppercase tracking-widest text-slate-950 transition shadow-lg shadow-emerald-500/15 active:scale-[0.98] disabled:opacity-50"
+                >
+                  {loadingSelect ? (
+                    <LoaderCircle className="h-5 w-5 animate-spin text-slate-950" />
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-5 w-5" />
+                      Activar este Plan
+                    </>
+                  )}
+                </button>
+              )}
+
               <article className="rounded-[1.75rem] bg-emerald-500 p-5 text-slate-950 shadow-lg shadow-emerald-500/15 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
@@ -360,22 +434,8 @@ export default function PatientPlanDetailPage() {
                 </div>
 
                 <p className="text-xs leading-relaxed text-slate-900 font-semibold">
-                  Este detalle está enlazado al backend. Cuando el plan cambie en Django, esta pantalla mostrará los datos actualizados.
+                  Al hacer clic en "Activar este Plan", este plan de alimentación se establecerá como tu régimen activo en tu perfil clínico.
                 </p>
-              </article>
-
-              <article className="rounded-[1.75rem] bg-input-bg border border-card-border p-5 shadow-sm transition-all duration-300">
-                <h3 className="text-sm font-extrabold text-text-main uppercase tracking-wider">Fuentes consultadas</h3>
-                <div className="mt-4 space-y-3 text-xs text-slate-500">
-                  <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
-                    <ShieldPlus className="h-5 w-5 text-emerald-500" />
-                    <span><span className="font-bold text-slate-400">GET /api/planes/{planId}/</span></span>
-                  </div>
-                  <div className="flex items-center gap-3 rounded-2xl bg-card-bg border border-card-border px-4 py-3 transition-colors duration-300">
-                    <Users className="h-5 w-5 text-emerald-500" />
-                    <span><span className="font-bold text-slate-400">GET /api/planes/{planId}/alimentos/</span></span>
-                  </div>
-                </div>
               </article>
 
               {errorMessage ? (

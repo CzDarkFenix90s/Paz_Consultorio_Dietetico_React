@@ -54,6 +54,7 @@ const bottomNav = [
   { label: 'Inicio', icon: House, active: false },
   { label: 'Mi Plan', icon: UtensilsCrossed, active: false },
   { label: 'Recetas', icon: ChefHat, active: false },
+  { label: 'Progreso', icon: Camera, active: false },
   { label: 'Chat', icon: MessageSquareText, active: true },
 ]
 
@@ -494,7 +495,7 @@ export default function PatientChatPage() {
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
       <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
-        <div className="grid grid-cols-4 items-center">
+        <div className="grid grid-cols-5 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
               key={label}
@@ -503,6 +504,7 @@ export default function PatientChatPage() {
                 if (label === 'Inicio') navigate('/patient/menu')
                 if (label === 'Mi Plan') navigate('/patient/plan')
                 if (label === 'Recetas') navigate('/patient/recipes')
+                if (label === 'Progreso') navigate('/patient/photos')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
