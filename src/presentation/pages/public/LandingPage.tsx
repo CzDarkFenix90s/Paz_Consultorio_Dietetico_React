@@ -98,7 +98,7 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
   const cardScale = Math.max(0.88, 1 - distanceFromCenter * 0.24) // smoothly scales between 0.88 and 1.00
   const videoParallax = (scrollProgress - 0.5) * -70 // vertical parallax translation
 
-  const videoUrl = getMediaUrl(`videos/${videoName}`)
+  const videoUrl = `${getMediaUrl(`videos/${videoName}`)}?v=2`
 
   return (
     <div 
@@ -216,7 +216,7 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const heroVideoUrl = getMediaUrl('videos/1.mp4')
+  const heroVideoUrl = `${getMediaUrl('videos/1.mp4')}?v=2`
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-hidden">
