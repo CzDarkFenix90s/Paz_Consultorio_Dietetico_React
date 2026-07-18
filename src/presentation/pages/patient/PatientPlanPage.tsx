@@ -164,50 +164,74 @@ export default function PatientPlanPage() {
       // 1. Fetch current subscriptions for patient
       const subResponse = await fetch(`${API_CONFIG.BASE_URL}/suscripciones/?_t=${Date.now()}`, { headers })
       let dbg = `GET /suscripciones/ status: ${subResponse.status}. `
+      let activePlanId: number | null = null
+      let nutricionistaName = 'Dra. Maria Cosio'
+      
       if (subResponse.ok) {
         const subData = await subResponse.json()
         const subs = Array.isArray(subData.results) ? subData.results : Array.isArray(subData) ? subData : []
-        dbg += `Returned ${subs.length} items. `
+        dbg += `Returned ${subs.length} subs. `
         const activeSub = subs.find((s: any) => s.estado === 'activo')
-        
         if (activeSub && activeSub.plan) {
-          const planId = activeSub.plan
-          dbg += `Active sub plan ID: ${planId}. `
-          
-          // 2. Fetch plan details and foods in parallel
-          const [planResponse, foodsResponse] = await Promise.all([
-            fetch(`${API_CONFIG.BASE_URL}/planes/${planId}/`, { headers }),
-            fetch(`${API_CONFIG.BASE_URL}/planes/${planId}/alimentos/`, { headers })
-          ])
-          
-          dbg += `planResponse: ${planResponse.status}, foodsResponse: ${foodsResponse.status}. `
-          
-          if (planResponse.ok) {
-            const planDetails = await planResponse.json()
-            setActivePlan({
-              id: planDetails.id,
-              name: planDetails.name || planDetails.nombre || 'Plan Nutricional',
-              calories: planDetails.target_calories ? `${planDetails.target_calories} kcal` : '1500 kcal',
-              week: `Semana 1 de ${planDetails.duration_weeks || 4}`,
-              progress: 45,
-              hydration: '1.2 L / 2.0 L',
-              nextConsult: 'Lunes, 24 de Julio - 10:00 AM',
-              nutricionista: 'Dra. Maria Cosio'
-            })
-            
-            if (foodsResponse.ok) {
-              const foodsData = await foodsResponse.json()
-              const foodItems = Array.isArray(foodsData) ? foodsData : Array.isArray(foodsData.results) ? foodsData.results : []
-              setFoods(foodItems)
-            }
-            setDebugInfo('')
-            return
-          }
-        } else {
-          dbg += 'No active subscription (estado === "activo") found in results list. '
+          activePlanId = activeSub.plan
+          dbg += `Found active sub plan ID: ${activePlanId}. `
         }
       } else {
         dbg += `Error response body: ${await subResponse.text()}. `
+      }
+      
+      // Fallback: If no active subscription, check /api/consultas/mine/
+      if (!activePlanId) {
+        dbg += `Checking consultations fallback. `
+        const consultResponse = await fetch(`${API_CONFIG.BASE_URL}/consultas/mine/?_t=${Date.now()}`, { headers })
+        dbg += `GET /consultas/mine/ status: ${consultResponse.status}. `
+        if (consultResponse.ok) {
+          const consultData = await consultResponse.json()
+          const consults = Array.isArray(consultData.results) ? consultData.results : Array.isArray(consultData) ? consultData : []
+          dbg += `Returned ${consults.length} consultations. `
+          // Find the latest consultation with plan
+          const latestConsult = consults.find((c: any) => c.plan_nutricional && ['programada', 'en_curso', 'completada'].includes(c.status))
+          if (latestConsult) {
+            activePlanId = latestConsult.plan_nutricional.id
+            if (latestConsult.nutricionista) {
+              const nut = latestConsult.nutricionista
+              nutricionistaName = `${nut.first_name || ''} ${nut.last_name || ''}`.trim() || 'Dra. Maria Cosio'
+            }
+            dbg += `Found plan ID ${activePlanId} in latest consultation. `
+          }
+        }
+      }
+      
+      if (activePlanId) {
+        // 2. Fetch plan details and foods in parallel
+        const [planResponse, foodsResponse] = await Promise.all([
+          fetch(`${API_CONFIG.BASE_URL}/planes/${activePlanId}/`, { headers }),
+          fetch(`${API_CONFIG.BASE_URL}/planes/${activePlanId}/alimentos/`, { headers })
+        ])
+        
+        dbg += `planResponse: ${planResponse.status}, foodsResponse: ${foodsResponse.status}. `
+        
+        if (planResponse.ok) {
+          const planDetails = await planResponse.json()
+          setActivePlan({
+            id: planDetails.id,
+            name: planDetails.name || planDetails.nombre || 'Plan Nutricional',
+            calories: planDetails.target_calories ? `${planDetails.target_calories} kcal` : '1500 kcal',
+            week: `Semana 1 de ${planDetails.duration_weeks || 4}`,
+            progress: 45,
+            hydration: '1.2 L / 2.0 L',
+            nextConsult: 'Lunes, 24 de Julio - 10:00 AM',
+            nutricionista: nutricionistaName
+          })
+          
+          if (foodsResponse.ok) {
+            const foodsData = await foodsResponse.json()
+            const foodItems = Array.isArray(foodsData) ? foodsData : Array.isArray(foodsData.results) ? foodsData.results : []
+            setFoods(foodItems)
+          }
+          setDebugInfo('')
+          return
+        }
       }
       
       setDebugInfo(dbg)
