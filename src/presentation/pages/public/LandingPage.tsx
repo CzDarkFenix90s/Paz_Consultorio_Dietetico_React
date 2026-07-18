@@ -91,7 +91,6 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
         })
       } else {
         videoRef.current.pause()
-        videoRef.current.currentTime = 0
       }
     }
   }, [isHovered])
@@ -156,21 +155,41 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
           
           {/* Overlay Gradients and Dynamic Text */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent flex flex-col justify-between p-8 pointer-events-none">
-            {/* Dynamic subtitle */}
-            <div className={`text-[10px] font-bold tracking-[0.25em] uppercase transition-colors duration-500 ${
-              isHovered ? 'text-teal-300' : 'text-emerald-400'
-            }`}>
-              {isHovered ? subtitleHover : subtitle}
+            {/* Dynamic subtitle container with cross-fade */}
+            <div className="relative w-full h-4">
+              {/* Default Subtitle */}
+              <div className={`absolute top-0 left-0 text-[10px] font-bold tracking-[0.25em] uppercase text-emerald-400 transition-all duration-700 ease-in-out ${
+                isHovered ? 'opacity-0 -translate-y-1 pointer-events-none' : 'opacity-100 translate-y-0'
+              }`}>
+                {subtitle}
+              </div>
+
+              {/* Hover Subtitle */}
+              <div className={`absolute top-0 left-0 text-[10px] font-bold tracking-[0.25em] uppercase text-teal-300 transition-all duration-700 ease-in-out ${
+                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1 pointer-events-none'
+              }`}>
+                {subtitleHover}
+              </div>
             </div>
             
-            {/* Dynamic title */}
+            {/* Dynamic title container with cross-fade */}
             <div className="space-y-1">
-              <h3 className={`text-2xl md:text-5xl font-black tracking-tight uppercase leading-none transition-all duration-500 ${
-                isHovered ? 'text-emerald-400 scale-[1.02]' : 'text-white'
-              }`}>
-                {isHovered ? titleHover : title}
-              </h3>
-              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-medium">
+              <div className="relative w-full">
+                {/* Default Title */}
+                <h3 className={`text-2xl md:text-5xl font-black tracking-tight uppercase leading-none text-white transition-all duration-700 ease-in-out ${
+                  isHovered ? 'opacity-0 -translate-y-2 scale-95 pointer-events-none' : 'opacity-100 translate-y-0 scale-100'
+                }`}>
+                  {title}
+                </h3>
+
+                {/* Hover Title */}
+                <h3 className={`absolute top-0 left-0 w-full text-2xl md:text-5xl font-black tracking-tight uppercase leading-none text-emerald-400 transition-all duration-700 ease-in-out ${
+                  isHovered ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95 pointer-events-none'
+                }`}>
+                  {titleHover}
+                </h3>
+              </div>
+              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-medium pt-1">
                 NutriTec Consultorio Inteligente
               </p>
             </div>
