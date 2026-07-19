@@ -465,10 +465,37 @@ export default function AdminDashboard() {
         ? `${API_CONFIG.BASE_URL}/${endpoint}/${editingCrudItem.id}/`
         : `${API_CONFIG.BASE_URL}/${endpoint}/`
 
+      // Map frontend fields to backend expected format
+      let bodyData: any = { ...crudFormData }
+      if (activeTab === 'momentos') {
+        bodyData.dia_plan = Number(crudFormData.dia_plan)
+        bodyData.orden = Number(crudFormData.orden || 1)
+      }
+      if (activeTab === 'dias') {
+        bodyData.plan_nutricional = Number(crudFormData.plan_nutricional)
+        bodyData.orden = Number(crudFormData.day_number)
+        bodyData.nombre_dia = `Día ${crudFormData.day_number}`
+      }
+      if (activeTab === 'detalles_alimentos') {
+        bodyData.cantidad_gramos = Number(crudFormData.portion_grams)
+        bodyData.momento_comida = Number(crudFormData.dia_plan)
+        bodyData.alimento_programado = Number(crudFormData.alimento)
+        bodyData.orden = Number(crudFormData.orden || 1)
+      }
+      if (activeTab === 'alimentos') {
+        bodyData.calories = Number(crudFormData.calories)
+        bodyData.protein = Number(crudFormData.protein)
+        bodyData.carbs = Number(crudFormData.carbs)
+        bodyData.fat = Number(crudFormData.fat)
+      }
+      if (activeTab === 'facturas') {
+        bodyData.monto = Number(crudFormData.monto)
+      }
+
       const response = await fetch(url, {
         method,
         headers,
-        body: JSON.stringify(crudFormData)
+        body: JSON.stringify(bodyData)
       })
 
       if (response.ok) {
@@ -1182,14 +1209,14 @@ export default function AdminDashboard() {
                             )}
                             {activeTab === 'dias' && (
                               <>
-                                <th className="px-4 py-3.5">Número de Día</th>
-                                <th className="px-4 py-3.5">ID Plan</th>
+                                <th className="px-4 py-3.5">Nombre del Día</th>
+                                <th className="px-4 py-3.5">Plan / Orden</th>
                               </>
                             )}
                             {activeTab === 'detalles_alimentos' && (
                               <>
                                 <th className="px-4 py-3.5">Gramos Porción</th>
-                                <th className="px-4 py-3.5">ID Día Plan</th>
+                                <th className="px-4 py-3.5">ID Momento Comida</th>
                                 <th className="px-4 py-3.5">ID Alimento</th>
                               </>
                             )}
@@ -1236,22 +1263,22 @@ export default function AdminDashboard() {
                                 <>
                                   <td className="px-4 py-4 font-bold text-white">{item.nombre_momento}</td>
                                   <td className="px-4 py-4">{item.orden}</td>
-                                  <td className="px-4 py-4 font-mono text-xs">{item.dia_plan}</td>
+                                  <td className="px-4 py-4 font-mono text-xs">{item.dia_plan_id}</td>
                                 </>
                               )}
 
                               {activeTab === 'dias' && (
                                 <>
-                                  <td className="px-4 py-4 font-bold text-white">Día #{item.day_number}</td>
-                                  <td className="px-4 py-4 font-mono text-xs">{item.plan_nutricional}</td>
+                                  <td className="px-4 py-4 font-bold text-white">{item.nombre_dia}</td>
+                                  <td className="px-4 py-4 font-mono text-xs">Plan #{item.plan_nutricional_id} (Orden: {item.orden})</td>
                                 </>
                               )}
 
                               {activeTab === 'detalles_alimentos' && (
                                 <>
-                                  <td className="px-4 py-4 font-bold text-white">{item.portion_grams}g</td>
-                                  <td className="px-4 py-4 font-mono text-xs">{item.dia_plan}</td>
-                                  <td className="px-4 py-4 font-mono text-xs">{item.alimento}</td>
+                                  <td className="px-4 py-4 font-bold text-white">{item.cantidad_gramos}g</td>
+                                  <td className="px-4 py-4 font-mono text-xs">Momento #{item.momento_comida_id}</td>
+                                  <td className="px-4 py-4 font-mono text-xs">Alimento #{item.alimento_programado_id}</td>
                                 </>
                               )}
 
@@ -1273,7 +1300,20 @@ export default function AdminDashboard() {
                                 <button
                                   onClick={() => {
                                     setEditingCrudItem(item)
-                                    setCrudFormData(item)
+                                    let mappedData = { ...item }
+                                    if (activeTab === 'momentos') {
+                                      mappedData.dia_plan = item.dia_plan_id
+                                    }
+                                    if (activeTab === 'dias') {
+                                      mappedData.plan_nutricional = item.plan_nutricional_id
+                                      mappedData.day_number = item.orden
+                                    }
+                                    if (activeTab === 'detalles_alimentos') {
+                                      mappedData.portion_grams = item.cantidad_gramos
+                                      mappedData.dia_plan = item.momento_comida_id
+                                      mappedData.alimento = item.alimento_programado_id
+                                    }
+                                    setCrudFormData(mappedData)
                                     setShowCrudFormModal(true)
                                   }}
                                   className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-slate-950 text-slate-400 hover:bg-white/10 hover:text-white transition"
@@ -1919,7 +1959,7 @@ export default function AdminDashboard() {
                   </label>
                   <div className="grid gap-3 grid-cols-2">
                     <label className="block">
-                      <span className="text-xs text-slate-400">ID Día Plan</span>
+                      <span className="text-xs text-slate-400">ID Momento Comida</span>
                       <input 
                         type="number"
                         required

@@ -54,6 +54,7 @@ interface Message {
 
 interface Specialist {
   id: number
+  user_id?: number
   full_name: string
   email: string
   specialty: string
@@ -101,11 +102,10 @@ export default function PatientChatPage() {
   // Load theme state on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
-    const hasDarkClass = document.documentElement.classList.contains('dark')
-    if (savedTheme === 'dark' && !hasDarkClass) {
+    if (savedTheme === 'dark') {
       document.documentElement.classList.add('dark')
       setIsDark(true)
-    } else if (savedTheme === 'light' && hasDarkClass) {
+    } else if (savedTheme === 'light') {
       document.documentElement.classList.remove('dark')
       setIsDark(false)
     }
@@ -134,7 +134,7 @@ export default function PatientChatPage() {
       setLoadingList(true)
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const response = await fetch(`${API_CONFIG.BASE_URL}/especialistas/`, { headers })
+      const response = await fetch(`${API_CONFIG.BASE_URL}/nutricionistas/`, { headers })
       if (response.ok) {
         const data = await response.json()
         const list = data.results || data
@@ -151,16 +151,23 @@ export default function PatientChatPage() {
   }
 
   // Fetch messages between logged-in user and selected nutritionist
-  const fetchChatMessages = async (nutriId: number) => {
+  const fetchChatMessages = async (nutriId: number, nutriUserId: number) => {
     try {
       setLoadingMessages(true)
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const response = await fetch(`${API_CONFIG.BASE_URL}/mensajes/historial/?con_id=${nutriId}`, { headers })
+      const response = await fetch(`${API_CONFIG.BASE_URL}/mensajes-chat/?_t=${Date.now()}`, { headers })
       if (response.ok) {
         const data = await response.json()
-        const list = data.results || data
-        setMessages(list || [])
+        const list = Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []
+        const currentUserId = Number(user?.id)
+        const targetNutriUserId = Number(nutriUserId || nutriId)
+        
+        const filtered = list.filter((m: any) => 
+          (Number(m.remitente_id) === currentUserId && Number(m.destinatario_id) === targetNutriUserId) ||
+          (Number(m.remitente_id) === targetNutriUserId && Number(m.destinatario_id) === currentUserId)
+        )
+        setMessages(filtered)
       }
     } catch (error) {
       console.error('Error loading messages history:', error)
@@ -178,7 +185,7 @@ export default function PatientChatPage() {
 
   useEffect(() => {
     if (selectedNutri) {
-      fetchChatMessages(selectedNutri.id)
+      fetchChatMessages(selectedNutri.id, selectedNutri.user_id || selectedNutri.id)
     }
   }, [selectedNutri])
 
@@ -201,11 +208,12 @@ export default function PatientChatPage() {
         'Content-Type': 'application/json'
       } : { 'Content-Type': 'application/json' }
 
-      const response = await fetch(`${API_CONFIG.BASE_URL}/mensajes/`, {
+      const targetDestId = selectedNutri.user_id || selectedNutri.id
+      const response = await fetch(`${API_CONFIG.BASE_URL}/mensajes-chat/`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          destinatario: selectedNutri.id,
+          destinatario: targetDestId,
           contenido: textToSend
         })
       })
@@ -221,7 +229,7 @@ export default function PatientChatPage() {
             id: Date.now() + 1,
             contenido: replyText,
             timestamp: new Date().toISOString(),
-            remitente_id: selectedNutri.id,
+            remitente_id: selectedNutri.user_id || selectedNutri.id,
             remitente_username: selectedNutri.full_name,
             destinatario_id: user.id,
             destinatario_username: user.username
