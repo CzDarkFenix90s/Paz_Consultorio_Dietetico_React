@@ -221,42 +221,10 @@ export default function PatientChatPage() {
       if (response.ok) {
         const newMsg = await response.json()
         setMessages(prev => [...prev, newMsg])
-        
-        // Auto-reply mock fallback
-        setTimeout(() => {
-          const replyText = getMockReply(textToSend)
-          const mockReplyMsg: Message = {
-            id: Date.now() + 1,
-            contenido: replyText,
-            timestamp: new Date().toISOString(),
-            remitente_id: selectedNutri.user_id || selectedNutri.id,
-            remitente_username: selectedNutri.full_name,
-            destinatario_id: user.id,
-            destinatario_username: user.username
-          }
-          setMessages(prev => [...prev, mockReplyMsg])
-        }, 1200)
       }
     } catch (error) {
       console.error('Error sending message:', error)
     }
-  }
-
-  const getMockReply = (question: string) => {
-    const q = question.toLowerCase()
-    if (q.includes('agua') || q.includes('hidratacion')) {
-      return `¡Hola! Mantenerse hidratado es fundamental. Recuerda que la meta de tu plan es de 2.0 litros al día. Intenta llevar un tomatodo medido para controlar tu consumo diario.`
-    }
-    if (q.includes('hambre') || q.includes('ansiedad')) {
-      return `Es normal sentir un poco de ansiedad las primeras semanas. Intenta tomar un vaso de agua tibia o infusiones sin azúcar (como manzanilla). También puedes comer palitos de apio o pepino.`
-    }
-    if (q.includes('plátano') || q.includes('fruta') || q.includes('noche')) {
-      return `Sí puedes consumir frutas en la noche, no hay problema de horario siempre que encaje dentro del total de calorías asignadas a tu plan (${user?.username || 'Paciente'}).`
-    }
-    if (q.includes('entrenar') || q.includes('ejercicio') || q.includes('rutina')) {
-      return `Excelente actitud. Te recomiendo seguir la rutina aeróbica que tienes asignada en tu pestaña "Rutina". Recuerda descansar al menos 1 o 2 días a la semana.`
-    }
-    return `Hola. He recibido tu mensaje. Revisaré tu historial antropométrico para darte una respuesta detallada en nuestra próxima consulta programada.`
   }
 
   const handleLogout = () => {
