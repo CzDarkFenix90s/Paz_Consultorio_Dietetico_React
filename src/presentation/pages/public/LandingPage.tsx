@@ -8,6 +8,11 @@ import {
   Menu,
   X
 } from 'lucide-react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+
+gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 // Helper to resolve media files from Django backend
 const getMediaUrl = (path: string) => {
@@ -44,47 +49,58 @@ function VideoWithFallback({ src, poster, className, style }: { src: string; pos
 
 function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover, videoName, posterSrc }: any) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const posterRef = useRef<HTMLImageElement>(null)
   const [isHovered, setIsHovered] = useState(false)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return
-      const rect = containerRef.current.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-      
-      const entryPoint = windowHeight
-      const exitPoint = -rect.height
-      const totalDistance = entryPoint - exitPoint
-      const currentDistance = windowHeight - rect.top
-      
-      let progress = currentDistance / totalDistance
-      progress = Math.max(0, Math.min(1, progress)) // clamp between 0 and 1
-      setScrollProgress(progress)
-    }
+  // GSAP ScrollTrigger for smooth scrubbed scale and parallax offset
+  useGSAP(() => {
+    if (!containerRef.current || !cardRef.current) return
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    gsap.fromTo(
+      cardRef.current,
+      { scale: 0.88, opacity: 0.7 },
+      {
+        scale: 1,
+        opacity: 1,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 85%',
+          end: 'top 25%',
+          scrub: 0.6,
+        },
+      }
+    )
+
+    if (posterRef.current) {
+      gsap.fromTo(
+        posterRef.current,
+        { y: -30 },
+        {
+          y: 30,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        }
+      )
+    }
+  }, { scope: containerRef })
 
   useEffect(() => {
     if (videoRef.current) {
       if (isHovered) {
-        videoRef.current.play().catch((err) => {
-          console.warn("Video playback was interrupted or blocked:", err)
-        })
+        videoRef.current.play().catch(() => {})
       } else {
         videoRef.current.pause()
       }
     }
   }, [isHovered])
-
-  // Calculate dynamic scale and parallax offset based on screen centering
-  const distanceFromCenter = Math.abs(scrollProgress - 0.5) // 0 when centered, 0.5 when at edge
-  const cardScale = Math.max(0.88, 1 - distanceFromCenter * 0.24) // smoothly scales between 0.88 and 1.00
-  const videoParallax = (scrollProgress - 0.5) * -70 // vertical parallax translation
 
   const videoUrl = `${getMediaUrl(`videos/${videoName}`)}?v=2`
 
@@ -100,27 +116,21 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
           {number} //
         </div>
 
-        {/* Widescreen Video Card Container with Smooth Scale-on-Scroll */}
+        {/* Widescreen Video Card Container with GSAP ScrollTrigger */}
         <div 
-          style={{ 
-            transform: `scale(${cardScale})`,
-            transition: 'transform 0.1s ease-out'
-          }}
+          ref={cardRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className="flex-1 relative aspect-[21/9] w-full overflow-hidden rounded-[2rem] border border-white/5 bg-slate-950 shadow-2xl origin-center cursor-pointer group"
         >
           {/* Static Image (Poster) */}
           <img 
+            ref={posterRef}
             src={posterSrc} 
             alt={title} 
             className={`w-full h-full absolute inset-0 object-cover scale-110 transition-opacity duration-1000 ease-out ${
               isHovered ? 'opacity-20' : 'opacity-60'
             }`}
-            style={{
-              transform: `scale(1.15) translateY(${videoParallax}px)`,
-              transition: 'transform 0.1s ease-out'
-            }}
           />
 
           {/* Video element - plays and fades in on hover */}
@@ -133,10 +143,6 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
             className={`w-full h-full absolute inset-0 object-cover scale-110 transition-opacity duration-1000 ease-out ${
               isHovered ? 'opacity-90' : 'opacity-0 pointer-events-none'
             }`}
-            style={{
-              transform: `scale(1.15) translateY(${videoParallax}px)`,
-              transition: 'transform 0.1s ease-out'
-            }}
           />
           
           {/* Overlay Gradients and Dynamic Text (Opal-style Layout) */}
@@ -182,7 +188,7 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
           </div>
         </div>
 
-        {/* Right Action Button (Opal minimalist style) */}
+        {/* Right Action Button */}
         <div className="w-24 text-right">
           <Link 
             to="/register"
@@ -203,11 +209,77 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, subtitleHover,
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const heroContainerRef = useRef<HTMLDivElement>(null)
+  const heroBadgeRef = useRef<HTMLSpanElement>(null)
+  const heroTitleRef = useRef<HTMLHeadingElement>(null)
+  const heroTextRef = useRef<HTMLParagraphElement>(null)
+  const heroCtaRef = useRef<HTMLDivElement>(null)
+  const specGridRef = useRef<HTMLDivElement>(null)
+  const contactSectionRef = useRef<HTMLDivElement>(null)
 
   const heroVideoUrl = `${getMediaUrl('videos/1.mp4')}?v=2`
 
+  // GSAP Animations Context
+  useGSAP(() => {
+    // 1. Hero Entrance Stagger Timeline
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+    if (heroBadgeRef.current) {
+      tl.fromTo(heroBadgeRef.current, { opacity: 0, y: -20, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.7 })
+    }
+
+    if (heroTitleRef.current) {
+      tl.fromTo(heroTitleRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.9 }, '-=0.4')
+    }
+
+    if (heroTextRef.current) {
+      tl.fromTo(heroTextRef.current, { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.7 }, '-=0.5')
+    }
+
+    if (heroCtaRef.current) {
+      tl.fromTo(heroCtaRef.current.children, { opacity: 0, y: 20, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.15 }, '-=0.4')
+    }
+
+    // 2. Specifications Grid Staggered Reveal on Scroll
+    if (specGridRef.current) {
+      gsap.fromTo(
+        specGridRef.current.children,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: specGridRef.current,
+            start: 'top 80%',
+          },
+        }
+      )
+    }
+
+    // 3. Contact Section Smooth Fade Slide
+    if (contactSectionRef.current) {
+      gsap.fromTo(
+        contactSectionRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: contactSectionRef.current,
+            start: 'top 80%',
+          },
+        }
+      )
+    }
+  }, { scope: heroContainerRef })
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-hidden">
+    <div ref={heroContainerRef} className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-hidden">
       
       {/* Background glow effects */}
       <div className="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-emerald-500/[0.02] blur-[150px] pointer-events-none" />
@@ -299,22 +371,31 @@ export default function LandingPage() {
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-16">
           <div className="max-w-4xl space-y-10">
-            <span className="inline-flex items-center gap-2 font-mono text-[9px] tracking-[0.3em] uppercase border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-emerald-400 rounded-full">
+            <span 
+              ref={heroBadgeRef}
+              className="inline-flex items-center gap-2 font-mono text-[9px] tracking-[0.3em] uppercase border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-emerald-400 rounded-full"
+            >
               Tu salud inteligente empieza hoy
             </span>
             
-            <h1 className="text-5xl sm:text-7xl lg:text-[6.5rem] font-serif tracking-tight text-white leading-[0.9] max-w-3xl">
+            <h1 
+              ref={heroTitleRef}
+              className="text-5xl sm:text-7xl lg:text-[6.5rem] font-serif tracking-tight text-white leading-[0.9] max-w-3xl"
+            >
               Alcanza tu mejor versión con <br />
               <span className="italic font-normal bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
                 planes nutricionales
               </span> a tu medida.
             </h1>
 
-            <p className="text-base sm:text-lg leading-relaxed text-slate-400 max-w-2xl font-sans">
+            <p 
+              ref={heroTextRef}
+              className="text-base sm:text-lg leading-relaxed text-slate-400 max-w-2xl font-sans"
+            >
               En nuestro Consultorio Dietético fusionamos la ciencia de la nutrición con tecnología intuitiva para crear planes alimenticios personalizados que realmente se adapten a tu estilo de vida.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div ref={heroCtaRef} className="flex flex-wrap gap-4 pt-4">
               <Link
                 to="/register"
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-8 py-4 rounded-full text-xs font-mono tracking-widest font-bold transition shadow-lg shadow-emerald-500/10 uppercase flex items-center gap-2"
@@ -396,7 +477,7 @@ export default function LandingPage() {
           </div>
 
           {/* Grid layout separated by ultra-thin technical border lines */}
-          <div className="grid border-t border-l border-white/5 md:grid-cols-2 lg:grid-cols-3">
+          <div ref={specGridRef} className="grid border-t border-l border-white/5 md:grid-cols-2 lg:grid-cols-3">
             {[
               { number: '01', title: 'NUTRICIÓN CIENTÍFICA', desc: 'Planes validados por profesionales basados en evaluaciones clínicas y antropométricas.' },
               { number: '02', title: 'PLATAFORMA INTERACTIVA', desc: 'Acceso privado para registrar tu consumo de agua, comidas y síntomas diarios.' },
@@ -416,7 +497,7 @@ export default function LandingPage() {
       </section>
 
       {/* Call to Action & Contact */}
-      <section id="contacto" className="py-24 bg-slate-900/10">
+      <section id="contacto" ref={contactSectionRef} className="py-24 bg-slate-900/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
             
