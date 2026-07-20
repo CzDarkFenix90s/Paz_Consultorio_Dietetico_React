@@ -71,3 +71,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* CRT & Retro Marquee Utilities inspired by kvs.services */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.crt-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.35) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+.crt-screen-bevel {
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 0, 0, 0.95);
+}
