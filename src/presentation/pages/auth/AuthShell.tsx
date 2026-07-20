@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ShieldCheck, Zap, Layers } from 'lucide-react'
 
 type AuthShellProps = {
   eyebrow: string
@@ -45,19 +44,16 @@ export default function AuthShell({
 
           <div className="grid gap-4 mt-8 sm:grid-cols-3">
             <div className="rounded-3xl border border-white/5 bg-slate-950/50 p-5 hover:border-emerald-500/20 transition duration-300">
-              <ShieldCheck className="h-6 w-6 text-emerald-400 mb-2" />
               <div className="text-sm font-bold text-white uppercase tracking-wider">Seguro</div>
               <div className="mt-1 text-xs text-slate-500 leading-normal">Sesiones encriptadas con seguridad JWT.</div>
             </div>
             
             <div className="rounded-3xl border border-white/5 bg-slate-950/50 p-5 hover:border-emerald-500/20 transition duration-300">
-              <Zap className="h-6 w-6 text-emerald-400 mb-2" />
               <div className="text-sm font-bold text-white uppercase tracking-wider">Rápido</div>
               <div className="mt-1 text-xs text-slate-500 leading-normal">Acceso inmediato sin esperas complejas.</div>
             </div>
             
             <div className="rounded-3xl border border-white/5 bg-slate-950/50 p-5 hover:border-emerald-500/20 transition duration-300">
-              <Layers className="h-6 w-6 text-emerald-400 mb-2" />
               <div className="text-sm font-bold text-white uppercase tracking-wider">Conectado</div>
               <div className="mt-1 text-xs text-slate-500 leading-normal">Sincronización en tiempo real con tu nutricionista.</div>
             </div>

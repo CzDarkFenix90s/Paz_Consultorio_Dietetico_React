@@ -19,35 +19,23 @@ const getMediaUrl = (path: string) => {
 
 // Custom Video Player that falls back gracefully to a poster image if not found on the backend
 function VideoWithFallback({ src, poster, className, style }: { src: string; poster: string; className?: string; style?: React.CSSProperties }) {
-  const [hasError, setHasError] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    setHasError(false)
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {})
+    }
   }, [src])
-
-  if (hasError || !src) {
-    return (
-      <img 
-        src={poster} 
-        alt="Visual" 
-        className={`${className} object-cover`}
-        style={style}
-      />
-    )
-  }
 
   return (
     <video
+      ref={videoRef}
       src={src}
       poster={poster}
       autoPlay
       loop
       muted
       playsInline
-      onError={() => {
-        console.warn(`Video failed to load: ${src}. Using poster fallback.`);
-        setHasError(true)
-      }}
       className={`${className} object-cover`}
       style={style}
     />
