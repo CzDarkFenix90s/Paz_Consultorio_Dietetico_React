@@ -106,7 +106,6 @@ export default function PatientPlanPage() {
   const [activePlan, setActivePlan] = useState<NutritionPlan | null>(null)
   const [foods, setFoods] = useState<any[]>([])
   const [userProfileData, setUserProfileData] = useState<any | null>(null)
-  const [debugInfo, setDebugInfo] = useState<string>('')
 
   // Dark/Light Theme state toggle
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
@@ -227,17 +226,14 @@ export default function PatientPlanPage() {
             const foodItems = Array.isArray(foodsData) ? foodsData : Array.isArray(foodsData.results) ? foodsData.results : []
             setFoods(foodItems)
           }
-          setDebugInfo('')
           return
         }
       }
       
-      setDebugInfo(dbg)
       setActivePlan(null)
       setFoods([])
     } catch (error: any) {
       console.error('Error loading active diet plan:', error)
-      setDebugInfo(`JS Exception: ${error?.message || error}. `)
       setActivePlan(null)
       setFoods([])
     } finally {
@@ -418,11 +414,6 @@ export default function PatientPlanPage() {
                 Activar Plan Demo Offline
               </button>
             </div>
-            {debugInfo && (
-              <div className="text-[11px] font-mono text-rose-400 bg-rose-500/5 border border-rose-500/10 rounded-2xl p-4 max-w-lg mt-4 text-left leading-relaxed">
-                <strong>Debug Info:</strong> {debugInfo}
-              </div>
-            )}
           </section>
         ) : (
           <section className="rounded-[2.5rem] border border-card-border bg-card-bg p-6 sm:p-8 backdrop-blur-xl shadow-sm space-y-8 transition-all duration-300">
