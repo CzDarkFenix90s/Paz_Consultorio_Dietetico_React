@@ -240,7 +240,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
       {/* Light Off-White / Silver Retro Television Chassis Frame (Exact Target Screenshot 2) */}
-      <div className="relative w-full max-w-[98vw] h-[92vh] sm:h-[96vh] px-4 sm:px-14 md:px-20 py-3 sm:py-6 rounded-[3rem] sm:rounded-[4.5rem] bg-[#e1e6ea] border-4 sm:border-8 border-[#d4dbdf] shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex items-center justify-center crt-scanlines">
+      <div className="relative w-full max-w-7xl h-[90vh] sm:h-[94vh] p-3 sm:p-6 md:p-8 rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#e1e6ea] border-4 sm:border-8 border-[#d4dbdf] shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex items-center justify-center crt-scanlines">
         
         {/* Top-Left Yellow AWS SITE OF THE DAY Ribbon Badge */}
         <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-[#facc15] text-slate-950 px-3 py-1 font-mono text-[9px] sm:text-[10px] font-black tracking-tight shadow-md uppercase transform -rotate-12 border border-amber-500 z-40 pointer-events-none">
@@ -255,7 +255,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
         {/* Dark Slate Grey CRT Terminal Glass Screen */}
         <div 
           onClick={handleShatter}
-          className="relative w-full max-w-5xl h-full rounded-[2rem] sm:rounded-[3rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
+          className="relative w-full h-full rounded-[1.8rem] sm:rounded-[2.8rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
         >
           {/* Fine TV Mesh Grid Overlay */}
           <div 
