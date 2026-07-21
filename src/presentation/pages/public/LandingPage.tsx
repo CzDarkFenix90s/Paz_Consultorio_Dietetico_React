@@ -15,8 +15,7 @@ import {
   ShieldCheck,
   Volume2,
   VolumeX,
-  Terminal,
-  Zap
+  Terminal
 } from 'lucide-react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -89,19 +88,10 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void; soundEnabled: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [progress, setProgress] = useState(0)
-  const [bootLog, setBootLog] = useState<string[]>([])
   const [shattering, setShattering] = useState(false)
 
   // Live boot terminal sequence counter
   useEffect(() => {
-    const logs = [
-      '[INIT NUTRITEC OS v4.2.0]...',
-      '[OK] CHECKING ANTHROPOMETRIC DATABASE',
-      '[OK] DIETETIC ALGORITHMS LOADED',
-      '[OK] CRT RASTER PIPELINE INITIALIZED',
-      '[READY] SYSTEM ONLINE. WAITING FOR USER INPUT.'
-    ]
-
     let current = 0
     const interval = setInterval(() => {
       current += 2
@@ -110,11 +100,6 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
         clearInterval(interval)
       }
       setProgress(current)
-
-      const logIndex = Math.floor((current / 100) * logs.length)
-      if (logIndex < logs.length) {
-        setBootLog(prev => prev.includes(logs[logIndex]) ? prev : [...prev, logs[logIndex]])
-      }
     }, 25)
 
     return () => clearInterval(interval)
@@ -198,71 +183,85 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
   }
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-slate-950 text-slate-100 font-mono flex flex-col items-center justify-between p-6 overflow-hidden selection:bg-orange-500 selection:text-slate-950">
+    <div className="fixed inset-0 z-[10000] bg-slate-950 p-3 sm:p-6 flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white">
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
-      {/* Top Header */}
-      <div className="w-full max-w-4xl flex items-center justify-between text-[10px] text-slate-500 tracking-[0.25em] border-b border-white/10 pb-4 uppercase">
-        <span className="flex items-center gap-2 text-emerald-400">
-          <Terminal className="h-4 w-4" /> &#123;NUTRITEC BOOTLOADER v4.2&#125;
-        </span>
-        <span>&#123;MEMORY: 640K OK&#125;</span>
-      </div>
+      {/* Light Silver CRT TV Screen Frame (Exact kvs.services design) */}
+      <div 
+        onClick={handleShatter}
+        className="relative w-full max-w-6xl h-[92vh] rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#e1e6ea] text-slate-900 border-8 border-slate-900 shadow-[inset_0_0_90px_rgba(0,0,0,0.35),0_0_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col justify-between p-6 sm:p-10 cursor-pointer crt-scanlines"
+      >
+        {/* Fine Dot Matrix TV Grid Overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-25 mix-blend-multiply"
+          style={{
+            backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
+            backgroundSize: '4px 4px'
+          }}
+        />
 
-      {/* Main ASCII & Progress Center */}
-      <div className="my-auto flex flex-col items-center text-center space-y-8 max-w-3xl">
-        
-        {/* ASCII Logo */}
-        <pre className="text-[10px] sm:text-xs md:text-sm font-extrabold leading-tight text-emerald-400 crt-chromatic-text selection:bg-transparent">
+        {/* Top Terminal Info Bar */}
+        <div className="relative z-10 flex items-center justify-between text-[10px] sm:text-xs font-bold text-slate-700 tracking-[0.2em] uppercase border-b border-slate-400/30 pb-3">
+          <span className="flex items-center gap-2 text-slate-800">
+            <Terminal className="h-4 w-4 text-orange-600" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
+          </span>
+          <span className="text-slate-600">[MEMORY: 640K OK]</span>
+        </div>
+
+        {/* Center Metal Gothic Logo & Subtext */}
+        <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-6">
+          
+          {/* Black Tribal / Gothic Metal Artwork Logo */}
+          <div className="relative group max-w-full overflow-hidden">
+            <pre className="text-[11px] sm:text-xs md:text-sm font-black leading-tight text-slate-950 tracking-widest select-none crt-chromatic-text">
 {`
   _  _ _  _ ___ ____ _ ___ ____ ____ 
   |\\ | |  |  |  |__/ |  |  |___ |    
   | \\| |__|  |  |  \\ |  |  |___ |___ 
 `}
-        </pre>
+            </pre>
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-[0.2em] text-slate-950 uppercase mt-2 font-mono underline decoration-orange-500 decoration-4 underline-offset-8">
+              NUTRITEC
+            </h1>
+          </div>
 
-        {/* Terminal Boot Log */}
-        <div className="w-full bg-slate-900/80 border border-white/10 rounded-2xl p-4 text-left font-mono text-[10px] text-slate-400 space-y-1 max-h-32 overflow-hidden shadow-inner">
-          {bootLog.map((log, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <span className="text-orange-500">&gt;</span>
-              <span>{log}</span>
+          {/* Terminal Boot Progress indicator */}
+          <div className="w-full max-w-sm space-y-2 pt-2">
+            <div className="flex justify-between text-[10px] font-bold tracking-widest text-slate-700 uppercase">
+              <span>SYSTEM INITIALIZATION</span>
+              <span className="text-orange-600 font-black">{progress}%</span>
             </div>
-          ))}
+            <div className="w-full h-2.5 rounded-full bg-slate-300 border border-slate-400/50 overflow-hidden p-0.5">
+              <div 
+                className="h-full bg-gradient-to-r from-slate-900 to-orange-500 rounded-full transition-all duration-75"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Orange Action Button */}
+          <div className="pt-4 flex flex-col items-center gap-3">
+            <button
+              onClick={handleShatter}
+              className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 py-2 rounded text-[11px] font-mono font-bold tracking-[0.25em] uppercase shadow-md transition active:scale-95 border border-orange-400"
+            >
+              CLICK TO ENTER
+            </button>
+            
+            <p className="text-[9px] font-mono text-slate-600 tracking-[0.2em] uppercase font-semibold">
+              (HEADPHONES RECOMMENDED)
+            </p>
+          </div>
+
         </div>
 
-        {/* Progress Bar & Percentage */}
-        <div className="w-full space-y-2">
-          <div className="flex justify-between text-xs font-bold tracking-widest text-slate-300">
-            <span>SYSTEM INITIALIZATION</span>
-            <span className="text-orange-500 font-black">{progress}%</span>
-          </div>
-          <div className="w-full h-3 rounded-full bg-slate-900 border border-white/10 overflow-hidden p-0.5">
-            <div 
-              className="h-full bg-gradient-to-r from-emerald-500 to-orange-500 rounded-full transition-all duration-75"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+        {/* Bottom Status Bar */}
+        <div className="relative z-10 flex items-center justify-between text-[9px] text-slate-600 tracking-[0.25em] uppercase border-t border-slate-400/30 pt-3">
+          <span>&#123;PROYECTO INTEGRADOR DE SISTEMAS // CRT RASTER PIPELINE&#125;</span>
+          <span className="hidden sm:block text-slate-700 font-bold">&#123;STATUS: READY&#125;</span>
         </div>
 
-        {/* Explosive Shatter Button ("CLICK TO BREAK / ENTER") */}
-        {progress >= 100 && (
-          <button
-            onClick={handleShatter}
-            className="btn-pixel-retro bg-orange-500 text-slate-950 px-10 py-4 font-mono font-extrabold text-sm tracking-[0.25em] uppercase rounded border-2 border-orange-400 animate-bounce flex items-center gap-3"
-          >
-            <Zap className="h-5 w-5 fill-slate-950" />
-            CLICK TO BREAK SYSTEM &rarr;
-          </button>
-        )}
-
       </div>
-
-      {/* Footer hint */}
-      <div className="text-[9px] text-slate-600 tracking-[0.2em] uppercase">
-        &#123;PROYECTO INTEGRADOR DE SISTEMAS // CRT RASTER PIPELINE&#125;
-      </div>
-
     </div>
   )
 }
