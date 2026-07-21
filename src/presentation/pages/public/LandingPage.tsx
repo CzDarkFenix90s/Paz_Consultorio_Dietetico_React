@@ -85,21 +85,21 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 }
 
 // Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
-// Symmetrical Cyber-Sigilism Emblem for NUTRITEC (Exact Target Screenshot)
-function CyberSigilismNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { className?: string }) {
+// Symmetrical Cyber-Sigilism Emblem for NUTRITEC (Stretched Horizontally matching image_34.png)
+function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { className?: string }) {
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
       <svg
-        viewBox="0 0 1000 420"
+        viewBox="0 0 1400 420"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto drop-shadow-[0_0_20px_rgba(56,189,248,0.4)]"
+        className="w-full h-auto drop-shadow-[0_0_22px_rgba(56,189,248,0.45)]"
       >
         <defs>
           {/* Cyan Phosphor Dot Matrix Mesh Pattern matching screenshot */}
-          <pattern id="cyan-dot-matrix" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
-            <rect width="5" height="5" fill="#2d373c" />
-            <circle cx="2.5" cy="2.5" r="1.2" fill="#7dd3fc" opacity="0.8" />
+          <pattern id="cyan-dot-matrix" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <rect width="6" height="6" fill="#2d373c" />
+            <circle cx="3" cy="3" r="1.4" fill="#7dd3fc" opacity="0.85" />
           </pattern>
           {/* Cyan Glow Gradient */}
           <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -109,44 +109,44 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { 
           </linearGradient>
         </defs>
 
-        {/* Cyber-Sigilism Symmetrical Top Arching Halo Wings (Cyan Glow) */}
+        {/* Cyber-Sigilism Symmetrical Top Arching Halo Wings (Stretched Wide to Edges matching image_34.png) */}
         <path
-          d="M 500,40 C 380,10 240,30 140,90 C 80,130 40,180 30,240 C 35,260 55,250 65,230 C 80,190 120,150 180,115 C 250,75 350,55 450,55 C 380,85 310,135 260,195 C 230,230 210,270 215,300 C 220,310 235,300 240,280 C 250,240 285,195 335,155 C 390,115 460,85 500,75 C 540,85 610,115 665,155 C 715,195 750,240 760,280 C 765,300 780,310 785,300 C 790,270 770,230 740,195 C 690,135 620,85 550,55 C 650,55 750,75 820,115 C 880,150 920,190 935,230 C 945,250 965,260 970,240 C 960,180 920,130 860,90 C 760,30 620,10 500,40 Z"
+          d="M 700,40 C 530,10 330,30 180,90 C 100,130 50,180 30,240 C 35,260 65,250 80,230 C 100,190 160,150 250,115 C 350,75 490,55 630,55 C 530,85 430,135 360,195 C 320,230 290,270 295,300 C 300,310 320,300 330,280 C 345,240 395,195 465,155 C 540,115 640,85 700,75 C 760,85 860,115 935,155 C 1005,195 1055,240 1070,280 C 1080,300 1100,310 1105,300 C 1110,270 1080,230 1040,195 C 970,135 870,85 770,55 C 910,55 1050,75 1150,115 C 1240,150 1300,190 1320,230 C 1335,250 1365,260 1370,240 C 1350,180 1300,130 1220,90 C 1070,30 870,10 700,40 Z"
           fill="url(#cyan-dot-matrix)"
           stroke="#38bdf8"
-          strokeWidth="2.5"
+          strokeWidth="3"
         />
 
-        {/* Lower Symmetrical Organic Tribal Roots & Thorn Branches */}
-        <g stroke="url(#cyan-glow)" strokeWidth="3" fill="none">
-          <path d="M 500,280 C 440,320 370,350 300,370 C 260,380 220,385 190,375 C 230,360 280,340 330,310 C 390,275 440,230 470,180 Z" fill="url(#cyan-dot-matrix)" />
-          <path d="M 500,280 C 560,320 630,350 700,370 C 740,380 780,385 810,375 C 770,360 720,340 670,310 C 610,275 560,230 530,180 Z" fill="url(#cyan-dot-matrix)" />
-          <path d="M 500,260 L 500,380 M 460,290 L 410,360 M 540,290 L 590,360 M 480,310 L 450,375 M 520,310 L 550,375" strokeWidth="2.5" />
+        {/* Lower Symmetrical Organic Tribal Roots & Thorn Branches (Widescreen Extended) */}
+        <g stroke="url(#cyan-glow)" strokeWidth="3.5" fill="none">
+          <path d="M 700,280 C 610,320 510,350 410,370 C 350,380 300,385 260,375 C 310,360 380,340 450,310 C 540,275 620,230 660,180 Z" fill="url(#cyan-dot-matrix)" />
+          <path d="M 700,280 C 790,320 890,350 990,370 C 1050,380 1100,385 1140,375 C 1090,360 1020,340 950,310 C 860,275 780,230 740,180 Z" fill="url(#cyan-dot-matrix)" />
+          <path d="M 700,260 L 700,380 M 640,290 L 570,360 M 760,290 L 830,360 M 670,310 L 620,375 M 730,310 L 780,375" strokeWidth="3" />
         </g>
 
-        {/* Integrated Center NUTRITEC Text (Clean White/Cyan Monospace Font) */}
+        {/* Integrated Center NUTRITEC Text (Spaced Monospace Cyber Font) */}
         <text
-          x="500"
+          x="700"
           y="215"
           textAnchor="middle"
           fill="#f8fafc"
           stroke="#1e293b"
-          strokeWidth="6"
-          className="font-black text-6xl sm:text-7xl md:text-8xl tracking-[0.22em] uppercase font-mono"
-          style={{ letterSpacing: '0.22em', filter: 'drop-shadow(0 0 12px #38bdf8)' }}
+          strokeWidth="7"
+          className="font-black text-6xl sm:text-7xl md:text-8xl tracking-[0.25em] uppercase font-mono"
+          style={{ letterSpacing: '0.25em', filter: 'drop-shadow(0 0 15px #38bdf8)' }}
         >
           NUTRITEC
         </text>
 
         {/* Ink Blotches / Ground Reflections under logo */}
-        <g fill="#1e293b" opacity="0.8">
-          <ellipse cx="500" cy="330" rx="140" ry="10" />
-          <path d="M 320,325 Q 380,340 440,328 Q 520,342 600,326 Q 660,340 720,325 Q 640,355 500,350 Q 380,355 320,325 Z" />
-          <circle cx="280" cy="335" r="4" />
-          <circle cx="340" cy="345" r="6" />
-          <circle cx="410" cy="350" r="7" />
-          <circle cx="580" cy="352" r="6" />
-          <circle cx="660" cy="342" r="5" />
+        <g fill="#1e293b" opacity="0.85">
+          <ellipse cx="700" cy="330" rx="200" ry="12" />
+          <path d="M 440,325 Q 530,340 610,328 Q 730,342 850,326 Q 930,340 1010,325 Q 890,355 700,350 Q 530,355 440,325 Z" />
+          <circle cx="380" cy="335" r="5" />
+          <circle cx="470" cy="345" r="7" />
+          <circle cx="570" cy="350" r="8" />
+          <circle cx="820" cy="352" r="7" />
+          <circle cx="930" cy="342" r="6" />
         </g>
       </svg>
     </div>
@@ -274,11 +274,11 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
             <span className="text-slate-300">[MEMORY: 640K OK]</span>
           </div>
 
-          {/* Center Glowing Cyan Cyber-Sigilism Logo & Integrated NUTRITEC */}
-          <div className="relative z-20 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-4">
+          {/* Center Glowing Cyan Cyber-Sigilism Logo & Integrated NUTRITEC (Stretched max-w-5xl) */}
+          <div className="relative z-20 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-2">
             
             {/* Cyber Sigil Organic Tribal Emblem Component */}
-            <CyberSigilismNutritecLogo className="w-full max-w-lg sm:max-w-2xl" />
+            <CyberSigilismNutritecLogo className="w-full max-w-5xl sm:max-w-6xl" />
 
             {/* Small Orange Action Pill Button & Headphones Subtext */}
             <div className="pt-2 flex flex-col items-center gap-2">
