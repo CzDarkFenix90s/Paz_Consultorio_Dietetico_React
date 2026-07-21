@@ -236,14 +236,14 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
   }
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-slate-950 p-2 sm:p-4 flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white overflow-hidden">
+    <div className="fixed inset-0 z-[10000] bg-[#070b10] flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
-      {/* Light Off-White / Silver Retro Television Chassis Frame */}
-      <div className="relative w-full max-w-7xl h-[92vh] sm:h-[96vh] p-2 sm:p-5 rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#e1e6ea] border-4 sm:border-8 border-[#d4dbdf] shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex items-center justify-center crt-scanlines">
+      {/* Light Off-White / Silver Retro Television Chassis Frame (Expanded to Match Guidelines in image_37.png) */}
+      <div className="relative w-full max-w-[98vw] h-[92vh] sm:h-[95vh] px-4 sm:px-12 md:px-16 py-3 sm:py-6 rounded-[3rem] sm:rounded-[4rem] bg-[#e1e6ea] border-4 sm:border-8 border-[#d4dbdf] shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex items-center justify-center crt-scanlines">
         
         {/* Top-Left Yellow AWS SITE OF THE DAY Ribbon Badge */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-[#facc15] text-slate-950 px-3 py-1 font-mono text-[9px] sm:text-[10px] font-black tracking-tight shadow-md uppercase transform -rotate-12 border border-amber-500 z-40 pointer-events-none">
+        <div className="absolute top-3 left-3 sm:top-5 sm:left-5 bg-[#facc15] text-slate-950 px-3 py-1 font-mono text-[9px] sm:text-[10px] font-black tracking-tight shadow-md uppercase transform -rotate-12 border border-amber-500 z-40 pointer-events-none">
           AWS SITE OF THE DAY
         </div>
 
@@ -252,10 +252,10 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           Site of the Day
         </div>
 
-        {/* Dark Slate Grey CRT Terminal Glass Screen (LO DEL MEDIO ESTIRADO A LOS LADOS) */}
+        {/* Center Dark Slate Grey CRT Terminal Glass Screen (Vastly Expanded Canvas) */}
         <div 
           onClick={handleShatter}
-          className="relative w-full h-full rounded-[1.8rem] sm:rounded-[2.8rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
+          className="relative w-full h-full rounded-[2rem] sm:rounded-[3rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
         >
           {/* Fine TV Mesh Grid Overlay */}
           <div 
