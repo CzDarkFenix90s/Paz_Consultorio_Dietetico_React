@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/useAuthStore'
 import { API_CONFIG } from '../../../infrastructure/config/api.config'
+import { useToast } from '../../components/Toast'
 import { 
   Bell, 
   CalendarCheck2, 
@@ -66,6 +67,7 @@ const bottomNav = [
 ]
 
 export default function PatientMenuPage() {
+  const { showToast } = useToast()
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
@@ -315,11 +317,11 @@ export default function PatientMenuPage() {
         console.error('Symptoms logging encountered a silent error:', err)
       }
 
-      alert('Ficha diaria registrada de manera exitosa.')
+      showToast('Ficha diaria registrada de manera exitosa.', 'success')
       loadPatientProfile()
     } catch (error) {
       console.error('Error saving patient profile checklist:', error)
-      alert('Error guardando perfil: ' + error)
+      showToast('Error guardando perfil: ' + error, 'error')
     }
   }
 
@@ -343,9 +345,9 @@ export default function PatientMenuPage() {
       })
       if (response.ok) {
         loadUserProfile()
-        alert('Foto de perfil actualizada.')
+        showToast('Foto de perfil actualizada.', 'success')
       } else {
-        alert('Error al subir la imagen. Verifica el formato.')
+        showToast('Error al subir la imagen. Verifica el formato.', 'error')
       }
     } catch (error) {
       console.error('Error uploading profile picture:', error)

@@ -2,9 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { usePlanStore } from '../../store/usePlanStore'
+import { useToast } from '../../components/Toast'
 import { ArrowLeft, Save, AlertCircle, Sparkles } from 'lucide-react'
 
 export default function PlanFormPage() {
+  const { showToast } = useToast()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEdit = !!id
@@ -80,7 +82,7 @@ export default function PlanFormPage() {
     }
 
     if (success) {
-      alert(isEdit ? 'Plan nutricional actualizado correctamente.' : 'Plan nutricional creado correctamente.')
+      showToast(isEdit ? 'Plan nutricional actualizado correctamente.' : 'Plan nutricional creado correctamente.', 'success')
       navigate('/admin')
     }
   }

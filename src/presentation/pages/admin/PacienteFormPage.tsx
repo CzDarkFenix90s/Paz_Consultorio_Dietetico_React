@@ -2,9 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { usePacienteStore } from '../../store/usePacienteStore'
+import { useToast } from '../../components/Toast'
 import { ArrowLeft, Save, AlertCircle, Sparkles } from 'lucide-react'
 
 export default function PacienteFormPage() {
+  const { showToast } = useToast()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEdit = !!id
@@ -109,7 +111,7 @@ export default function PacienteFormPage() {
     }
 
     if (success) {
-      alert(isEdit ? 'Paciente actualizado correctamente.' : 'Paciente creado correctamente.')
+      showToast(isEdit ? 'Paciente actualizado correctamente.' : 'Paciente creado correctamente.', 'success')
       navigate('/admin')
     }
   }

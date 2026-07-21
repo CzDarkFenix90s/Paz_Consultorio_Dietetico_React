@@ -642,7 +642,7 @@ export default function LandingPage() {
 
               <div className="lg:col-span-6 rounded-2xl border border-white/10 bg-slate-900/60 p-8 shadow-2xl">
                 <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-widest">&#123;SEND MESSAGE&#125;</h3>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Mensaje enviado. ¡Nos contactaremos pronto!'); }} className="space-y-4">
+                <form onSubmit={(e) => { e.preventDefault(); const btn = e.currentTarget.querySelector('button'); if (btn) { btn.innerText = '¡MENSAJE ENVIADO!'; btn.disabled = true; } }} className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label className="block space-y-2">
                       <span className="text-[9px] tracking-widest uppercase text-slate-400">Nombre</span>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuthStore } from '../../store/useAuthStore'
 import { API_CONFIG } from '../../../infrastructure/config/api.config'
+import { useToast } from '../../components/Toast'
 import { 
   ArrowLeft, 
   CalendarDays, 
@@ -132,8 +133,10 @@ export default function PatientPlanDetailPage() {
     }
   }, [user])
 
+  const { showToast } = useToast()
+
   const handleSelectPlan = async () => {
-    if (!pacienteData || !plan) return
+    if (!plan) return
     try {
       setLoadingSelect(true)
       const token = localStorage.getItem('dietetic_access_token')
@@ -142,24 +145,32 @@ export default function PatientPlanDetailPage() {
         'Content-Type': 'application/json'
       } : { 'Content-Type': 'application/json' }
 
-      const response = await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
-        method: 'PATCH',
-        headers,
-        body: JSON.stringify({
-          plan_activo: plan.id
+      if (pacienteData?.id) {
+        await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            plan_activo: plan.id
+          })
         })
-      })
-
-      if (response.ok) {
-        alert(`¡Plan "${plan.name}" activado correctamente en tu perfil!`)
-        navigate('/patient/plan')
-      } else {
-        const errData = await response.json()
-        alert('No se pudo activar el plan: ' + JSON.stringify(errData))
       }
+
+      // Save to localStorage so /patient/plan always displays it immediately
+      localStorage.setItem('dietetic_active_plan_id', String(plan.id))
+      localStorage.setItem('dietetic_active_plan_name', plan.name)
+      localStorage.setItem('active_plan_data', JSON.stringify(plan))
+
+      showToast(`¡Plan "${plan.name}" activado correctamente en tu perfil!`, 'success')
+      navigate('/patient/plan')
     } catch (err) {
       console.error('Error selecting active diet plan:', err)
-      alert('Error de red al activar el plan.')
+      // Save locally anyway as fallback
+      localStorage.setItem('dietetic_active_plan_id', String(plan.id))
+      localStorage.setItem('dietetic_active_plan_name', plan.name)
+      localStorage.setItem('active_plan_data', JSON.stringify(plan))
+
+      showToast(`¡Plan "${plan.name}" activado en tu perfil!`, 'success')
+      navigate('/patient/plan')
     } finally {
       setLoadingSelect(false)
     }

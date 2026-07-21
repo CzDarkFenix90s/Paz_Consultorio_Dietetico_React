@@ -151,9 +151,9 @@ export default function PatientChatPage() {
   }
 
   // Fetch messages between logged-in user and selected nutritionist
-  const fetchChatMessages = async (nutriId: number, nutriUserId: number) => {
+  const fetchChatMessages = async (nutriId: number, nutriUserId: number, isSilent = false) => {
     try {
-      setLoadingMessages(true)
+      if (!isSilent) setLoadingMessages(true)
       const token = localStorage.getItem('dietetic_access_token')
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {}
       const response = await fetch(`${API_CONFIG.BASE_URL}/mensajes-chat/?_t=${Date.now()}`, { headers })
@@ -167,12 +167,21 @@ export default function PatientChatPage() {
           (Number(m.remitente_id) === currentUserId && Number(m.destinatario_id) === targetNutriUserId) ||
           (Number(m.remitente_id) === targetNutriUserId && Number(m.destinatario_id) === currentUserId)
         )
+
+        // Sort chronologically ascending (oldest first at top, newest at bottom)
+        filtered.sort((a: any, b: any) => {
+          const tA = new Date(a.timestamp || a.created_at || 0).getTime()
+          const tB = new Date(b.timestamp || b.created_at || 0).getTime()
+          if (tA !== tB) return tA - tB
+          return (a.id || 0) - (b.id || 0)
+        })
+
         setMessages(filtered)
       }
     } catch (error) {
       console.error('Error loading messages history:', error)
     } finally {
-      setLoadingMessages(false)
+      if (!isSilent) setLoadingMessages(false)
     }
   }
 
@@ -183,10 +192,18 @@ export default function PatientChatPage() {
     }
   }, [user])
 
+  // Real-time polling every 3 seconds for active conversation
   useEffect(() => {
-    if (selectedNutri) {
-      fetchChatMessages(selectedNutri.id, selectedNutri.user_id || selectedNutri.id)
-    }
+    if (!selectedNutri) return
+
+    const targetNutriUserId = selectedNutri.user_id || selectedNutri.id
+    fetchChatMessages(selectedNutri.id, targetNutriUserId, false)
+
+    const intervalId = setInterval(() => {
+      fetchChatMessages(selectedNutri.id, targetNutriUserId, true)
+    }, 3000)
+
+    return () => clearInterval(intervalId)
   }, [selectedNutri])
 
   // Scroll to bottom when new messages loaded

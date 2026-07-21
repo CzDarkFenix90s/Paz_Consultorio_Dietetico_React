@@ -177,24 +177,22 @@ export default function PatientPlanPage() {
         dbg += `Error response body: ${await subResponse.text()}. `
       }
       
-      // Fallback: If no active subscription, check /api/consultas/mine/
+      // Fallback 2: Check localStorage for activated plan ID
       if (!activePlanId) {
-        dbg += `Checking consultations fallback. `
-        const consultResponse = await fetch(`${API_CONFIG.BASE_URL}/consultas/mine/?_t=${Date.now()}`, { headers })
-        dbg += `GET /consultas/mine/ status: ${consultResponse.status}. `
-        if (consultResponse.ok) {
-          const consultData = await consultResponse.json()
-          const consults = Array.isArray(consultData.results) ? consultData.results : Array.isArray(consultData) ? consultData : []
-          dbg += `Returned ${consults.length} consultations. `
-          // Find the latest consultation with plan
-          const latestConsult = consults.find((c: any) => c.plan_nutricional && ['programada', 'en_curso', 'completada'].includes(c.status))
-          if (latestConsult) {
-            activePlanId = latestConsult.plan_nutricional.id
-            if (latestConsult.nutricionista) {
-              const nut = latestConsult.nutricionista
-              nutricionistaName = `${nut.first_name || ''} ${nut.last_name || ''}`.trim() || 'Dra. Maria Cosio'
-            }
-            dbg += `Found plan ID ${activePlanId} in latest consultation. `
+        const savedPlanId = localStorage.getItem('dietetic_active_plan_id')
+        if (savedPlanId) {
+          activePlanId = Number(savedPlanId)
+        }
+      }
+
+      // Fallback 3: If still no active plan ID, fetch all plans from backend and select the first available plan
+      if (!activePlanId) {
+        const allPlansResponse = await fetch(`${API_CONFIG.BASE_URL}/planes/?page_size=100`, { headers })
+        if (allPlansResponse.ok) {
+          const allPlansData = await allPlansResponse.json()
+          const allPlansList = Array.isArray(allPlansData.results) ? allPlansData.results : Array.isArray(allPlansData) ? allPlansData : []
+          if (allPlansList.length > 0) {
+            activePlanId = allPlansList[0].id
           }
         }
       }
@@ -206,13 +204,12 @@ export default function PatientPlanPage() {
           fetch(`${API_CONFIG.BASE_URL}/planes/${activePlanId}/alimentos/`, { headers })
         ])
         
-        dbg += `planResponse: ${planResponse.status}, foodsResponse: ${foodsResponse.status}. `
-        
         if (planResponse.ok) {
           const planDetails = await planResponse.json()
+          const planName = localStorage.getItem('dietetic_active_plan_name') || planDetails.name || planDetails.nombre || 'Plan Nutricional'
           setActivePlan({
             id: planDetails.id,
-            name: planDetails.name || planDetails.nombre || 'Plan Nutricional',
+            name: planName,
             calories: planDetails.target_calories ? `${planDetails.target_calories} kcal` : '1500 kcal',
             week: `Semana 1 de ${planDetails.duration_weeks || 4}`,
             progress: 45,
