@@ -252,11 +252,24 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           Site of the Day
         </div>
 
-        {/* Center Dark Slate Grey CRT Terminal Glass Screen (Vastly Expanded Canvas) */}
+        {/* Dark Slate Grey CRT Terminal Glass Screen (Vastly Expanded Canvas) */}
         <div 
           onClick={handleShatter}
-          className="relative w-full h-full rounded-[2rem] sm:rounded-[3rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
+          className="relative w-full h-full rounded-[2rem] sm:rounded-[3rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer crt-scanlines"
         >
+          {/* Animated VHS Tape Horizontal Tracking Line Glitch */}
+          <div className="vhs-tracking-line" />
+
+          {/* Authentic VHS Tape On-Screen Display (OSD HUD Overlay) */}
+          <div className="absolute top-4 left-6 right-6 flex items-center justify-between font-mono text-[9px] sm:text-[10px] tracking-widest text-cyan-300/80 pointer-events-none z-30 font-bold uppercase select-none">
+            <span className="flex items-center gap-1.5 text-red-500 font-black drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+              <span className="h-2 w-2 rounded-full bg-red-500 inline-block vhs-rec-blink" /> ● REC [VHS HI-FI]
+            </span>
+            <span className="text-emerald-400 font-extrabold tracking-widest vhs-text-glitch">
+              PLAY ▶ 0:02:14
+            </span>
+          </div>
+
           {/* Fine TV Mesh Grid Overlay */}
           <div 
             className="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply z-20"
@@ -267,8 +280,8 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           />
 
           {/* Top Terminal Info Bar */}
-          <div className="relative z-20 flex items-center justify-between text-[10px] sm:text-xs font-bold text-slate-200 tracking-[0.2em] uppercase border-b border-slate-400/20 pb-3">
-            <span className="flex items-center gap-2 text-slate-100">
+          <div className="relative z-20 flex items-center justify-between text-[10px] sm:text-xs font-bold text-slate-200 tracking-[0.2em] uppercase border-b border-slate-400/20 pb-3 pt-4 sm:pt-2">
+            <span className="flex items-center gap-2 text-slate-100 vhs-text-glitch">
               <Terminal className="h-4 w-4 text-slate-300" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
             </span>
             <span className="text-slate-300">[MEMORY: 640K OK]</span>
@@ -278,13 +291,13 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           <div className="relative z-20 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-2">
             
             {/* Cyber Sigil Organic Tribal Emblem Component */}
-            <CyberSigilismNutritecLogo className="w-full max-w-5xl sm:max-w-6xl" />
+            <CyberSigilismNutritecLogo className="w-full max-w-5xl sm:max-w-6xl vhs-text-glitch" />
 
             {/* Small Orange Action Pill Button & Headphones Subtext */}
             <div className="pt-2 flex flex-col items-center gap-2">
               <button
                 onClick={handleShatter}
-                className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-5 py-1.5 rounded text-[10px] sm:text-[11px] font-mono font-bold tracking-[0.2em] uppercase shadow-md transition active:scale-95 border border-orange-400"
+                className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-5 py-1.5 rounded text-[10px] sm:text-[11px] font-mono font-bold tracking-[0.2em] uppercase shadow-md transition active:scale-95 border border-orange-400 btn-pixel-retro"
               >
                 CLICK TO ENTER
               </button>
@@ -298,8 +311,8 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
 
           {/* Bottom Status Bar */}
           <div className="relative z-20 flex items-center justify-between text-[8px] sm:text-[9px] text-slate-300 tracking-[0.2em] uppercase border-t border-slate-400/20 pt-3">
-            <span>{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
-            <span className="hidden sm:block text-slate-200 font-bold">{"[STATUS: READY]"}</span>
+            <span className="vhs-text-glitch">{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
+            <span className="hidden sm:block text-slate-200 font-bold">{"[AUTO TRACKING -- OK]"}</span>
           </div>
 
         </div>
