@@ -236,27 +236,24 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
   }
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-black p-1 sm:p-4 flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white overflow-hidden">
+    <div className="fixed inset-0 z-[10000] bg-[#e1e6ea] flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white overflow-hidden crt-scanlines">
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
-      {/* Light Off-White / Silver Retro Television Chassis Frame (Exact Target Screenshot 2) */}
-      <div className="relative w-full max-w-7xl h-[90vh] sm:h-[94vh] p-3 sm:p-6 md:p-8 rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#e1e6ea] border-4 sm:border-8 border-[#d4dbdf] shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex items-center justify-center crt-scanlines">
-        
-        {/* Top-Left Yellow AWS SITE OF THE DAY Ribbon Badge */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-[#facc15] text-slate-950 px-3 py-1 font-mono text-[9px] sm:text-[10px] font-black tracking-tight shadow-md uppercase transform -rotate-12 border border-amber-500 z-40 pointer-events-none">
-          AWS SITE OF THE DAY
-        </div>
+      {/* Top-Left Yellow AWS SITE OF THE DAY Ribbon Badge */}
+      <div className="absolute top-3 left-3 sm:top-5 sm:left-6 bg-[#facc15] text-slate-950 px-3.5 py-1 font-mono text-[9px] sm:text-[10px] font-black tracking-tight shadow-md uppercase transform -rotate-12 border border-amber-500 z-40 pointer-events-none">
+        AWS SITE OF THE DAY
+      </div>
 
-        {/* Right Red Ribbon Badge */}
-        <div className="absolute top-1/2 -right-3 -translate-y-1/2 bg-red-600 text-white px-1.5 py-4 font-mono text-[8px] font-bold tracking-widest uppercase [writing-mode:vertical-rl] rounded-l z-40 shadow-md pointer-events-none">
-          Site of the Day
-        </div>
+      {/* Right Red Ribbon Badge */}
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 bg-red-600 text-white px-2 py-5 font-mono text-[9px] font-bold tracking-widest uppercase [writing-mode:vertical-rl] rounded-l z-40 shadow-md pointer-events-none">
+        Site of the Day
+      </div>
 
-        {/* Dark Slate Grey CRT Terminal Glass Screen */}
-        <div 
-          onClick={handleShatter}
-          className="relative w-full h-full rounded-[1.8rem] sm:rounded-[2.8rem] bg-[#384349] text-slate-100 border-4 sm:border-8 border-[#242d32] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
-        >
+      {/* Center Dark Slate Grey CRT Terminal Glass Screen */}
+      <div 
+        onClick={handleShatter}
+        className="relative w-full max-w-6xl h-[88vh] mx-3 sm:mx-8 rounded-[2.2rem] sm:rounded-[3.5rem] bg-[#384349] text-slate-100 border-[8px] sm:border-[14px] border-[#252f34] shadow-[inset_0_0_100px_rgba(0,0,0,0.9),0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
+      >
           {/* Fine TV Mesh Grid Overlay */}
           <div 
             className="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply z-20"
@@ -304,7 +301,6 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
 
         </div>
 
-      </div>
     </div>
   )
 }
