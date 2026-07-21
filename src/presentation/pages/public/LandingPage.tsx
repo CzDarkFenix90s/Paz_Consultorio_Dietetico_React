@@ -85,7 +85,7 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 }
 
 // Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
-// Symmetrical Cyber-Sigilism Organic Tribal Emblem for NUTRITEC (Screenshot 1 Target)
+// Symmetrical Cyber-Sigilism Emblem for NUTRITEC (Exact Target Screenshot)
 function CyberSigilismNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { className?: string }) {
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
@@ -93,135 +93,70 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { 
         viewBox="0 0 1000 420"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto drop-shadow-[0_0_25px_rgba(16,185,129,0.35)]"
+        className="w-full h-auto drop-shadow-[0_0_20px_rgba(56,189,248,0.4)]"
       >
         <defs>
-          {/* Green Phosphor Dot Matrix Mesh Pattern matching Screenshot 1 */}
-          <pattern id="cyber-dot-matrix" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
-            <rect width="5" height="5" fill="#041810" />
-            <circle cx="2.5" cy="2.5" r="1.2" fill="#34d399" opacity="0.85" />
+          {/* Cyan Phosphor Dot Matrix Mesh Pattern matching screenshot */}
+          <pattern id="cyan-dot-matrix" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+            <rect width="5" height="5" fill="#2d373c" />
+            <circle cx="2.5" cy="2.5" r="1.2" fill="#7dd3fc" opacity="0.8" />
           </pattern>
-          {/* Cyber Sigil Glow Gradient */}
-          <linearGradient id="sigil-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#34d399" />
-            <stop offset="50%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="#059669" />
+          {/* Cyan Glow Gradient */}
+          <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#bae6fd" />
+            <stop offset="50%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0284c7" />
           </linearGradient>
         </defs>
 
-        {/* Cyber-Sigilism Symmetrical Top Arching Halo Wings (Matching Screenshot 1) */}
+        {/* Cyber-Sigilism Symmetrical Top Arching Halo Wings (Cyan Glow) */}
         <path
           d="M 500,40 C 380,10 240,30 140,90 C 80,130 40,180 30,240 C 35,260 55,250 65,230 C 80,190 120,150 180,115 C 250,75 350,55 450,55 C 380,85 310,135 260,195 C 230,230 210,270 215,300 C 220,310 235,300 240,280 C 250,240 285,195 335,155 C 390,115 460,85 500,75 C 540,85 610,115 665,155 C 715,195 750,240 760,280 C 765,300 780,310 785,300 C 790,270 770,230 740,195 C 690,135 620,85 550,55 C 650,55 750,75 820,115 C 880,150 920,190 935,230 C 945,250 965,260 970,240 C 960,180 920,130 860,90 C 760,30 620,10 500,40 Z"
-          fill="url(#cyber-dot-matrix)"
-          stroke="#10b981"
-          strokeWidth="2"
+          fill="url(#cyan-dot-matrix)"
+          stroke="#38bdf8"
+          strokeWidth="2.5"
         />
 
         {/* Lower Symmetrical Organic Tribal Roots & Thorn Branches */}
-        <g stroke="url(#sigil-glow)" strokeWidth="3" fill="none">
-          <path d="M 500,280 C 440,320 370,350 300,370 C 260,380 220,385 190,375 C 230,360 280,340 330,310 C 390,275 440,230 470,180 Z" fill="url(#cyber-dot-matrix)" />
-          <path d="M 500,280 C 560,320 630,350 700,370 C 740,380 780,385 810,375 C 770,360 720,340 670,310 C 610,275 560,230 530,180 Z" fill="url(#cyber-dot-matrix)" />
+        <g stroke="url(#cyan-glow)" strokeWidth="3" fill="none">
+          <path d="M 500,280 C 440,320 370,350 300,370 C 260,380 220,385 190,375 C 230,360 280,340 330,310 C 390,275 440,230 470,180 Z" fill="url(#cyan-dot-matrix)" />
+          <path d="M 500,280 C 560,320 630,350 700,370 C 740,380 780,385 810,375 C 770,360 720,340 670,310 C 610,275 560,230 530,180 Z" fill="url(#cyan-dot-matrix)" />
           <path d="M 500,260 L 500,380 M 460,290 L 410,360 M 540,290 L 590,360 M 480,310 L 450,375 M 520,310 L 550,375" strokeWidth="2.5" />
         </g>
 
-        {/* Integrated Center NUTRITEC Text (Bold Monospace Cyber Font) */}
+        {/* Integrated Center NUTRITEC Text (Clean White/Cyan Monospace Font) */}
         <text
           x="500"
           y="215"
           textAnchor="middle"
-          fill="#e2e8f0"
-          stroke="#041810"
+          fill="#f8fafc"
+          stroke="#1e293b"
           strokeWidth="6"
           className="font-black text-6xl sm:text-7xl md:text-8xl tracking-[0.22em] uppercase font-mono"
-          style={{ letterSpacing: '0.22em', filter: 'drop-shadow(0 0 10px #10b981)' }}
+          style={{ letterSpacing: '0.22em', filter: 'drop-shadow(0 0 12px #38bdf8)' }}
         >
           NUTRITEC
         </text>
+
+        {/* Ink Blotches / Ground Reflections under logo */}
+        <g fill="#1e293b" opacity="0.8">
+          <ellipse cx="500" cy="330" rx="140" ry="10" />
+          <path d="M 320,325 Q 380,340 440,328 Q 520,342 600,326 Q 660,340 720,325 Q 640,355 500,350 Q 380,355 320,325 Z" />
+          <circle cx="280" cy="335" r="4" />
+          <circle cx="340" cy="345" r="6" />
+          <circle cx="410" cy="350" r="7" />
+          <circle cx="580" cy="352" r="6" />
+          <circle cx="660" cy="342" r="5" />
+        </g>
       </svg>
     </div>
   )
 }
 
-// Particle Shatter Canvas Splash Overlay (Screenshot 1 Phosphor Green CRT Terminal)
+// Canvas Shatter Splash Component (Exact target screenshot matching)
 function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void; soundEnabled: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [progress, setProgress] = useState(0)
   const [shattering, setShattering] = useState(false)
-
-  // Live progress counter & Drifting Pixel Noise Animation
-  useEffect(() => {
-    let current = 0
-    const interval = setInterval(() => {
-      current += 2
-      if (current > 100) {
-        current = 100
-        clearInterval(interval)
-      }
-      setProgress(current)
-    }, 25)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  // Drifting Phosphor Green & Orange Noise Particles (Screenshot 1 Effect)
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let animId: number
-    const chars = ['0', '1', 'A', 'X', '#', '+', ':', '*', '■', '▫']
-    const colors = ['#10b981', '#34d399', '#ff5500', '#fb923c', '#059669']
-
-    // Create 90 floating pixel noise particles
-    const noiseParticles = Array.from({ length: 90 }).map(() => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: -Math.random() * 1.2 - 0.3,
-      size: Math.random() * 10 + 8,
-      char: chars[Math.floor(Math.random() * chars.length)],
-      color: colors[Math.floor(Math.random() * colors.length)],
-      opacity: Math.random() * 0.8 + 0.2
-    }))
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-
-    const renderNoise = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      if (!shattering) {
-        noiseParticles.forEach((p) => {
-          p.x += p.vx
-          p.y += p.vy
-
-          // Wrap screen boundaries
-          if (p.y < 0) p.y = canvas.height
-          if (p.x < 0) p.x = canvas.width
-          if (p.x > canvas.width) p.x = 0
-
-          ctx.font = `${p.size}px monospace`
-          ctx.fillStyle = p.color
-          ctx.globalAlpha = p.opacity
-          ctx.fillText(p.char, p.x, p.y)
-        })
-        animId = requestAnimationFrame(renderNoise)
-      }
-    }
-
-    renderNoise()
-
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [shattering])
 
   const handleShatter = (e: React.MouseEvent) => {
     if (shattering) return
@@ -247,7 +182,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
     const clickY = e.clientY || canvas.height / 2
 
     // Explosive particles
-    const colors = ['#ff5500', '#10b981', '#34d399', '#ffffff', '#eab308']
+    const colors = ['#ff5500', '#38bdf8', '#7dd3fc', '#ffffff', '#eab308']
     const particles = Array.from({ length: 350 }).map(() => {
       const angle = Math.random() * Math.PI * 2
       const speed = Math.random() * 18 + 4
@@ -265,7 +200,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
 
     let animId: number
     const render = () => {
-      ctx.fillStyle = 'rgba(4, 18, 12, 0.25)'
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.25)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       let aliveCount = 0
@@ -301,82 +236,70 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
   }
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-[#070a0d] p-2 sm:p-6 flex items-center justify-center font-mono selection:bg-emerald-500 selection:text-slate-950 overflow-hidden">
+    <div className="fixed inset-0 z-[10000] bg-black p-2 sm:p-6 flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
-      {/* Realistic Physical Retro CRT Television Monitor Frame Enclosure (Screenshot 2 Target) */}
-      <div className="relative w-full max-w-6xl max-h-[96vh] p-2 sm:p-5 md:p-7 rounded-[3rem] sm:rounded-[4rem] bg-[#1a2128] border-[8px] sm:border-[16px] md:border-[20px] border-[#262f3a] shadow-[0_30px_100px_rgba(0,0,0,0.95),inset_0_4px_12px_rgba(255,255,255,0.08)] flex items-center justify-center">
+      {/* Light Off-White / Silver Retro Television Chassis Frame (Exact Target Screenshot) */}
+      <div className="relative w-full max-w-6xl max-h-[96vh] p-3 sm:p-6 md:p-8 rounded-[2.8rem] sm:rounded-[4rem] bg-[#e1e6ea] border-[6px] sm:border-[12px] border-[#d4dbdf] shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex items-center justify-center crt-scanlines">
         
-        {/* Inner Dark Bezel Rim around CRT Glass */}
-        <div className="relative w-full h-full p-2 sm:p-4 rounded-[2.2rem] sm:rounded-[3rem] bg-[#0c1015] border-[4px] sm:border-[8px] border-[#06080b] shadow-[inset_0_0_40px_rgba(0,0,0,0.95)] overflow-hidden">
+        {/* Top-Left Yellow AWS SITE OF THE DAY Ribbon Badge */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-[#facc15] text-slate-950 px-3 py-1 font-mono text-[9px] sm:text-[10px] font-black tracking-tight shadow-md uppercase transform -rotate-12 border border-amber-500 z-40 pointer-events-none">
+          AWS SITE OF THE DAY
+        </div>
 
-          {/* Phosphor Green CRT Glass Screen */}
+        {/* Right Red Ribbon Badge */}
+        <div className="absolute top-1/3 -right-2 bg-red-600 text-white px-1.5 py-4 font-mono text-[8px] font-bold tracking-widest uppercase [writing-mode:vertical-rl] rounded-l z-40 shadow-md pointer-events-none">
+          Site of the Day
+        </div>
+
+        {/* Dark Slate Grey CRT Terminal Glass Screen */}
+        <div 
+          onClick={handleShatter}
+          className="relative w-full min-h-[78vh] sm:h-[84vh] rounded-[2rem] sm:rounded-[2.8rem] bg-[#384349] text-slate-100 border-4 border-[#242d32] shadow-[inset_0_0_90px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer"
+        >
+          {/* Fine TV Mesh Grid Overlay */}
           <div 
-            onClick={handleShatter}
-            className="relative w-full min-h-[78vh] sm:h-[84vh] rounded-[1.8rem] sm:rounded-[2.4rem] bg-[#051810] text-emerald-400 border-4 border-[#030f0a] shadow-[inset_0_0_120px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer crt-scanlines"
-          >
-            {/* Glossy Curved Glass Reflection Glare Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 pointer-events-none z-30" />
+            className="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply z-20"
+            style={{
+              backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
+              backgroundSize: '4px 4px'
+            }}
+          />
 
-            {/* Phosphor Grid Scanline & Vignette Overlay */}
-            <div 
-              className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay z-20"
-              style={{
-                backgroundImage: 'radial-gradient(#10b981 1px, transparent 1px)',
-                backgroundSize: '4px 4px'
-              }}
-            />
+          {/* Top Terminal Info Bar */}
+          <div className="relative z-20 flex items-center justify-between text-[10px] sm:text-xs font-bold text-slate-200 tracking-[0.2em] uppercase border-b border-slate-400/20 pb-3">
+            <span className="flex items-center gap-2 text-slate-100">
+              <Terminal className="h-4 w-4 text-slate-300" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
+            </span>
+            <span className="text-slate-300">[MEMORY: 640K OK]</span>
+          </div>
 
-            {/* Top Terminal Info Bar */}
-            <div className="relative z-20 flex items-center justify-between text-[10px] sm:text-xs font-bold text-emerald-400 tracking-[0.2em] uppercase border-b border-emerald-500/20 pb-3">
-              <span className="flex items-center gap-2 text-emerald-400">
-                <Terminal className="h-4 w-4 text-emerald-400" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
-              </span>
-              <span className="text-emerald-500/80">[MEMORY: 640K OK]</span>
-            </div>
+          {/* Center Glowing Cyan Cyber-Sigilism Logo & Integrated NUTRITEC */}
+          <div className="relative z-20 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-4">
+            
+            {/* Cyber Sigil Organic Tribal Emblem Component */}
+            <CyberSigilismNutritecLogo className="w-full max-w-lg sm:max-w-2xl" />
 
-            {/* Center Cyber-Sigilism Logo & Integrated NUTRITEC */}
-            <div className="relative z-20 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-4">
+            {/* Small Orange Action Pill Button & Headphones Subtext */}
+            <div className="pt-2 flex flex-col items-center gap-2">
+              <button
+                onClick={handleShatter}
+                className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-5 py-1.5 rounded text-[10px] sm:text-[11px] font-mono font-bold tracking-[0.2em] uppercase shadow-md transition active:scale-95 border border-orange-400"
+              >
+                CLICK TO ENTER
+              </button>
               
-              {/* Cyber Sigil Organic Tribal Emblem Component */}
-              <CyberSigilismNutritecLogo className="w-full max-w-lg sm:max-w-2xl" />
-
-              {/* Terminal Boot Progress Bar at 100% */}
-              <div className="w-full max-w-xs sm:max-w-sm space-y-2 pt-2">
-                <div className="flex justify-between text-[9px] sm:text-[10px] font-bold tracking-widest text-emerald-400 uppercase">
-                  <span>SYSTEM INITIALIZATION</span>
-                  <span className="text-orange-500 font-black">{progress}%</span>
-                </div>
-                <div className="w-full h-2.5 rounded-full bg-slate-950 border border-emerald-500/30 overflow-hidden p-0.5 shadow-inner">
-                  <div 
-                    className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-orange-500 rounded-full transition-all duration-75"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Pixelated Orange Action Button & Headphones Subtext */}
-              <div className="pt-2 flex flex-col items-center gap-2 sm:gap-3">
-                <button
-                  onClick={handleShatter}
-                  className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 sm:px-8 py-2.5 rounded text-[10px] sm:text-[11px] font-mono font-black tracking-[0.25em] uppercase shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition border border-orange-400"
-                >
-                  CLICK TO ENTER
-                </button>
-                
-                <p className="text-[9px] font-mono text-emerald-600/90 tracking-[0.2em] uppercase font-semibold">
-                  (HEADPHONES RECOMMENDED)
-                </p>
-              </div>
-
+              <p className="text-[9px] font-mono text-slate-300/80 tracking-[0.2em] uppercase font-semibold">
+                (HEADPHONES RECOMMENDED)
+              </p>
             </div>
 
-            {/* Bottom Status Bar */}
-            <div className="relative z-20 flex items-center justify-between text-[8px] sm:text-[9px] text-emerald-500/80 tracking-[0.2em] uppercase border-t border-emerald-500/20 pt-3">
-              <span>{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
-              <span className="hidden sm:block text-emerald-400 font-bold">{"[STATUS: READY]"}</span>
-            </div>
+          </div>
 
+          {/* Bottom Status Bar */}
+          <div className="relative z-20 flex items-center justify-between text-[8px] sm:text-[9px] text-slate-300 tracking-[0.2em] uppercase border-t border-slate-400/20 pt-3">
+            <span>{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
+            <span className="hidden sm:block text-slate-200 font-bold">{"[STATUS: READY]"}</span>
           </div>
 
         </div>
