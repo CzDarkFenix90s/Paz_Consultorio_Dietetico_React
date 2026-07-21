@@ -140,18 +140,20 @@ export default function PatientPlansListPage() {
     const normalizedSearch = search.trim().toLowerCase()
 
     return plans.filter((plan) => {
+      if (!plan) return false
+
       const matchesSearch =
         normalizedSearch.length === 0 ||
-        plan.name.toLowerCase().includes(normalizedSearch) ||
-        plan.goal.toLowerCase().includes(normalizedSearch) ||
-        plan.description.toLowerCase().includes(normalizedSearch)
+        (plan.name && String(plan.name).toLowerCase().includes(normalizedSearch)) ||
+        (plan.goal && String(plan.goal).toLowerCase().includes(normalizedSearch)) ||
+        (plan.description && String(plan.description).toLowerCase().includes(normalizedSearch))
 
       const matchesFilter =
         planFilter === 'all' ||
         (planFilter === 'active' && plan.is_active) ||
         (planFilter === 'inactive' && !plan.is_active)
 
-      return matchesSearch && matchesFilter
+      return Boolean(matchesSearch && matchesFilter)
     })
   }, [plans, search, planFilter])
 

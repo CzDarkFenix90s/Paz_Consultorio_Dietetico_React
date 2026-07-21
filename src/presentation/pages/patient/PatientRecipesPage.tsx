@@ -285,15 +285,18 @@ export default function PatientRecipesPage() {
     const needle = query.trim().toLowerCase()
 
     return recipes.filter((recipe) => {
+      if (!recipe) return false
+
       const matchesQuery =
         needle.length === 0 ||
-        recipe.name.toLowerCase().includes(needle) ||
-        recipe.subtitle.toLowerCase().includes(needle) ||
-        recipe.ingredients.some((ingredient) => ingredient.toLowerCase().includes(needle))
+        (recipe.name && String(recipe.name).toLowerCase().includes(needle)) ||
+        (recipe.subtitle && String(recipe.subtitle).toLowerCase().includes(needle)) ||
+        (Array.isArray(recipe.ingredients) &&
+          recipe.ingredients.some((ingredient) => ingredient && String(ingredient).toLowerCase().includes(needle)))
 
       const matchesFilter = activeFilter === 'all' || recipe.mealType === activeFilter
 
-      return matchesQuery && matchesFilter
+      return Boolean(matchesQuery && matchesFilter)
     })
   }, [activeFilter, query, recipes])
 
