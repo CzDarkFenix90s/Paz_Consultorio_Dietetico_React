@@ -122,8 +122,27 @@ const fallbackRecipes: Recipe[] = [
   }
 ]
 
+function getSavedFavoriteIds(): number[] {
+  try {
+    const raw = localStorage.getItem('dietetic_favorite_recipe_ids')
+    if (raw) return JSON.parse(raw)
+  } catch {
+    // fallback
+  }
+  return []
+}
+
 function buildRecipes(apiItems: RecipeApiItem[]): Recipe[] {
-  if (!apiItems || apiItems.length === 0) return fallbackRecipes
+  if (!apiItems || apiItems.length === 0) {
+    const favoriteIds = getSavedFavoriteIds()
+    return fallbackRecipes.map(r => ({
+      ...r,
+      favorite: favoriteIds.includes(r.id)
+    }))
+  }
+
+  const favoriteIds = getSavedFavoriteIds()
+
   return apiItems.map((item, idx) => {
     let listIngredients: string[] = ['Ingredientes variados']
     if (typeof item.ingredientes === 'string') {
@@ -131,7 +150,7 @@ function buildRecipes(apiItems: RecipeApiItem[]): Recipe[] {
         const parsed = JSON.parse(item.ingredientes.replace(/'/g, '"'))
         if (Array.isArray(parsed)) listIngredients = parsed
       } catch {
-        listIngredients = item.ingredientes.split(',').map((x) => x.trim())
+        listIngredients = item.ingredientes.split(',').map((x) => x.trim()).filter(Boolean)
       }
     } else if (Array.isArray(item.ingredientes)) {
       listIngredients = item.ingredientes
@@ -149,19 +168,22 @@ function buildRecipes(apiItems: RecipeApiItem[]): Recipe[] {
       listSteps = item.pasos
     }
 
+    const rawName = item.nombre || (item as any).name || (item as any).titulo || item.descripcion
+    const recipeName = rawName && String(rawName).trim() ? String(rawName).trim() : `Receta Saludable #${item.id || idx + 1}`
+
     return {
       id: item.id,
-      name: item.nombre,
+      name: recipeName,
       subtitle: item.descripcion || 'Detalles y porciones sugeridas por tu nutricionista.',
       image: item.imagen || fallbackRecipes[idx % fallbackRecipes.length].image,
       kcal: item.calorias || 280,
       minutes: item.tiempo_preparacion || 15,
       mealType: item.momento_nombre || 'Almuerzo',
-      favorite: idx % 2 === 0,
+      favorite: favoriteIds.includes(item.id),
       tag: item.categoria_nombre || 'Nutritivo',
       difficulty: 'Fácil',
-      ingredients: listIngredients,
-      steps: listSteps
+      ingredients: listIngredients.length > 0 ? listIngredients : ['Ingredientes variados'],
+      steps: listSteps.length > 0 ? listSteps : ['Pasos de preparación estándar']
     }
   })
 }
@@ -176,14 +198,25 @@ export default function PatientRecipesPage() {
   const [errorMessage, setErrorMessage] = useState('')
 
   const [query, setQuery] = useState('')
-  const [activeFilter, setActiveFilter] = useState<'all' | 'Desayuno' | 'Almuerzo' | 'Cena'>('all')
+  const [activeFilter, setActiveFilter] = useState<'all' | 'Desayuno' | 'Almuerzo' | 'Cena' | 'Favoritas'>('all')
 
   const filters = [
     { label: 'Todos', value: 'all' },
     { label: 'Desayuno', value: 'Desayuno' },
     { label: 'Almuerzo', value: 'Almuerzo' },
-    { label: 'Cena', value: 'Cena' }
+    { label: 'Cena', value: 'Cena' },
+    { label: 'Favoritas', value: 'Favoritas' }
   ]
+
+  const toggleFavorite = (e: React.MouseEvent, recipeId: number) => {
+    e.stopPropagation()
+    setRecipes(prevRecipes => {
+      const updated = prevRecipes.map(r => r.id === recipeId ? { ...r, favorite: !r.favorite } : r)
+      const favIds = updated.filter(r => r.favorite).map(r => r.id)
+      localStorage.setItem('dietetic_favorite_recipe_ids', JSON.stringify(favIds))
+      return updated
+    })
+  }
 
   const [userProfileData, setUserProfileData] = useState<any | null>(null)
 
@@ -294,7 +327,9 @@ export default function PatientRecipesPage() {
         (Array.isArray(recipe.ingredients) &&
           recipe.ingredients.some((ingredient) => ingredient && String(ingredient).toLowerCase().includes(needle)))
 
-      const matchesFilter = activeFilter === 'all' || recipe.mealType === activeFilter
+      const matchesFilter =
+        activeFilter === 'all' ||
+        (activeFilter === 'Favoritas' ? recipe.favorite : recipe.mealType === activeFilter)
 
       return Boolean(matchesQuery && matchesFilter)
     })
@@ -382,7 +417,12 @@ export default function PatientRecipesPage() {
                 <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Filtradas</div>
                 <div className="mt-1 text-2xl font-black text-text-main">{filteredRecipes.length}</div>
               </article>
-              <article className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 text-center transition-colors duration-300">
+              <article 
+                onClick={() => setActiveFilter(activeFilter === 'Favoritas' ? 'all' : 'Favoritas')}
+                className={`cursor-pointer rounded-2xl border px-4 py-3 text-center transition-colors duration-300 ${
+                  activeFilter === 'Favoritas' ? 'border-red-500/30 bg-red-500/10' : 'border-card-border bg-input-bg hover:border-red-500/20'
+                }`}
+              >
                 <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Favoritas</div>
                 <div className="mt-1 text-2xl font-black text-text-main">{recipes.filter((recipe) => recipe.favorite).length}</div>
               </article>
@@ -461,7 +501,14 @@ export default function PatientRecipesPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <Heart className={`h-5 w-5 ${recipe.favorite ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
+                      <button
+                        type="button"
+                        onClick={(e) => toggleFavorite(e, recipe.id)}
+                        className="p-1.5 rounded-full hover:bg-slate-500/10 transition active:scale-125"
+                        title={recipe.favorite ? "Quitar de favoritas" : "Marcar como favorita"}
+                      >
+                        <Heart className={`h-5 w-5 ${recipe.favorite ? 'fill-red-500 text-red-500' : 'text-slate-500 hover:text-red-400'}`} />
+                      </button>
                       <ArrowRight className="h-5 w-5 text-slate-500" />
                     </div>
                   </div>
