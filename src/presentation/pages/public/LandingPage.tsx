@@ -301,71 +301,84 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
   }
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-[#020a06] p-2 sm:p-6 flex items-center justify-center font-mono selection:bg-emerald-500 selection:text-slate-950 overflow-hidden">
+    <div className="fixed inset-0 z-[10000] bg-[#070a0d] p-2 sm:p-6 flex items-center justify-center font-mono selection:bg-emerald-500 selection:text-slate-950 overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
-      {/* Dark Phosphor Green CRT Monitor Screen (Exact Screenshot 1 design) */}
-      <div 
-        onClick={handleShatter}
-        className="relative w-full max-w-6xl min-h-[85vh] sm:h-[92vh] rounded-[2rem] sm:rounded-[3.5rem] bg-[#051810] text-emerald-400 border-4 sm:border-8 border-slate-900 shadow-[inset_0_0_120px_rgba(0,0,0,0.9),0_0_80px_rgba(4,24,16,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer crt-scanlines"
-      >
-        {/* Phosphor Grid Scanline & Vignette Overlay */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay"
-          style={{
-            backgroundImage: 'radial-gradient(#10b981 1px, transparent 1px)',
-            backgroundSize: '4px 4px'
-          }}
-        />
+      {/* Realistic Physical Retro CRT Television Monitor Frame Enclosure (Screenshot 2 Target) */}
+      <div className="relative w-full max-w-6xl max-h-[96vh] p-2 sm:p-5 md:p-7 rounded-[3rem] sm:rounded-[4rem] bg-[#1a2128] border-[8px] sm:border-[16px] md:border-[20px] border-[#262f3a] shadow-[0_30px_100px_rgba(0,0,0,0.95),inset_0_4px_12px_rgba(255,255,255,0.08)] flex items-center justify-center">
+        
+        {/* Inner Dark Bezel Rim around CRT Glass */}
+        <div className="relative w-full h-full p-2 sm:p-4 rounded-[2.2rem] sm:rounded-[3rem] bg-[#0c1015] border-[4px] sm:border-[8px] border-[#06080b] shadow-[inset_0_0_40px_rgba(0,0,0,0.95)] overflow-hidden">
 
-        {/* Top Terminal Info Bar */}
-        <div className="relative z-10 flex items-center justify-between text-[10px] sm:text-xs font-bold text-emerald-400 tracking-[0.2em] uppercase border-b border-emerald-500/20 pb-3">
-          <span className="flex items-center gap-2 text-emerald-400">
-            <Terminal className="h-4 w-4 text-emerald-400" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
-          </span>
-          <span className="text-emerald-500/80">[MEMORY: 640K OK]</span>
-        </div>
+          {/* Phosphor Green CRT Glass Screen */}
+          <div 
+            onClick={handleShatter}
+            className="relative w-full min-h-[78vh] sm:h-[84vh] rounded-[1.8rem] sm:rounded-[2.4rem] bg-[#051810] text-emerald-400 border-4 border-[#030f0a] shadow-[inset_0_0_120px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer crt-scanlines"
+          >
+            {/* Glossy Curved Glass Reflection Glare Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 pointer-events-none z-30" />
 
-        {/* Center Cyber-Sigilism Logo & Integrated NUTRITEC */}
-        <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-4">
-          
-          {/* Cyber Sigil Organic Tribal Emblem Component */}
-          <CyberSigilismNutritecLogo className="w-full max-w-lg sm:max-w-2xl" />
+            {/* Phosphor Grid Scanline & Vignette Overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay z-20"
+              style={{
+                backgroundImage: 'radial-gradient(#10b981 1px, transparent 1px)',
+                backgroundSize: '4px 4px'
+              }}
+            />
 
-          {/* Terminal Boot Progress Bar at 100% */}
-          <div className="w-full max-w-xs sm:max-w-sm space-y-2 pt-2">
-            <div className="flex justify-between text-[9px] sm:text-[10px] font-bold tracking-widest text-emerald-400 uppercase">
-              <span>SYSTEM INITIALIZATION</span>
-              <span className="text-orange-500 font-black">{progress}%</span>
+            {/* Top Terminal Info Bar */}
+            <div className="relative z-20 flex items-center justify-between text-[10px] sm:text-xs font-bold text-emerald-400 tracking-[0.2em] uppercase border-b border-emerald-500/20 pb-3">
+              <span className="flex items-center gap-2 text-emerald-400">
+                <Terminal className="h-4 w-4 text-emerald-400" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
+              </span>
+              <span className="text-emerald-500/80">[MEMORY: 640K OK]</span>
             </div>
-            <div className="w-full h-2.5 rounded-full bg-slate-950 border border-emerald-500/30 overflow-hidden p-0.5 shadow-inner">
-              <div 
-                className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-orange-500 rounded-full transition-all duration-75"
-                style={{ width: `${progress}%` }}
-              />
+
+            {/* Center Cyber-Sigilism Logo & Integrated NUTRITEC */}
+            <div className="relative z-20 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-4">
+              
+              {/* Cyber Sigil Organic Tribal Emblem Component */}
+              <CyberSigilismNutritecLogo className="w-full max-w-lg sm:max-w-2xl" />
+
+              {/* Terminal Boot Progress Bar at 100% */}
+              <div className="w-full max-w-xs sm:max-w-sm space-y-2 pt-2">
+                <div className="flex justify-between text-[9px] sm:text-[10px] font-bold tracking-widest text-emerald-400 uppercase">
+                  <span>SYSTEM INITIALIZATION</span>
+                  <span className="text-orange-500 font-black">{progress}%</span>
+                </div>
+                <div className="w-full h-2.5 rounded-full bg-slate-950 border border-emerald-500/30 overflow-hidden p-0.5 shadow-inner">
+                  <div 
+                    className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-orange-500 rounded-full transition-all duration-75"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Pixelated Orange Action Button & Headphones Subtext */}
+              <div className="pt-2 flex flex-col items-center gap-2 sm:gap-3">
+                <button
+                  onClick={handleShatter}
+                  className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 sm:px-8 py-2.5 rounded text-[10px] sm:text-[11px] font-mono font-black tracking-[0.25em] uppercase shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition border border-orange-400"
+                >
+                  CLICK TO ENTER
+                </button>
+                
+                <p className="text-[9px] font-mono text-emerald-600/90 tracking-[0.2em] uppercase font-semibold">
+                  (HEADPHONES RECOMMENDED)
+                </p>
+              </div>
+
             </div>
+
+            {/* Bottom Status Bar */}
+            <div className="relative z-20 flex items-center justify-between text-[8px] sm:text-[9px] text-emerald-500/80 tracking-[0.2em] uppercase border-t border-emerald-500/20 pt-3">
+              <span>{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
+              <span className="hidden sm:block text-emerald-400 font-bold">{"[STATUS: READY]"}</span>
+            </div>
+
           </div>
 
-          {/* Pixelated Orange Action Button & Headphones Subtext */}
-          <div className="pt-2 flex flex-col items-center gap-2 sm:gap-3">
-            <button
-              onClick={handleShatter}
-              className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 sm:px-8 py-2.5 rounded text-[10px] sm:text-[11px] font-mono font-black tracking-[0.25em] uppercase shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition border border-orange-400"
-            >
-              CLICK TO ENTER
-            </button>
-            
-            <p className="text-[9px] font-mono text-emerald-600/90 tracking-[0.2em] uppercase font-semibold">
-              (HEADPHONES RECOMMENDED)
-            </p>
-          </div>
-
-        </div>
-
-        {/* Bottom Status Bar */}
-        <div className="relative z-10 flex items-center justify-between text-[8px] sm:text-[9px] text-emerald-500/80 tracking-[0.2em] uppercase border-t border-emerald-500/20 pt-3">
-          <span>{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
-          <span className="hidden sm:block text-emerald-400 font-bold">{"[STATUS: READY]"}</span>
         </div>
 
       </div>
