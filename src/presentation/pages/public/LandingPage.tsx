@@ -85,6 +85,77 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 }
 
 // Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
+// Metal Gothic / Death Metal Tribal Logo SVG Component for NUTRITEC
+function MetalGothicNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { className?: string }) {
+  return (
+    <div className={`relative flex flex-col items-center select-none ${className}`}>
+      <svg
+        viewBox="0 0 1000 380"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-full h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)]"
+      >
+        <defs>
+          {/* Halftone Dot Matrix Pattern matching kvs.services screenshot */}
+          <pattern id="metal-dot-matrix" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <rect width="6" height="6" fill="#090d16" />
+            <circle cx="3" cy="3" r="1.5" fill="#e2e8f0" opacity="0.65" />
+          </pattern>
+        </defs>
+
+        {/* Outer Death Metal Spiky Wings & Thorns Left Wing */}
+        <path
+          d="M 500,30 C 410,5 300,5 210,50 C 150,80 90,120 40,180 C 10,220 -15,270 10,320 C 25,340 45,330 55,310 C 70,270 105,220 155,180 C 205,140 270,110 340,90 C 280,120 220,170 180,230 C 160,260 145,300 150,330 C 155,340 170,330 175,310 C 185,270 215,230 255,190 C 295,155 350,130 410,115 C 360,160 310,220 280,290 C 270,320 265,350 275,360 C 285,360 295,330 310,300 C 335,250 375,200 430,160 C 470,130 485,80 500,30 Z"
+          fill="url(#metal-dot-matrix)"
+          stroke="#000"
+          strokeWidth="2.5"
+        />
+
+        {/* Outer Death Metal Spiky Wings & Thorns Right Wing */}
+        <path
+          d="M 500,30 C 590,5 700,5 790,50 C 850,80 910,120 960,180 C 990,220 1015,270 990,320 C 975,340 955,330 945,310 C 930,270 895,220 845,180 C 795,140 730,110 660,90 C 720,120 780,170 820,230 C 840,260 855,300 850,330 C 845,340 830,330 825,310 C 815,270 785,230 745,190 C 705,155 650,130 590,115 C 640,160 690,220 720,290 C 730,320 735,350 725,360 C 715,360 705,330 690,300 C 665,250 625,200 570,160 C 530,130 515,80 500,30 Z"
+          fill="url(#metal-dot-matrix)"
+          stroke="#000"
+          strokeWidth="2.5"
+        />
+
+        {/* Top Center Horn Spikes */}
+        <path
+          d="M 500,5 L 475,85 L 450,45 L 485,115 L 500,65 L 515,115 L 550,45 L 525,85 Z"
+          fill="#090d16"
+        />
+
+        {/* Center Metal Death Typography Text */}
+        <text
+          x="500"
+          y="230"
+          textAnchor="middle"
+          fill="url(#metal-dot-matrix)"
+          stroke="#000"
+          strokeWidth="4"
+          className="font-black text-7xl sm:text-8xl tracking-[0.2em] uppercase font-mono"
+          style={{ fontStyle: 'italic' }}
+        >
+          NUTRITEC
+        </text>
+
+        {/* Ground Splatter Reflections underneath logo */}
+        <g fill="#090d16" opacity="0.85">
+          <ellipse cx="500" cy="320" rx="150" ry="12" />
+          <path d="M 300,315 Q 380,330 440,318 Q 520,332 600,316 Q 660,330 740,315 Q 640,345 500,340 Q 380,345 300,315 Z" />
+          <circle cx="270" cy="325" r="4" />
+          <circle cx="330" cy="335" r="6" />
+          <circle cx="410" cy="342" r="8" />
+          <circle cx="580" cy="344" r="7" />
+          <circle cx="670" cy="332" r="5" />
+          <circle cx="720" cy="322" r="4" />
+        </g>
+      </svg>
+    </div>
+  )
+}
+
+// Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
 function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void; soundEnabled: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [progress, setProgress] = useState(0)
@@ -208,22 +279,11 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           <span className="text-slate-600">[MEMORY: 640K OK]</span>
         </div>
 
-        {/* Center Metal Gothic Logo & Subtext */}
-        <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-6">
+        {/* Center Spiky Metal Gothic Logo & NUTRITEC */}
+        <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-4">
           
-          {/* Black Tribal / Gothic Metal Artwork Logo */}
-          <div className="relative group max-w-full overflow-hidden">
-            <pre className="text-[11px] sm:text-xs md:text-sm font-black leading-tight text-slate-950 tracking-widest select-none crt-chromatic-text">
-{`
-  _  _ _  _ ___ ____ _ ___ ____ ____ 
-  |\\ | |  |  |  |__/ |  |  |___ |    
-  | \\| |__|  |  |  \\ |  |  |___ |___ 
-`}
-            </pre>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-[0.2em] text-slate-950 uppercase mt-2 font-mono underline decoration-orange-500 decoration-4 underline-offset-8">
-              NUTRITEC
-            </h1>
-          </div>
+          {/* Intricate Death Metal Spiky Logo SVG Component */}
+          <MetalGothicNutritecLogo className="w-full max-w-xl sm:max-w-2xl" />
 
           {/* Terminal Boot Progress indicator */}
           <div className="w-full max-w-sm space-y-2 pt-2">
@@ -240,7 +300,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           </div>
 
           {/* Orange Action Button */}
-          <div className="pt-4 flex flex-col items-center gap-3">
+          <div className="pt-2 flex flex-col items-center gap-3">
             <button
               onClick={handleShatter}
               className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 py-2 rounded text-[11px] font-mono font-bold tracking-[0.25em] uppercase shadow-md transition active:scale-95 border border-orange-400"
@@ -257,8 +317,8 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
 
         {/* Bottom Status Bar */}
         <div className="relative z-10 flex items-center justify-between text-[9px] text-slate-600 tracking-[0.25em] uppercase border-t border-slate-400/30 pt-3">
-          <span>&#123;PROYECTO INTEGRADOR DE SISTEMAS // CRT RASTER PIPELINE&#125;</span>
-          <span className="hidden sm:block text-slate-700 font-bold">&#123;STATUS: READY&#125;</span>
+          <span>{"{PROYECTO INTEGRADOR DE SISTEMAS // CRT RASTER PIPELINE}"}</span>
+          <span className="hidden sm:block text-slate-700 font-bold">{"{STATUS: READY}"}</span>
         </div>
 
       </div>
