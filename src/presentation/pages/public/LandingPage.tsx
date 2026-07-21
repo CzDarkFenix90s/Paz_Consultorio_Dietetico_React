@@ -85,83 +85,70 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 }
 
 // Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
-// Metal Gothic / Death Metal Tribal Logo SVG Component for NUTRITEC
-function MetalGothicNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { className?: string }) {
+// Symmetrical Cyber-Sigilism Organic Tribal Emblem for NUTRITEC (Screenshot 1 Target)
+function CyberSigilismNutritecLogo({ className = "w-full max-w-2xl h-auto" }: { className?: string }) {
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
       <svg
-        viewBox="0 0 1000 380"
+        viewBox="0 0 1000 420"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)]"
+        className="w-full h-auto drop-shadow-[0_0_25px_rgba(16,185,129,0.35)]"
       >
         <defs>
-          {/* Halftone Dot Matrix Pattern matching kvs.services screenshot */}
-          <pattern id="metal-dot-matrix" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
-            <rect width="6" height="6" fill="#090d16" />
-            <circle cx="3" cy="3" r="1.5" fill="#e2e8f0" opacity="0.65" />
+          {/* Green Phosphor Dot Matrix Mesh Pattern matching Screenshot 1 */}
+          <pattern id="cyber-dot-matrix" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+            <rect width="5" height="5" fill="#041810" />
+            <circle cx="2.5" cy="2.5" r="1.2" fill="#34d399" opacity="0.85" />
           </pattern>
+          {/* Cyber Sigil Glow Gradient */}
+          <linearGradient id="sigil-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#34d399" />
+            <stop offset="50%" stopColor="#10b981" />
+            <stop offset="100%" stopColor="#059669" />
+          </linearGradient>
         </defs>
 
-        {/* Outer Death Metal Spiky Wings & Thorns Left Wing */}
+        {/* Cyber-Sigilism Symmetrical Top Arching Halo Wings (Matching Screenshot 1) */}
         <path
-          d="M 500,30 C 410,5 300,5 210,50 C 150,80 90,120 40,180 C 10,220 -15,270 10,320 C 25,340 45,330 55,310 C 70,270 105,220 155,180 C 205,140 270,110 340,90 C 280,120 220,170 180,230 C 160,260 145,300 150,330 C 155,340 170,330 175,310 C 185,270 215,230 255,190 C 295,155 350,130 410,115 C 360,160 310,220 280,290 C 270,320 265,350 275,360 C 285,360 295,330 310,300 C 335,250 375,200 430,160 C 470,130 485,80 500,30 Z"
-          fill="url(#metal-dot-matrix)"
-          stroke="#000"
-          strokeWidth="2.5"
+          d="M 500,40 C 380,10 240,30 140,90 C 80,130 40,180 30,240 C 35,260 55,250 65,230 C 80,190 120,150 180,115 C 250,75 350,55 450,55 C 380,85 310,135 260,195 C 230,230 210,270 215,300 C 220,310 235,300 240,280 C 250,240 285,195 335,155 C 390,115 460,85 500,75 C 540,85 610,115 665,155 C 715,195 750,240 760,280 C 765,300 780,310 785,300 C 790,270 770,230 740,195 C 690,135 620,85 550,55 C 650,55 750,75 820,115 C 880,150 920,190 935,230 C 945,250 965,260 970,240 C 960,180 920,130 860,90 C 760,30 620,10 500,40 Z"
+          fill="url(#cyber-dot-matrix)"
+          stroke="#10b981"
+          strokeWidth="2"
         />
 
-        {/* Outer Death Metal Spiky Wings & Thorns Right Wing */}
-        <path
-          d="M 500,30 C 590,5 700,5 790,50 C 850,80 910,120 960,180 C 990,220 1015,270 990,320 C 975,340 955,330 945,310 C 930,270 895,220 845,180 C 795,140 730,110 660,90 C 720,120 780,170 820,230 C 840,260 855,300 850,330 C 845,340 830,330 825,310 C 815,270 785,230 745,190 C 705,155 650,130 590,115 C 640,160 690,220 720,290 C 730,320 735,350 725,360 C 715,360 705,330 690,300 C 665,250 625,200 570,160 C 530,130 515,80 500,30 Z"
-          fill="url(#metal-dot-matrix)"
-          stroke="#000"
-          strokeWidth="2.5"
-        />
+        {/* Lower Symmetrical Organic Tribal Roots & Thorn Branches */}
+        <g stroke="url(#sigil-glow)" strokeWidth="3" fill="none">
+          <path d="M 500,280 C 440,320 370,350 300,370 C 260,380 220,385 190,375 C 230,360 280,340 330,310 C 390,275 440,230 470,180 Z" fill="url(#cyber-dot-matrix)" />
+          <path d="M 500,280 C 560,320 630,350 700,370 C 740,380 780,385 810,375 C 770,360 720,340 670,310 C 610,275 560,230 530,180 Z" fill="url(#cyber-dot-matrix)" />
+          <path d="M 500,260 L 500,380 M 460,290 L 410,360 M 540,290 L 590,360 M 480,310 L 450,375 M 520,310 L 550,375" strokeWidth="2.5" />
+        </g>
 
-        {/* Top Center Horn Spikes */}
-        <path
-          d="M 500,5 L 475,85 L 450,45 L 485,115 L 500,65 L 515,115 L 550,45 L 525,85 Z"
-          fill="#090d16"
-        />
-
-        {/* Center Metal Death Typography Text */}
+        {/* Integrated Center NUTRITEC Text (Bold Monospace Cyber Font) */}
         <text
           x="500"
-          y="230"
+          y="215"
           textAnchor="middle"
-          fill="url(#metal-dot-matrix)"
-          stroke="#000"
-          strokeWidth="4"
-          className="font-black text-7xl sm:text-8xl tracking-[0.2em] uppercase font-mono"
-          style={{ fontStyle: 'italic' }}
+          fill="#e2e8f0"
+          stroke="#041810"
+          strokeWidth="6"
+          className="font-black text-6xl sm:text-7xl md:text-8xl tracking-[0.22em] uppercase font-mono"
+          style={{ letterSpacing: '0.22em', filter: 'drop-shadow(0 0 10px #10b981)' }}
         >
           NUTRITEC
         </text>
-
-        {/* Ground Splatter Reflections underneath logo */}
-        <g fill="#090d16" opacity="0.85">
-          <ellipse cx="500" cy="320" rx="150" ry="12" />
-          <path d="M 300,315 Q 380,330 440,318 Q 520,332 600,316 Q 660,330 740,315 Q 640,345 500,340 Q 380,345 300,315 Z" />
-          <circle cx="270" cy="325" r="4" />
-          <circle cx="330" cy="335" r="6" />
-          <circle cx="410" cy="342" r="8" />
-          <circle cx="580" cy="344" r="7" />
-          <circle cx="670" cy="332" r="5" />
-          <circle cx="720" cy="322" r="4" />
-        </g>
       </svg>
     </div>
   )
 }
 
-// Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
+// Particle Shatter Canvas Splash Overlay (Screenshot 1 Phosphor Green CRT Terminal)
 function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void; soundEnabled: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [progress, setProgress] = useState(0)
   const [shattering, setShattering] = useState(false)
 
-  // Live boot terminal sequence counter
+  // Live progress counter & Drifting Pixel Noise Animation
   useEffect(() => {
     let current = 0
     const interval = setInterval(() => {
@@ -175,6 +162,66 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
 
     return () => clearInterval(interval)
   }, [])
+
+  // Drifting Phosphor Green & Orange Noise Particles (Screenshot 1 Effect)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId: number
+    const chars = ['0', '1', 'A', 'X', '#', '+', ':', '*', '■', '▫']
+    const colors = ['#10b981', '#34d399', '#ff5500', '#fb923c', '#059669']
+
+    // Create 90 floating pixel noise particles
+    const noiseParticles = Array.from({ length: 90 }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: -Math.random() * 1.2 - 0.3,
+      size: Math.random() * 10 + 8,
+      char: chars[Math.floor(Math.random() * chars.length)],
+      color: colors[Math.floor(Math.random() * colors.length)],
+      opacity: Math.random() * 0.8 + 0.2
+    }))
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+
+    const renderNoise = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      if (!shattering) {
+        noiseParticles.forEach((p) => {
+          p.x += p.vx
+          p.y += p.vy
+
+          // Wrap screen boundaries
+          if (p.y < 0) p.y = canvas.height
+          if (p.x < 0) p.x = canvas.width
+          if (p.x > canvas.width) p.x = 0
+
+          ctx.font = `${p.size}px monospace`
+          ctx.fillStyle = p.color
+          ctx.globalAlpha = p.opacity
+          ctx.fillText(p.char, p.x, p.y)
+        })
+        animId = requestAnimationFrame(renderNoise)
+      }
+    }
+
+    renderNoise()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [shattering])
 
   const handleShatter = (e: React.MouseEvent) => {
     if (shattering) return
@@ -199,8 +246,8 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
     const clickX = e.clientX || canvas.width / 2
     const clickY = e.clientY || canvas.height / 2
 
-    // Generate 350 glowing retro pixels
-    const colors = ['#ff5500', '#10b981', '#00ffff', '#ffffff', '#eab308']
+    // Explosive particles
+    const colors = ['#ff5500', '#10b981', '#34d399', '#ffffff', '#eab308']
     const particles = Array.from({ length: 350 }).map(() => {
       const angle = Math.random() * Math.PI * 2
       const speed = Math.random() * 18 + 4
@@ -218,7 +265,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
 
     let animId: number
     const render = () => {
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.25)'
+      ctx.fillStyle = 'rgba(4, 18, 12, 0.25)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       let aliveCount = 0
@@ -227,7 +274,7 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           aliveCount++
           p.x += p.vx
           p.y += p.vy
-          p.vy += 0.15 // gravity
+          p.vy += 0.15
           p.alpha -= p.decay
 
           ctx.fillStyle = p.color
@@ -254,61 +301,61 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
   }
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-slate-950 p-3 sm:p-6 flex items-center justify-center font-mono selection:bg-orange-500 selection:text-white">
+    <div className="fixed inset-0 z-[10000] bg-[#020a06] p-2 sm:p-6 flex items-center justify-center font-mono selection:bg-emerald-500 selection:text-slate-950 overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-50" />
 
-      {/* Light Silver CRT TV Screen Frame (Exact kvs.services design) */}
+      {/* Dark Phosphor Green CRT Monitor Screen (Exact Screenshot 1 design) */}
       <div 
         onClick={handleShatter}
-        className="relative w-full max-w-6xl h-[92vh] rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#e1e6ea] text-slate-900 border-8 border-slate-900 shadow-[inset_0_0_90px_rgba(0,0,0,0.35),0_0_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col justify-between p-6 sm:p-10 cursor-pointer crt-scanlines"
+        className="relative w-full max-w-6xl min-h-[85vh] sm:h-[92vh] rounded-[2rem] sm:rounded-[3.5rem] bg-[#051810] text-emerald-400 border-4 sm:border-8 border-slate-900 shadow-[inset_0_0_120px_rgba(0,0,0,0.9),0_0_80px_rgba(4,24,16,0.9)] overflow-hidden flex flex-col justify-between p-4 sm:p-8 md:p-10 cursor-pointer crt-scanlines"
       >
-        {/* Fine Dot Matrix TV Grid Overlay */}
+        {/* Phosphor Grid Scanline & Vignette Overlay */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-25 mix-blend-multiply"
+          className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay"
           style={{
-            backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(#10b981 1px, transparent 1px)',
             backgroundSize: '4px 4px'
           }}
         />
 
         {/* Top Terminal Info Bar */}
-        <div className="relative z-10 flex items-center justify-between text-[10px] sm:text-xs font-bold text-slate-700 tracking-[0.2em] uppercase border-b border-slate-400/30 pb-3">
-          <span className="flex items-center gap-2 text-slate-800">
-            <Terminal className="h-4 w-4 text-orange-600" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
+        <div className="relative z-10 flex items-center justify-between text-[10px] sm:text-xs font-bold text-emerald-400 tracking-[0.2em] uppercase border-b border-emerald-500/20 pb-3">
+          <span className="flex items-center gap-2 text-emerald-400">
+            <Terminal className="h-4 w-4 text-emerald-400" /> &gt;_ [NUTRITEC BOOTLOADER V4.2]
           </span>
-          <span className="text-slate-600">[MEMORY: 640K OK]</span>
+          <span className="text-emerald-500/80">[MEMORY: 640K OK]</span>
         </div>
 
-        {/* Center Spiky Metal Gothic Logo & NUTRITEC */}
-        <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-4">
+        {/* Center Cyber-Sigilism Logo & Integrated NUTRITEC */}
+        <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-4 sm:space-y-6 py-4">
           
-          {/* Intricate Death Metal Spiky Logo SVG Component */}
-          <MetalGothicNutritecLogo className="w-full max-w-xl sm:max-w-2xl" />
+          {/* Cyber Sigil Organic Tribal Emblem Component */}
+          <CyberSigilismNutritecLogo className="w-full max-w-lg sm:max-w-2xl" />
 
-          {/* Terminal Boot Progress indicator */}
-          <div className="w-full max-w-sm space-y-2 pt-2">
-            <div className="flex justify-between text-[10px] font-bold tracking-widest text-slate-700 uppercase">
+          {/* Terminal Boot Progress Bar at 100% */}
+          <div className="w-full max-w-xs sm:max-w-sm space-y-2 pt-2">
+            <div className="flex justify-between text-[9px] sm:text-[10px] font-bold tracking-widest text-emerald-400 uppercase">
               <span>SYSTEM INITIALIZATION</span>
-              <span className="text-orange-600 font-black">{progress}%</span>
+              <span className="text-orange-500 font-black">{progress}%</span>
             </div>
-            <div className="w-full h-2.5 rounded-full bg-slate-300 border border-slate-400/50 overflow-hidden p-0.5">
+            <div className="w-full h-2.5 rounded-full bg-slate-950 border border-emerald-500/30 overflow-hidden p-0.5 shadow-inner">
               <div 
-                className="h-full bg-gradient-to-r from-slate-900 to-orange-500 rounded-full transition-all duration-75"
+                className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-orange-500 rounded-full transition-all duration-75"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
-          {/* Orange Action Button */}
-          <div className="pt-2 flex flex-col items-center gap-3">
+          {/* Pixelated Orange Action Button & Headphones Subtext */}
+          <div className="pt-2 flex flex-col items-center gap-2 sm:gap-3">
             <button
               onClick={handleShatter}
-              className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 py-2 rounded text-[11px] font-mono font-bold tracking-[0.25em] uppercase shadow-md transition active:scale-95 border border-orange-400"
+              className="bg-[#ff5500] hover:bg-[#e04b00] text-white px-6 sm:px-8 py-2.5 rounded text-[10px] sm:text-[11px] font-mono font-black tracking-[0.25em] uppercase shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition border border-orange-400"
             >
               CLICK TO ENTER
             </button>
             
-            <p className="text-[9px] font-mono text-slate-600 tracking-[0.2em] uppercase font-semibold">
+            <p className="text-[9px] font-mono text-emerald-600/90 tracking-[0.2em] uppercase font-semibold">
               (HEADPHONES RECOMMENDED)
             </p>
           </div>
@@ -316,9 +363,9 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
         </div>
 
         {/* Bottom Status Bar */}
-        <div className="relative z-10 flex items-center justify-between text-[9px] text-slate-600 tracking-[0.25em] uppercase border-t border-slate-400/30 pt-3">
-          <span>{"{PROYECTO INTEGRADOR DE SISTEMAS // CRT RASTER PIPELINE}"}</span>
-          <span className="hidden sm:block text-slate-700 font-bold">{"{STATUS: READY}"}</span>
+        <div className="relative z-10 flex items-center justify-between text-[8px] sm:text-[9px] text-emerald-500/80 tracking-[0.2em] uppercase border-t border-emerald-500/20 pt-3">
+          <span>{"[PROYECTO INTEGRADOR DE SISTEMAS // CRT MASTER PIPELINE]"}</span>
+          <span className="hidden sm:block text-emerald-400 font-bold">{"[STATUS: READY]"}</span>
         </div>
 
       </div>
