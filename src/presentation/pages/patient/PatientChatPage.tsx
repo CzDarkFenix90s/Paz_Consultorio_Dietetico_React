@@ -253,45 +253,68 @@ export default function PatientChatPage() {
   const avatarUrlResolved = getAvatarUrl(userProfileData?.avatar_url)
 
   return (
-    <main className="min-h-screen bg-bg-main text-text-main pb-28 font-sans relative overflow-hidden flex flex-col selection:bg-emerald-500 selection:text-slate-950 transition-colors duration-300">
-      {/* Ambient glows */}
-      <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
+    <main className={`min-h-screen pb-28 relative overflow-hidden transition-colors duration-300 selection:bg-orange-500 selection:text-white flex flex-col ${
+      isDark 
+        ? "bg-[#070b10] text-slate-100 font-mono crt-scanlines" 
+        : "bg-[#f3f4f6] text-slate-900 font-sans"
+    }`}>
+      {/* Floating VHS Tape Horizontal Tracking Line Glitch */}
+      {isDark && <div className="vhs-tracking-line" />}
 
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-card-border bg-header-bg backdrop-blur-md transition-colors duration-300 shrink-0">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className={`sticky top-0 z-30 px-4 py-4 backdrop-blur-md transition-colors duration-300 shrink-0 ${
+        isDark ? "bg-[#070b10]/80" : "bg-[#f3f4f6]/80"
+      }`}>
+        <div className={`mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl transition-all duration-300 ${
+          isDark 
+            ? "bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32]" 
+            : "bg-white px-6 shadow-sm border border-slate-200"
+        }`}>
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400" 
+                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            }`}
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-text-main tracking-widest uppercase transition-colors duration-300">
-            Nutri<span className="text-emerald-500">Tec</span>
+          <div className={`flex items-center gap-2 text-xl font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+            isDark ? "text-slate-100 vhs-text-glitch" : "text-slate-900"
+          }`} style={isDark ? { filter: 'drop-shadow(0 0 6px #38bdf8)' } : {}}>
+            NUTRI<span className={isDark ? "text-cyan-400" : "text-emerald-500"}>TEC</span>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
-            <button onClick={() => navigate('/patient/menu')} className="hover:text-emerald-500 transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="hover:text-emerald-500 transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="text-emerald-500 font-bold transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className={`${isDark ? "text-cyan-400 font-extrabold" : "text-emerald-500 font-bold"} transition`}>Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button 
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+                isDark 
+                  ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
+                  : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+              }`}
               title="Alternar modo claro/oscuro"
             >
-              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-500" />}
             </button>
 
-            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <button className={`overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-cyan-400/40 bg-cyan-400/10 text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]" 
+                : "border border-slate-200 bg-slate-50 text-slate-500"
+            } text-xs font-black`}>
               {avatarUrlResolved ? (
                 <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
               ) : (
@@ -303,16 +326,20 @@ export default function PatientChatPage() {
       </header>
 
       {/* Sidebar Drawer */}
-      <div className={`fixed inset-0 z-40 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
+      <div className={`fixed inset-0 z-50 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
         <button type="button" aria-label="Cerrar menú" className={`absolute inset-0 bg-slate-950/60 backdrop-blur-[3px] transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setMenuOpen(false)} />
-        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden bg-slate-900 border-r border-white/5 shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="relative flex min-h-[260px] flex-col justify-between bg-gradient-to-b from-emerald-950 to-slate-900 px-6 pb-8 pt-7 text-white">
-            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
+        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'} ${
+          isDark ? "bg-[#384349] border-r border-[#242d32]" : "bg-white border-r border-slate-200"
+        }`}>
+          <div className={`relative flex min-h-[260px] flex-col justify-between px-6 pb-8 pt-7 text-white ${
+            isDark ? "bg-gradient-to-b from-[#242d32] to-[#1e2528]" : "bg-gradient-to-b from-emerald-950 to-slate-900"
+          }`}>
+            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
               <PanelLeftClose className="h-5 w-5" />
             </button>
 
             <div className="flex flex-col items-start gap-5">
-              <div className="overflow-hidden flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)]">
+              <div className="overflow-hidden flex h-20 w-20 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-cyan-400 shadow-[0_10px_25px_rgba(56,189,248,0.2)]">
                 {avatarUrlResolved ? (
                   <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
@@ -320,38 +347,40 @@ export default function PatientChatPage() {
                 )}
               </div>
               <div>
-                <p className="text-xl font-bold tracking-tight text-white">{user?.username}</p>
-                <span className="mt-2.5 inline-flex rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">Paciente</span>
+                <h3 className="text-lg font-black uppercase tracking-wider">{user?.username}</h3>
+                <p className="text-xs font-bold uppercase tracking-widest text-cyan-400">{user?.role}</p>
               </div>
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
-            <nav className="space-y-2">
-              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">Mi Salud</p>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <House className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Inicio</span>
+            <nav className="space-y-2.5 p-2">
+              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">[MÓDULOS]</p>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/menu') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+                isDark ? "text-slate-350 hover:bg-white/5" : "text-slate-500 hover:bg-emerald-500/5 hover:text-emerald-500"
+              }`}>
+                <House className="h-5 w-5" /> Inicio
               </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <UtensilsCrossed className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Mi Plan</span>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+                isDark ? "text-slate-350 hover:bg-white/5" : "text-slate-500 hover:bg-emerald-500/5 hover:text-emerald-500"
+              }`}>
+                <UtensilsCrossed className="h-5 w-5" /> Mi Plan
               </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className="flex w-full items-center gap-4 rounded-2xl border border-white/5 px-4 py-3.5 text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition">
-                <ChefHat className="h-5 w-5 shrink-0 text-slate-400" />
-                <span>Recetas</span>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+                isDark ? "text-slate-350 hover:bg-white/5" : "text-slate-500 hover:bg-emerald-500/5 hover:text-emerald-500"
+              }`}>
+                <ChefHat className="h-5 w-5" /> Recetas
               </button>
-              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className="flex w-full items-center gap-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3.5 text-left text-sm font-bold text-emerald-400">
-                <MessageSquareText className="h-5 w-5 shrink-0" />
-                <span>Soporte por Chat</span>
+              <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+                isDark ? "bg-cyan-400/10 text-cyan-400 border border-cyan-400/20" : "bg-emerald-500/10 text-emerald-600"
+              }`}>
+                <MessageSquareText className="h-5 w-5" /> Soporte
               </button>
             </nav>
 
-            <nav className="space-y-2">
-              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase">Cuenta</p>
-              <button type="button" onClick={handleLogout} className="flex w-full items-center gap-4 rounded-2xl border border-rose-500/10 px-4 py-3.5 text-left text-sm font-semibold text-rose-400 hover:bg-rose-500/5 transition">
-                <LogOut className="h-5 w-5 shrink-0 text-rose-400" />
-                <span>Cerrar sesión</span>
+            <nav className="space-y-2 p-2 pt-6 border-t border-white/5">
+              <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest text-rose-500 hover:bg-rose-500/5 transition">
+                <LogOut className="h-5 w-5" /> Cerrar sesión
               </button>
             </nav>
           </div>
@@ -362,17 +391,23 @@ export default function PatientChatPage() {
       <div className="flex-1 mx-auto w-full max-w-[1200px] p-4 flex flex-col md:flex-row gap-6 min-h-0 overflow-hidden">
         
         {/* Left Side: Nutritionists list */}
-        <section className="w-full md:w-80 rounded-3xl border border-card-border bg-card-bg p-4 shadow-sm flex flex-col overflow-hidden shrink-0 transition-all duration-300">
-          <h2 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 pb-3 border-b border-card-border">Nutricionistas</h2>
+        <section className={`w-full md:w-80 rounded-3xl p-4 shadow-sm flex flex-col overflow-hidden shrink-0 transition-all duration-300 border ${
+          isDark 
+            ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_20px_rgba(0,0,0,0.6)]" 
+            : "bg-white border-slate-200"
+        }`}>
+          <h2 className={`text-[10px] font-black uppercase tracking-widest px-2 pb-3 border-b ${
+            isDark ? "text-slate-300 border-[#242d32]" : "text-slate-500 border-slate-100"
+          }`}>[NUTRICIONISTAS]</h2>
           
           <div className="flex-1 overflow-y-auto mt-4 space-y-2">
             {loadingList ? (
-              <div className="py-12 text-center text-slate-400 text-sm font-medium">
-                <Loader className="h-5 w-5 animate-spin mx-auto text-emerald-500 mb-2" />
+              <div className="py-12 text-center text-slate-400 text-xs font-black uppercase">
+                <Loader className="h-5 w-5 animate-spin mx-auto text-cyan-400 mb-2" />
                 Cargando especialistas...
               </div>
             ) : nutritionists.length === 0 ? (
-              <div className="py-12 text-center text-slate-400 text-sm">No hay especialistas registrados.</div>
+              <div className="py-12 text-center text-slate-400 text-xs font-black uppercase">No hay especialistas registrados.</div>
             ) : (
               nutritionists.map((nutri) => {
                 const active = selectedNutri?.id === nutri.id
@@ -380,18 +415,20 @@ export default function PatientChatPage() {
                   <button
                     key={nutri.id}
                     onClick={() => setSelectedNutri(nutri)}
-                    className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition border ${
+                    className={`w-full flex items-center gap-3 rounded-xl p-3 text-left transition border ${
                       active 
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-450 shadow-sm shadow-emerald-500/5' 
-                        : 'border-transparent hover:bg-slate-500/5'
+                        ? (isDark ? 'bg-cyan-400/10 border-cyan-400/40 text-cyan-400' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600') 
+                        : (isDark ? 'border-transparent hover:bg-white/5 text-slate-355' : 'border-transparent hover:bg-slate-500/5')
                     }`}
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm">
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold text-sm ${
+                      isDark ? "bg-cyan-400/10 text-cyan-400 border border-cyan-400/20" : "bg-emerald-500 text-white"
+                    }`}>
                       {nutri.full_name[0]?.toUpperCase() || 'D'}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate text-sm font-bold text-text-main">{nutri.full_name}</h3>
-                      <p className="truncate text-[10px] text-slate-400 font-semibold mt-0.5">{nutri.specialty}</p>
+                      <h3 className="truncate text-sm font-black text-white uppercase">{nutri.full_name}</h3>
+                      <p className="truncate text-[10px] text-slate-400 font-bold uppercase mt-0.5">{nutri.specialty}</p>
                     </div>
                   </button>
                 )
@@ -401,36 +438,46 @@ export default function PatientChatPage() {
         </section>
 
         {/* Right Side: Conversation Area */}
-        <section className="flex-1 rounded-3xl border border-card-border bg-card-bg shadow-sm flex flex-col overflow-hidden transition-all duration-300">
+        <section className={`flex-1 rounded-3xl shadow-sm flex flex-col overflow-hidden transition-all duration-300 border ${
+          isDark 
+            ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_20px_rgba(0,0,0,0.6)]" 
+            : "bg-white border-slate-200"
+        }`}>
           
           {selectedNutri ? (
             <>
               {/* Header */}
-              <div className="px-5 py-4 border-b border-card-border bg-input-bg flex items-center justify-between shrink-0 transition-colors duration-300">
+              <div className={`px-5 py-4 border-b flex items-center justify-between shrink-0 transition-colors duration-300 ${
+                isDark ? "bg-[#242d32] border-[#1e2528]" : "bg-input-bg border-card-border"
+              }`}>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/25 text-emerald-500 font-bold border border-emerald-500/30">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl font-bold border ${
+                    isDark ? "bg-cyan-400/15 border-cyan-400/30 text-cyan-450" : "bg-emerald-500/25 border-emerald-500/30 text-emerald-600"
+                  }`}>
                     {selectedNutri.full_name[0]?.toUpperCase()}
                   </div>
                   <div>
-                    <h2 className="text-sm font-bold text-text-main">{selectedNutri.full_name}</h2>
-                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">En línea</p>
+                    <h2 className="text-sm font-black text-white uppercase tracking-wider">{selectedNutri.full_name}</h2>
+                    <p className={`text-[10px] font-black uppercase tracking-widest mt-0.5 ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>[EN LÍNEA]</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-slate-500 text-xs">
-                  <Info className="h-4 w-4 text-emerald-400" />
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase tracking-wider">
+                  <Info className={`h-4 w-4 ${isDark ? "text-cyan-400" : "text-emerald-500"}`} />
                   <span>Soporte Clínico</span>
                 </div>
               </div>
 
               {/* Chat bubbles list */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-input-bg/10 transition-colors duration-300">
+              <div className={`flex-1 overflow-y-auto p-5 space-y-4 transition-colors duration-300 ${
+                isDark ? "bg-[#1e2528]" : "bg-input-bg/10"
+              }`}>
                 {loadingMessages ? (
-                  <div className="py-20 text-center text-slate-400 text-sm">
-                    <Loader className="h-6 w-6 animate-spin mx-auto text-emerald-500 mb-2" />
-                    Cargando historial de mensajes...
+                  <div className="py-20 text-center text-slate-400 text-xs font-black uppercase">
+                    <Loader className="h-6 w-6 animate-spin mx-auto text-cyan-400 mb-2" />
+                    Cargando historial...
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="py-20 text-center text-slate-500 text-sm">
+                  <div className="py-20 text-center text-slate-500 text-xs font-black uppercase">
                     Escribe tu primer mensaje para iniciar el soporte con {selectedNutri.full_name}.
                   </div>
                 ) : (
@@ -441,13 +488,13 @@ export default function PatientChatPage() {
                         key={msg.id}
                         className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
                       >
-                        <div className={`max-w-[70%] rounded-2xl px-4 py-3 text-xs shadow-md ${
+                        <div className={`max-w-[70%] rounded-xl px-4 py-3 text-xs shadow-md ${
                           isMine 
-                            ? 'bg-emerald-500 text-slate-950 rounded-tr-none font-bold' 
-                            : 'bg-card-bg text-text-main border border-card-border rounded-tl-none transition-colors duration-300'
+                            ? (isDark ? 'bg-cyan-500 text-slate-950 rounded-tr-none font-bold' : 'bg-emerald-500 text-slate-950 rounded-tr-none font-bold') 
+                            : (isDark ? 'bg-[#384349] text-white border border-[#242d32] rounded-tl-none font-bold' : 'bg-card-bg text-slate-800 border border-slate-200 rounded-tl-none')
                         }`}>
                           <p className="leading-relaxed whitespace-pre-wrap">{msg.contenido}</p>
-                          <div className={`text-[9px] mt-1.5 text-right font-medium ${isMine ? 'text-slate-950/70' : 'text-slate-500'}`}>
+                          <div className={`text-[8px] mt-1.5 text-right font-black uppercase ${isMine ? 'text-slate-950/70' : 'text-slate-400'}`}>
                             {new Date(msg.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </div>
@@ -459,18 +506,28 @@ export default function PatientChatPage() {
               </div>
 
               {/* Composition form */}
-              <form onSubmit={handleSendMessage} className="p-4 border-t border-card-border bg-input-bg flex gap-3 items-center shrink-0 transition-colors duration-300">
+              <form onSubmit={handleSendMessage} className={`p-4 border-t flex gap-3 items-center shrink-0 transition-colors duration-300 ${
+                isDark ? "bg-[#242d32] border-[#1e2528]" : "bg-input-bg border-card-border"
+              }`}>
                 <input
                   type="text"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Escribe tu mensaje o pregunta clínica aquí..."
-                  className="flex-1 rounded-2xl border border-card-border bg-card-bg px-4 py-3.5 text-xs text-text-main outline-none focus:border-emerald-500/60 transition-all duration-300"
+                  className={`flex-1 rounded-xl border px-4 py-3.5 text-xs outline-none focus:border-cyan-400 transition-all ${
+                    isDark 
+                      ? "bg-[#384349] border-[#1e2528] text-white placeholder:text-slate-500 font-bold uppercase" 
+                      : "bg-card-bg border-card-border text-slate-800 placeholder:text-slate-455"
+                  }`}
                   required
                 />
                 <button
                   type="submit"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 hover:bg-emerald-400 active:scale-95 transition shadow-lg shadow-emerald-500/10"
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl transition shadow-lg ${
+                    isDark 
+                      ? "bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 text-white btn-pixel-retro" 
+                      : "bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+                  }`}
                 >
                   <Send className="h-5 w-5" />
                 </button>
@@ -478,10 +535,10 @@ export default function PatientChatPage() {
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-slate-500 text-center space-y-3">
-              <MessageSquare className="h-14 w-14 text-slate-700" />
+              <MessageSquare className="h-14 w-14 text-slate-700 animate-pulse" />
               <div>
-                <p className="text-sm font-semibold text-slate-400">Ninguna conversación seleccionada</p>
-                <p className="text-xs text-slate-500 mt-1">Selecciona un nutricionista de la lista de la izquierda para comenzar el chat.</p>
+                <p className="text-xs font-black uppercase tracking-widest text-slate-400">Ninguna conversación seleccionada</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mt-1">Selecciona un nutricionista de la lista de la izquierda para comenzar el chat.</p>
               </div>
             </div>
           )}
@@ -491,7 +548,9 @@ export default function PatientChatPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
+      <nav className={`fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-2xl border shadow-2xl p-2.5 md:hidden transition-all duration-300 ${
+        isDark ? "border-4 border-[#242d32] bg-[#384349]/95" : "border-card-border bg-card-bg/95 backdrop-blur-xl"
+      }`}>
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -503,14 +562,14 @@ export default function PatientChatPage() {
                 if (label === 'Recetas') navigate('/patient/recipes')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
-              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
+              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition ${
                 active 
-                  ? 'text-emerald-500 bg-emerald-500/5' 
-                  : 'text-slate-455 hover:text-emerald-500 hover:bg-slate-500/5'
+                  ? (isDark ? 'text-cyan-400 bg-cyan-400/10' : 'text-emerald-500 bg-emerald-500/5') 
+                  : (isDark ? 'text-slate-350 hover:text-cyan-400' : 'text-slate-500 hover:text-emerald-500')
               }`}
             >
               <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{label}</span>
             </button>
           ))}
         </div>

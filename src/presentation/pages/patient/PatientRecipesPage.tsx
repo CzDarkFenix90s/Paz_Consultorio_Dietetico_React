@@ -351,41 +351,68 @@ export default function PatientRecipesPage() {
   const avatarUrlResolved = getAvatarUrl(userProfileData?.avatar_url)
 
   return (
-    <main className="min-h-screen bg-bg-main text-text-main transition-colors duration-300 pb-28">
+    <main className={`min-h-screen pb-28 relative overflow-hidden transition-colors duration-300 selection:bg-orange-500 selection:text-white ${
+      isDark 
+        ? "bg-[#070b10] text-slate-100 font-mono crt-scanlines" 
+        : "bg-[#f3f4f6] text-slate-900 font-sans"
+    }`}>
+      {/* Floating VHS Tape Horizontal Tracking Line Glitch */}
+      {isDark && <div className="vhs-tracking-line" />}
+
       {/* Floating Navbar Header */}
-      <header className="sticky top-0 z-30 border-b border-card-border bg-header-bg backdrop-blur-md transition-colors duration-300">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className={`sticky top-0 z-30 px-4 py-4 backdrop-blur-md transition-colors duration-300 ${
+        isDark ? "bg-[#070b10]/80" : "bg-[#f3f4f6]/80"
+      }`}>
+        <div className={`mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl transition-all duration-300 ${
+          isDark 
+            ? "bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32]" 
+            : "bg-white px-6 shadow-sm border border-slate-200"
+        }`}>
           <button
             type="button"
             onClick={() => navigate('/patient/menu')}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400" 
+                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            }`}
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-text-main tracking-widest uppercase transition-colors duration-300">
-            Nutri<span className="text-emerald-500">Tec</span>
+          <div className={`flex items-center gap-2 text-xl font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+            isDark ? "text-slate-100 vhs-text-glitch" : "text-slate-900"
+          }`} style={isDark ? { filter: 'drop-shadow(0 0 6px #38bdf8)' } : {}}>
+            NUTRI<span className={isDark ? "text-cyan-400" : "text-emerald-500"}>TEC</span>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
-            <button onClick={() => navigate('/patient/menu')} className="hover:text-emerald-500 transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="text-emerald-500 font-bold transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className={`${isDark ? "text-cyan-400 font-extrabold" : "text-emerald-500 font-bold"} transition`}>Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button 
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+                isDark 
+                  ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
+                  : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+              }`}
               title="Alternar modo claro/oscuro"
             >
-              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-500" />}
             </button>
 
-            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <button className={`overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-cyan-400/40 bg-cyan-400/10 text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]" 
+                : "border border-slate-200 bg-slate-50 text-slate-500"
+            } text-xs font-black`}>
               {avatarUrlResolved ? (
                 <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
               ) : (
@@ -398,51 +425,67 @@ export default function PatientRecipesPage() {
 
       {/* Main Content Grid */}
       <div className="mx-auto max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8">
-        <section className="rounded-[2.5rem] bg-card-bg border border-card-border p-6 shadow-sm transition-all duration-300 sm:p-8 lg:p-10">
+        <section className={`rounded-[2.5rem] p-6 shadow-sm transition-all duration-300 sm:p-8 lg:p-10 border ${
+          isDark 
+            ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] text-slate-100" 
+            : "bg-white border-slate-200"
+        }`}>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-500">Menú saludable</p>
-              <h1 className="text-3xl font-black text-text-main tracking-tight uppercase">Explora recetas rápidas y nutritivas</h1>
-              <p className="max-w-3xl text-sm leading-relaxed text-slate-400">
+              <p className={`text-xs font-bold uppercase tracking-[0.25em] ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>{isDark ? "[EXPLORADOR RECETAS CRT]" : "Menú saludable"}</p>
+              <h1 className="text-3xl font-black tracking-tight uppercase">{isDark ? "CATÁLOGO DE NUTRICIÓN" : "Explora recetas rápidas y nutritivas"}</h1>
+              <p className="max-w-3xl text-xs font-bold uppercase tracking-wider leading-relaxed text-slate-300">
                 Puedes buscar por nombre, filtrar por momento de comida y revisar los detalles antes de elegir una receta para tu plan.
               </p>
             </div>
 
             <div className="grid gap-3 grid-cols-3">
-              <article className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Recetas</div>
-                <div className="mt-1 text-2xl font-black text-emerald-400">{recipes.length}</div>
+              <article className={`rounded-xl border px-4 py-3 text-center transition-colors ${
+                isDark ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400" : "border-emerald-500/20 bg-emerald-500/10 text-emerald-600"
+              }`}>
+                <div className="text-[9px] font-bold uppercase tracking-widest">[RECETAS]</div>
+                <div className="mt-1 text-xl font-black">{recipes.length}</div>
               </article>
-              <article className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 text-center transition-colors duration-300">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Filtradas</div>
-                <div className="mt-1 text-2xl font-black text-text-main">{filteredRecipes.length}</div>
+              <article className={`rounded-xl border px-4 py-3 text-center transition-colors ${
+                isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+              }`}>
+                <div className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Filtradas</div>
+                <div className="mt-1 text-xl font-black">{filteredRecipes.length}</div>
               </article>
               <article 
                 onClick={() => setActiveFilter(activeFilter === 'Favoritas' ? 'all' : 'Favoritas')}
-                className={`cursor-pointer rounded-2xl border px-4 py-3 text-center transition-colors duration-300 ${
-                  activeFilter === 'Favoritas' ? 'border-red-500/30 bg-red-500/10' : 'border-card-border bg-input-bg hover:border-red-500/20'
+                className={`cursor-pointer rounded-xl border px-4 py-3 text-center transition-colors ${
+                  activeFilter === 'Favoritas' 
+                    ? 'border-red-500/30 bg-red-500/10 text-red-400' 
+                    : (isDark ? 'border-[#242d32] bg-[#242d32] hover:border-red-500/20' : 'border-card-border bg-input-bg hover:border-red-500/20')
                 }`}
               >
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Favoritas</div>
-                <div className="mt-1 text-2xl font-black text-text-main">{recipes.filter((recipe) => recipe.favorite).length}</div>
+                <div className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Favoritas</div>
+                <div className="mt-1 text-xl font-black">{recipes.filter((recipe) => recipe.favorite).length}</div>
               </article>
             </div>
           </div>
 
           <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-center">
-            <div className="flex-1 rounded-2xl bg-input-bg border border-card-border px-4 py-3.5 transition-all duration-300">
+            <div className={`flex-1 rounded-xl border px-4 py-3.5 transition-all duration-300 ${
+              isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+            }`}>
               <div className="flex items-center gap-3 text-slate-400">
                 <Search className="h-5 w-5 text-slate-500" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Buscar recetas..."
-                  className="w-full bg-transparent text-sm font-medium text-text-main outline-none placeholder:text-slate-500"
+                  className="w-full bg-transparent text-xs font-black uppercase tracking-wider text-white outline-none placeholder:text-slate-500"
                 />
               </div>
             </div>
 
-            <button className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-400">
+            <button className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 text-white btn-pixel-retro" 
+                : "bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+            }`}>
               <Filter className="h-6 w-6" />
             </button>
           </div>
@@ -453,10 +496,10 @@ export default function PatientRecipesPage() {
                 key={filter.value}
                 type="button"
                 onClick={() => setActiveFilter(filter.value as typeof activeFilter)}
-                className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                className={`rounded-xl px-5 py-2 text-xs font-black uppercase tracking-widest transition-all ${
                   activeFilter === filter.value 
-                    ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/15' 
-                    : 'bg-input-bg text-slate-400 border border-card-border hover:bg-slate-500/10'
+                    ? (isDark ? 'bg-[#ff5500] text-white border border-orange-400 btn-pixel-retro shadow-lg' : 'bg-emerald-500 text-slate-950 shadow-md')
+                    : (isDark ? 'border border-[#242d32] bg-[#242d32] text-slate-300 hover:text-cyan-400' : 'border border-card-border bg-input-bg text-slate-500 hover:text-emerald-500')
                 }`}
               >
                 {filter.label}
@@ -465,7 +508,9 @@ export default function PatientRecipesPage() {
           </div>
 
           {loading ? (
-            <div className="mt-8 rounded-3xl border border-dashed border-card-border bg-input-bg/50 p-10 text-center text-slate-400">
+            <div className={`mt-8 rounded-xl border p-10 text-center uppercase tracking-widest text-xs font-black ${
+              isDark ? "border-[#242d32] bg-[#242d32]" : "border-card-border bg-input-bg/50"
+            }`}>
               Cargando recetas desde el backend...
             </div>
           ) : null}
@@ -476,27 +521,31 @@ export default function PatientRecipesPage() {
                 <article
                   key={recipe.id}
                   onClick={() => setSelectedId(recipe.id)}
-                  className={`cursor-pointer rounded-[1.75rem] border p-4 transition-all duration-300 sm:p-5 ${
+                  className={`cursor-pointer rounded-2xl border p-4 transition-all duration-300 sm:p-5 ${
                     selectedRecipe?.id === recipe.id 
-                      ? 'border-emerald-500 bg-emerald-500/5 shadow-md shadow-emerald-500/5' 
-                      : 'border-card-border bg-card-bg hover:border-emerald-500/40'
+                      ? (isDark ? 'border-cyan-400 bg-cyan-400/5 shadow-md' : 'border-emerald-500 bg-emerald-500/5 shadow-sm') 
+                      : (isDark ? 'border-[#242d32] bg-[#242d32] hover:border-cyan-400/50' : 'border-card-border bg-card-bg hover:border-emerald-500/40')
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-card-border bg-input-bg transition-colors duration-300">
+                    <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl overflow-hidden border bg-slate-900 ${
+                      isDark ? "border-[#242d32]" : "border-card-border"
+                    }`}>
                       <img src={recipe.image} alt={recipe.name} className="h-full w-full object-cover" />
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="truncate text-base font-extrabold text-text-main uppercase tracking-tight">{recipe.name}</h2>
-                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-400">{recipe.tag}</span>
+                        <h2 className="truncate text-base font-black text-white uppercase tracking-wider">{recipe.name}</h2>
+                        <span className={`rounded-xl border px-3 py-0.5 text-[9px] font-black uppercase tracking-wider ${
+                          isDark ? "bg-cyan-400/10 border-cyan-400/20 text-cyan-400" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-550"
+                        }`}>{recipe.tag}</span>
                       </div>
-                      <p className="mt-1 line-clamp-2 text-xs text-slate-400 leading-normal">{recipe.subtitle}</p>
-                      <div className="mt-3 flex flex-wrap gap-4 text-xs font-semibold text-slate-400">
-                        <span className="inline-flex items-center gap-1.5"><Flame className="h-4 w-4 text-emerald-500" />{recipe.kcal} kcal</span>
-                        <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4 text-emerald-500" />{recipe.minutes} min</span>
-                        <span className="inline-flex items-center gap-1.5"><ChefHat className="h-4 w-4 text-emerald-500" />{recipe.mealType}</span>
+                      <p className="mt-1 line-clamp-2 text-xs text-slate-350 leading-normal uppercase font-bold">{recipe.subtitle}</p>
+                      <div className="mt-3 flex flex-wrap gap-4 text-xs font-black uppercase tracking-widest text-slate-400">
+                        <span className="inline-flex items-center gap-1.5"><Flame className={`h-4 w-4 ${isDark ? "text-cyan-400" : "text-emerald-500"}`} />{recipe.kcal} kcal</span>
+                        <span className="inline-flex items-center gap-1.5"><Clock3 className={`h-4 w-4 ${isDark ? "text-cyan-400" : "text-emerald-500"}`} />{recipe.minutes} min</span>
+                        <span className="inline-flex items-center gap-1.5"><ChefHat className={`h-4 w-4 ${isDark ? "text-cyan-400" : "text-emerald-500"}`} />{recipe.mealType}</span>
                       </div>
                     </div>
 
@@ -504,7 +553,7 @@ export default function PatientRecipesPage() {
                       <button
                         type="button"
                         onClick={(e) => toggleFavorite(e, recipe.id)}
-                        className="p-1.5 rounded-full hover:bg-slate-500/10 transition active:scale-125"
+                        className="p-1.5 rounded-xl hover:bg-slate-500/10 transition active:scale-125"
                         title={recipe.favorite ? "Quitar de favoritas" : "Marcar como favorita"}
                       >
                         <Heart className={`h-5 w-5 ${recipe.favorite ? 'fill-red-500 text-red-500' : 'text-slate-500 hover:text-red-400'}`} />
@@ -516,16 +565,20 @@ export default function PatientRecipesPage() {
               ))}
 
               {filteredRecipes.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-card-border bg-input-bg/50 p-8 text-center text-slate-500">
+                <div className={`rounded-xl border p-8 text-center uppercase text-xs font-black ${
+                  isDark ? "border-[#242d32] bg-[#242d32]" : "border-card-border bg-input-bg/50"
+                }`}>
                   No hay recetas que coincidan con tu búsqueda.
                 </div>
               ) : null}
 
-              {errorMessage ? <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">{errorMessage}</div> : null}
+              {errorMessage ? <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-xs uppercase font-black text-amber-300">{errorMessage}</div> : null}
             </section>
 
             <aside className="space-y-6">
-              <article className="overflow-hidden rounded-[1.75rem] bg-card-bg border border-card-border shadow-sm relative group/detail transition-all duration-300">
+              <article className={`overflow-hidden rounded-2xl border shadow-sm relative group/detail transition-all duration-300 ${
+                isDark ? "bg-[#242d32] border-[#242d32]" : "bg-card-bg border-card-border"
+              }`}>
                 {selectedRecipe?.image && (
                   <div className="w-full h-48 relative overflow-hidden bg-slate-900">
                     <img 
@@ -536,71 +589,91 @@ export default function PatientRecipesPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                     
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <p className="font-mono text-[9px] tracking-widest uppercase text-emerald-400">Receta seleccionada</p>
-                      <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5 uppercase">{selectedRecipe.name}</h2>
+                      <p className={`font-mono text-[9px] tracking-widest uppercase ${isDark ? "text-cyan-400" : "text-emerald-450"}`}>Receta seleccionada</p>
+                      <h2 className="text-xl font-black tracking-wider text-white mt-0.5 uppercase">{selectedRecipe.name}</h2>
                     </div>
                   </div>
                 )}
                 
                 <div className="p-5 space-y-4">
-                  <p className="text-xs text-slate-400 leading-relaxed font-semibold">
+                  <p className="text-xs text-slate-350 leading-relaxed font-bold uppercase">
                     {selectedRecipe?.subtitle ?? 'Selecciona una receta para ver su detalle.'}
                   </p>
 
-                  <div className="grid grid-cols-3 gap-3 text-center text-xs font-bold">
-                    <div className="rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
-                      <div className="text-lg font-black text-text-main">{selectedRecipe?.kcal ?? 0}</div>
-                      <div className="text-slate-500">kcal</div>
+                  <div className="grid grid-cols-3 gap-3 text-center text-xs font-black uppercase tracking-widest">
+                    <div className={`rounded-xl border px-3 py-3 ${
+                      isDark ? "bg-[#384349] border-[#384349]" : "bg-input-bg border-card-border"
+                    }`}>
+                      <div className="text-lg font-black text-white">{selectedRecipe?.kcal ?? 0}</div>
+                      <div className="text-slate-400">kcal</div>
                     </div>
-                    <div className="rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
-                      <div className="text-lg font-black text-text-main">{selectedRecipe?.minutes ?? 0}</div>
-                      <div className="text-slate-500">min</div>
+                    <div className={`rounded-xl border px-3 py-3 ${
+                      isDark ? "bg-[#384349] border-[#384349]" : "bg-input-bg border-card-border"
+                    }`}>
+                      <div className="text-lg font-black text-white">{selectedRecipe?.minutes ?? 0}</div>
+                      <div className="text-slate-400">min</div>
                     </div>
-                    <div className="rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
-                      <div className="text-lg font-black text-text-main">{selectedRecipe?.difficulty ?? 'Fácil'}</div>
-                      <div className="text-slate-500">Nivel</div>
+                    <div className={`rounded-xl border px-3 py-3 ${
+                      isDark ? "bg-[#384349] border-[#384349]" : "bg-input-bg border-card-border"
+                    }`}>
+                      <div className="text-base font-black text-white">{selectedRecipe?.difficulty ?? 'Fácil'}</div>
+                      <div className="text-slate-400">Nivel</div>
                     </div>
                   </div>
                 </div>
               </article>
 
-              <article className="rounded-[1.75rem] bg-card-bg border border-card-border p-5 shadow-sm transition-all duration-300">
+              <article className={`rounded-2xl border p-5 shadow-sm transition-all duration-300 ${
+                isDark ? "bg-[#242d32] border-[#242d32]" : "bg-card-bg border-card-border"
+              }`}>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-400">
+                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                    isDark ? "bg-cyan-400/10 text-cyan-400" : "bg-sky-500/10 text-sky-400"
+                  }`}>
                     <Wheat className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ingredientes</p>
-                    <h3 className="font-extrabold text-text-main uppercase">Lista base</h3>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Ingredientes</p>
+                    <h3 className="font-black text-white uppercase tracking-wider">Lista base</h3>
                   </div>
                 </div>
 
-                <ul className="mt-4 space-y-2 text-xs text-slate-300">
+                <ul className="mt-4 space-y-2 text-xs text-slate-300 uppercase font-bold">
                   {(selectedRecipe?.ingredients ?? []).map((ingredient) => (
-                    <li key={ingredient} className="flex items-center gap-2 rounded-2xl bg-input-bg border border-card-border px-3 py-2 transition-colors duration-300">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <li key={ingredient} className={`flex items-center gap-2 rounded-xl border px-3 py-2 transition-colors ${
+                      isDark ? "bg-[#384349] border-[#384349]" : "bg-input-bg border-card-border"
+                    }`}>
+                      <span className={`h-2 w-2 rounded-full ${isDark ? "bg-cyan-400" : "bg-emerald-500"}`} />
                       {ingredient}
                     </li>
                   ))}
                 </ul>
               </article>
 
-              <article className="rounded-[1.75rem] bg-card-bg border border-card-border p-5 shadow-sm transition-all duration-300">
+              <article className={`rounded-2xl border p-5 shadow-sm transition-all duration-300 ${
+                isDark ? "bg-[#242d32] border-[#242d32]" : "bg-card-bg border-card-border"
+              }`}>
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-base font-extrabold text-text-main uppercase">Preparación</h3>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
-                    <Flame className="h-4 w-4 text-emerald-500" />
+                  <h3 className="text-base font-black text-white uppercase tracking-wider">Preparación</h3>
+                  <span className={`inline-flex items-center gap-2 rounded-xl border px-3 py-1 text-xs font-black uppercase ${
+                    isDark ? "bg-cyan-400/10 border-cyan-400/20 text-cyan-400" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-550"
+                  }`}>
+                    <Flame className={`h-4 w-4 ${isDark ? "text-cyan-400" : "text-emerald-500"}`} />
                     {selectedRecipe?.mealType ?? 'N/A'}
                   </span>
                 </div>
 
-                <ol className="mt-4 space-y-3 text-xs text-slate-300">
+                <ol className="mt-4 space-y-3 text-xs text-slate-300 uppercase font-bold">
                   {(selectedRecipe?.steps ?? []).map((step, index) => (
-                    <li key={step} className="flex gap-3 rounded-2xl bg-input-bg border border-card-border px-3 py-3 transition-colors duration-300">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-slate-950">
+                    <li key={step} className={`flex gap-3 rounded-xl border px-3 py-3 transition-colors ${
+                      isDark ? "bg-[#384349] border-[#384349]" : "bg-input-bg border-card-border"
+                    }`}>
+                      <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                        isDark ? "bg-cyan-400 text-slate-950" : "bg-emerald-500 text-slate-950"
+                      }`}>
                         {index + 1}
                       </span>
-                      <span className="leading-relaxed">{step}</span>
+                      <span className="leading-relaxed text-slate-300">{step}</span>
                     </li>
                   ))}
                 </ol>
@@ -611,7 +684,9 @@ export default function PatientRecipesPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5">
+      <nav className={`fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-2xl border shadow-2xl p-2.5 md:hidden transition-all duration-300 ${
+        isDark ? "border-4 border-[#242d32] bg-[#384349]/95" : "border-card-border bg-card-bg/95 backdrop-blur-xl"
+      }`}>
         <div className="grid grid-cols-4 items-center">
           {[
             { label: 'Inicio', icon: House, href: '/patient/menu', active: false },
@@ -623,14 +698,14 @@ export default function PatientRecipesPage() {
               key={label}
               type="button"
               onClick={() => navigate(href)}
-              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
+              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition ${
                 active 
-                  ? 'text-emerald-500 bg-emerald-500/5 font-extrabold' 
-                  : 'text-slate-450 hover:text-emerald-500 hover:bg-slate-500/5'
+                  ? (isDark ? 'text-cyan-400 bg-cyan-400/10 font-black' : 'text-emerald-500 bg-emerald-500/5 font-bold') 
+                  : (isDark ? 'text-slate-350 hover:text-cyan-400' : 'text-slate-500 hover:text-emerald-500')
               }`}
             >
               <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{label}</span>
             </button>
           ))}
         </div>

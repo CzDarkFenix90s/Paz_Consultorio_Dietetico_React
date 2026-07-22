@@ -274,45 +274,72 @@ export default function PatientPlanPage() {
   const avatarUrlResolved = getAvatarUrl(userProfileData?.avatar_url)
 
   return (
-    <main className="min-h-screen bg-bg-main text-text-main pb-28 font-sans relative overflow-hidden transition-colors duration-300">
+    <main className={`min-h-screen pb-28 relative overflow-hidden transition-colors duration-300 selection:bg-orange-500 selection:text-white ${
+      isDark 
+        ? "bg-[#070b10] text-slate-100 font-mono crt-scanlines" 
+        : "bg-[#f3f4f6] text-slate-900 font-sans"
+    }`}>
       {/* Ambient glowing circles */}
-      <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-cyan-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[10%] right-[-10%] -z-10 h-[35rem] w-[35rem] rounded-full bg-orange-500/5 blur-[150px] pointer-events-none" />
+
+      {/* Floating VHS Tape Horizontal Tracking Line Glitch */}
+      {isDark && <div className="vhs-tracking-line" />}
 
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-card-border bg-header-bg backdrop-blur-md transition-colors duration-300">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className={`sticky top-0 z-30 px-4 py-4 backdrop-blur-md transition-colors duration-300 ${
+        isDark ? "bg-[#070b10]/80" : "bg-[#f3f4f6]/80"
+      }`}>
+        <div className={`mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl transition-all duration-300 ${
+          isDark 
+            ? "bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32]" 
+            : "bg-white px-6 shadow-sm border border-slate-200"
+        }`}>
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400" 
+                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            }`}
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-text-main tracking-widest uppercase transition-colors duration-300">
-            Nutri<span className="text-emerald-500">Tec</span>
+          <div className={`flex items-center gap-2 text-xl font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+            isDark ? "text-slate-100 vhs-text-glitch" : "text-slate-900"
+          }`} style={isDark ? { filter: 'drop-shadow(0 0 6px #38bdf8)' } : {}}>
+            NUTRI<span className={isDark ? "text-cyan-400" : "text-emerald-500"}>TEC</span>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
-            <button onClick={() => navigate('/patient/menu')} className="hover:text-emerald-500 transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="text-emerald-500 font-bold transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="hover:text-emerald-500 transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className={`${isDark ? "text-cyan-400 font-extrabold" : "text-emerald-500 font-bold"} transition`}>Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button 
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+                isDark 
+                  ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
+                  : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+              }`}
               title="Alternar modo claro/oscuro"
             >
-              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-500" />}
             </button>
 
-            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <button className={`overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-cyan-400/40 bg-cyan-400/10 text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]" 
+                : "border border-slate-200 bg-slate-50 text-slate-500"
+            } text-xs font-black`}>
               {avatarUrlResolved ? (
                 <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
               ) : (
@@ -324,53 +351,94 @@ export default function PatientPlanPage() {
       </header>
 
       {/* Drawer Sidebar Menu (Mobile) */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-72 transform border-r border-card-border bg-card-bg/95 backdrop-blur-xl p-6 shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between border-b border-card-border pb-5">
-          <div className="text-lg font-black text-text-main tracking-widest uppercase">
-            Nutri<span className="text-emerald-500">Tec</span>
-          </div>
-          <button type="button" onClick={() => setMenuOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-450 hover:bg-slate-550/10 transition">
-            <PanelLeftClose className="h-4 w-4" />
-          </button>
-        </div>
-
-        <nav className="mt-8 space-y-2.5">
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/menu') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
-            <House className="h-5 w-5" /> Inicio
-          </button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className="flex w-full items-center gap-3.5 rounded-2xl bg-emerald-500/10 px-4 py-3.5 text-sm font-bold text-emerald-450 transition">
-            <UtensilsCrossed className="h-5 w-5" /> Mi Plan
-          </button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
-            <ChefHat className="h-5 w-5" /> Recetas
-          </button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-500 transition">
-            <MessageSquareText className="h-5 w-5" /> Soporte
-          </button>
-
-          <div className="pt-6 border-t border-card-border">
-            <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 text-sm font-bold text-rose-500 hover:bg-rose-500/5 transition">
-              <LogOut className="h-5 w-5" /> Cerrar sesión
+      <div className={`fixed inset-0 z-50 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
+        <button type="button" aria-label="Cerrar menú" className={`absolute inset-0 bg-slate-950/60 backdrop-blur-[3px] transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setMenuOpen(false)} />
+        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'} ${
+          isDark ? "bg-[#384349] border-r border-[#242d32]" : "bg-white border-r border-slate-200"
+        }`}>
+          <div className={`relative flex min-h-[260px] flex-col justify-between px-6 pb-8 pt-7 text-white ${
+            isDark ? "bg-gradient-to-b from-[#242d32] to-[#1e2528]" : "bg-gradient-to-b from-emerald-950 to-slate-900"
+          }`}>
+            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
+              <PanelLeftClose className="h-5 w-5" />
             </button>
+
+            <div className="flex flex-col items-start gap-5">
+              <div className="overflow-hidden flex h-20 w-20 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-cyan-400 shadow-[0_10px_25px_rgba(56,189,248,0.2)]">
+                {avatarUrlResolved ? (
+                  <img src={avatarUrlResolved} alt="Profile" className="h-full w-full object-cover" />
+                ) : (
+                  <UtensilsCrossed className="h-10 w-10 text-slate-400" />
+                )}
+              </div>
+              <div>
+                <h3 className="text-lg font-black uppercase tracking-wider">{user?.username}</h3>
+                <p className="text-xs font-bold uppercase tracking-widest text-cyan-400">{user?.role}</p>
+              </div>
+            </div>
           </div>
-        </nav>
+
+          <nav className="mt-8 space-y-2.5 p-6">
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/menu') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+              isDark ? "text-slate-300 hover:bg-white/5" : "text-slate-500 hover:bg-emerald-500/5 hover:text-emerald-500"
+            }`}>
+              <House className="h-5 w-5" /> Inicio
+            </button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/plan') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+              isDark ? "bg-cyan-400/10 text-cyan-400 border border-cyan-400/20" : "bg-emerald-500/10 text-emerald-600"
+            }`}>
+              <UtensilsCrossed className="h-5 w-5" /> Mi Plan
+            </button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/recipes') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+              isDark ? "text-slate-300 hover:bg-white/5" : "text-slate-500 hover:bg-emerald-500/5 hover:text-emerald-500"
+            }`}>
+              <ChefHat className="h-5 w-5" /> Recetas
+            </button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/patient/chat') }} className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest transition ${
+              isDark ? "text-slate-300 hover:bg-white/5" : "text-slate-500 hover:bg-emerald-500/5 hover:text-emerald-500"
+            }`}>
+              <MessageSquareText className="h-5 w-5" /> Soporte
+            </button>
+
+            <div className="pt-6 border-t border-card-border">
+              <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest text-rose-500 hover:bg-rose-500/5 transition">
+                <LogOut className="h-5 w-5" /> Cerrar sesión
+              </button>
+            </div>
+          </nav>
+        </aside>
       </div>
 
       {/* Hero Welcome banner */}
       <div className="mx-auto max-w-[1200px] px-4 pt-8">
-        <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-slate-950 p-6 sm:p-10 border border-slate-800 text-white shadow-xl">
-          <div className="absolute right-0 top-0 -z-10 h-72 w-72 rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
+        <section className={`relative overflow-hidden rounded-[2.5rem] p-6 sm:p-10 border transition-all duration-300 ${
+          isDark 
+            ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_30px_rgba(0,0,0,0.7)] text-slate-100" 
+            : "bg-gradient-to-br from-slate-900 to-slate-950 border-slate-800 text-white"
+        }`}>
+          <div className="absolute right-0 top-0 -z-10 h-72 w-72 rounded-full bg-cyan-500/5 blur-[100px] pointer-events-none" />
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3.5 py-1 text-xs font-bold text-emerald-400 uppercase tracking-widest border border-emerald-500/20">
-                <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+              <span className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1 text-xs font-bold uppercase tracking-wider border ${
+                isDark 
+                  ? "bg-cyan-400/10 text-cyan-450 border-cyan-400/25" 
+                  : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+              }`}>
+                <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
                 Plan Activo
               </span>
-              <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl text-slate-100">Plan Nutricional del Paciente</h1>
-              <p className="max-w-2xl text-sm leading-relaxed text-slate-400">Revisa tu cronograma de alimentación diario, rutinas físicas sugeridas por tu nutricionista y logros desbloqueados.</p>
+              <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">Plan Nutricional del Paciente</h1>
+              <p className="max-w-2xl text-xs leading-relaxed text-slate-300 uppercase tracking-wide font-bold">Revisa tu cronograma de alimentación diario, rutinas físicas sugeridas por tu nutricionista y logros desbloqueados.</p>
             </div>
             {activePlan && (
-              <button onClick={() => navigate('/patient/plans')} className="inline-flex items-center gap-2 self-start rounded-full bg-emerald-500 px-6 py-3.5 text-xs font-black uppercase tracking-widest text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400">
+              <button 
+                onClick={() => navigate('/patient/plans')} 
+                className={`inline-flex items-center gap-2 self-start rounded-xl px-6 py-3.5 text-xs font-black uppercase tracking-widest transition shadow-lg ${
+                  isDark 
+                    ? "bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 text-white btn-pixel-retro" 
+                    : "bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+                }`}
+              >
                 Cambiar de Plan
               </button>
             )}
@@ -381,18 +449,24 @@ export default function PatientPlanPage() {
       {/* Main Content Area */}
       <div className="mx-auto max-w-[1200px] px-4 pt-8 space-y-8">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 rounded-3xl border border-card-border bg-card-bg/40 backdrop-blur-md shadow-sm">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
-            <p className="mt-4 text-slate-400 font-semibold">Cargando tu plan nutricional...</p>
+          <div className={`flex flex-col items-center justify-center py-32 rounded-3xl border transition-all duration-300 ${
+            isDark ? "bg-[#384349] border-4 border-[#242d32]" : "bg-card-bg/40 border-card-border"
+          }`}>
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-400 border-t-transparent"></div>
+            <p className="mt-4 text-slate-300 font-bold uppercase tracking-widest text-xs">Cargando tu plan nutricional...</p>
           </div>
         ) : !activePlan ? (
-          <section className="rounded-[2rem] border border-card-border bg-card-bg p-6 sm:p-10 backdrop-blur-xl shadow-sm text-center space-y-6 flex flex-col items-center justify-center min-h-[400px]">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+          <section className={`rounded-[2rem] p-6 sm:p-10 text-center space-y-6 flex flex-col items-center justify-center min-h-[400px] border transition-all duration-300 ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_30px_rgba(0,0,0,0.7)] text-slate-100" 
+              : "bg-card-bg border-card-border"
+          }`}>
+            <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 shadow-[0_0_20px_rgba(56,189,248,0.2)]">
               <UtensilsCrossed className="h-10 w-10 animate-bounce" />
             </div>
             <div className="max-w-md space-y-2">
-              <h2 className="text-2xl font-bold text-text-main">No tienes un plan activo</h2>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <h2 className="text-2xl font-bold uppercase tracking-wider">No tienes un plan activo</h2>
+              <p className="text-slate-300 text-xs leading-relaxed font-bold uppercase">
                 Parece que aún no tienes asignado ningún plan de alimentación en el consultorio. ¡Adquiere uno del catálogo o activa el plan demo offline!
               </p>
             </div>
@@ -413,59 +487,83 @@ export default function PatientPlanPage() {
             </div>
           </section>
         ) : (
-          <section className="rounded-[2.5rem] border border-card-border bg-card-bg p-6 sm:p-8 backdrop-blur-xl shadow-sm space-y-8 transition-all duration-300">
+          <section className={`rounded-[2.5rem] border p-6 sm:p-8 shadow-sm space-y-8 transition-all duration-300 ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] text-slate-100" 
+              : "bg-white border-slate-200"
+          }`}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Plan en curso</span>
-                <h2 className="text-2xl font-bold text-text-main leading-tight">{activePlan.name}</h2>
-                <p className="mt-2.5 text-sm text-slate-400">Control de metas de salud supervisado por: <span className="font-bold text-emerald-500">{activePlan.nutricionista}</span>.</p>
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>[PLAN DE NUTRICIÓN EN CURSO]</span>
+                <h2 className="text-2xl font-black uppercase tracking-wider text-white mt-1">{activePlan.name}</h2>
+                <p className="mt-2.5 text-xs font-bold text-slate-300 uppercase tracking-wide">
+                  Control de metas de salud supervisado por: <span className={`font-extrabold ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>{activePlan.nutricionista}</span>.
+                </p>
               </div>
 
               {/* Status metrics grid */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
-                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Plan</span>
-                  <div className="mt-1 font-bold text-text-main text-sm">{activePlan.name}</div>
+                <div className={`rounded-2xl border px-4 py-3 transition-colors duration-300 ${
+                  isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+                }`}>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Plan</span>
+                  <div className="mt-1 font-black text-sm uppercase">{activePlan.name}</div>
                 </div>
-                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
-                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Calorías</span>
-                  <div className="mt-1 font-bold text-text-main text-sm">{activePlan.calories}</div>
+                <div className={`rounded-2xl border px-4 py-3 transition-colors duration-300 ${
+                  isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+                }`}>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Calorías</span>
+                  <div className="mt-1 font-black text-sm uppercase">{activePlan.calories}</div>
                 </div>
-                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
-                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Duración</span>
-                  <div className="mt-1 font-bold text-emerald-455 text-sm">{activePlan.week}</div>
+                <div className={`rounded-2xl border px-4 py-3 transition-colors duration-300 ${
+                  isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+                }`}>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Duración</span>
+                  <div className={`mt-1 font-black text-sm uppercase ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>{activePlan.week}</div>
                 </div>
-                <div className="rounded-2xl border border-card-border bg-input-bg px-4 py-3 transition-colors duration-300">
-                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Agua</span>
-                  <div className="mt-1 font-bold text-sky-400 text-sm">{activePlan.hydration}</div>
+                <div className={`rounded-2xl border px-4 py-3 transition-colors duration-300 ${
+                  isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+                }`}>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Agua</span>
+                  <div className="mt-1 font-black text-sky-400 text-sm uppercase">{activePlan.hydration}</div>
                 </div>
               </div>
             </div>
 
             {/* Adherence progress bar */}
-            <div className="rounded-2xl border border-card-border bg-input-bg p-4 space-y-2 transition-all duration-300">
+            <div className={`rounded-2xl border p-4 space-y-2 transition-all duration-300 ${
+              isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+            }`}>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide">
-                <span className="text-slate-450">Adherencia del Plan actual</span>
+                <span className="text-slate-350">Adherencia del Plan actual</span>
                 <span>{activePlan.progress}%</span>
               </div>
-              <div className="h-3 w-full rounded-full bg-card-bg border border-card-border p-0.5 transition-all duration-300">
-                <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: `${activePlan.progress}%` }} />
+              <div className={`h-3 w-full rounded-full p-0.5 transition-all duration-300 ${
+                isDark ? "bg-slate-950 border border-white/5" : "bg-card-bg border border-card-border"
+              }`}>
+                <div className={`h-full rounded-full ${
+                  isDark ? "bg-gradient-to-r from-cyan-500 to-cyan-300 shadow-[0_0_10px_rgba(56,189,248,0.5)]" : "bg-gradient-to-r from-emerald-500 to-teal-400"
+                }`} style={{ width: `${activePlan.progress}%` }} />
               </div>
             </div>
 
             {/* Next Consultation banner */}
-            <div className="flex flex-col gap-4 rounded-3xl border border-emerald-500/10 bg-emerald-500/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className={`flex flex-col gap-4 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between ${
+              isDark ? "bg-[#242d32] border-[#242d32]" : "bg-emerald-500/5 border-emerald-500/10"
+            }`}>
               <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500"><CalendarDays className="h-5 w-5" /></div>
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                  isDark ? "bg-cyan-400/10 text-cyan-400" : "bg-emerald-500/10 text-emerald-500"
+                }`}><CalendarDays className="h-5 w-5" /></div>
                 <div>
-                  <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Próxima Consulta Programada</span>
-                  <h3 className="font-bold text-text-main text-xs leading-snug">{activePlan.nextConsult}</h3>
+                  <span className={`text-[9px] font-black uppercase tracking-widest ${isDark ? "text-cyan-455" : "text-emerald-450"}`}>Próxima Consulta Programada</span>
+                  <h3 className="font-bold text-xs leading-snug uppercase mt-0.5">{activePlan.nextConsult}</h3>
                 </div>
               </div>
             </div>
 
             {/* Interactive Custom Tabs */}
-            <div className="flex gap-2 border-b border-card-border pb-3 overflow-x-auto">
+            <div className={`flex gap-2 border-b pb-3 overflow-x-auto ${isDark ? "border-[#242d32]" : "border-card-border"}`}>
               {planTabs.map((tab) => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
@@ -474,10 +572,10 @@ export default function PatientPlanPage() {
                     key={tab.id} 
                     type="button" 
                     onClick={() => setActiveTab(tab.id)} 
-                    className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-xs font-bold uppercase tracking-wider transition ${
+                    className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-black uppercase tracking-widest transition ${
                       isActive 
-                        ? 'bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.25)]' 
-                        : 'border border-card-border bg-input-bg text-slate-400 hover:text-emerald-500 hover:bg-slate-500/10'
+                        ? (isDark ? 'bg-[#ff5500] text-white border border-orange-400 btn-pixel-retro shadow-lg' : 'bg-emerald-500 text-slate-950 shadow-md')
+                        : (isDark ? 'border border-[#242d32] bg-[#242d32] text-slate-300 hover:text-cyan-400' : 'border border-card-border bg-input-bg text-slate-500 hover:text-emerald-500')
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -488,39 +586,49 @@ export default function PatientPlanPage() {
             </div>
 
             <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
-              <section className="rounded-3xl border border-card-border bg-input-bg p-5 sm:p-6 shadow-inner transition-all duration-300">
+              <section className={`rounded-3xl border p-5 sm:p-6 shadow-inner transition-all duration-300 ${
+                isDark ? "bg-[#242d32] border-[#242d32]" : "bg-input-bg border-card-border"
+              }`}>
                 {activeTab === 'dieta' ? (
                   <div className="space-y-4">
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-500">Menú Recomendado por Nutricionista</h2>
+                    <h2 className={`text-sm font-black uppercase tracking-wider ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>{isDark ? "[MENÚ RECOMENDADO DIETA]" : "Menú Recomendado por Nutricionista"}</h2>
                     <div className="space-y-3">
                       {foods.length > 0 ? (
                         foods.map((food) => (
-                          <article key={food.id} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4 hover:border-emerald-500/40 transition duration-300">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500"><UtensilsCrossed className="h-5 w-5" /></div>
+                          <article key={food.id} className={`flex items-center gap-4 rounded-xl border p-4 transition duration-300 ${
+                            isDark ? "bg-[#384349] border-[#242d32] hover:border-cyan-400" : "bg-card-bg border-card-border hover:border-emerald-500/40"
+                          }`}>
+                            <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${isDark ? "bg-cyan-400/10 text-cyan-400" : "bg-emerald-500/10 text-emerald-500"}`}><UtensilsCrossed className="h-5 w-5" /></div>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <h3 className="truncate font-bold text-sm text-text-main uppercase">{food.name || 'Alimento'}</h3>
+                                <h3 className="truncate font-black text-sm text-white uppercase">{food.name || 'Alimento'}</h3>
                                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-655" />
-                                <span className="text-xs text-slate-500">{food.meal_type || 'Momento'}</span>
+                                <span className="text-xs text-slate-400 uppercase font-bold">{food.meal_type || 'Momento'}</span>
                               </div>
-                              <p className="mt-1 text-xs text-slate-400 leading-normal">{food.description || 'Sin descripción'}</p>
+                              <p className="mt-1 text-xs text-slate-300 leading-normal uppercase font-bold">{food.description || 'Sin descripción'}</p>
                             </div>
-                            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-500">{food.portion_grams || 0} g</span>
+                            <span className={`rounded-xl border px-3 py-1 text-[10px] font-black uppercase ${
+                              isDark ? "bg-cyan-400/10 border-cyan-400/20 text-cyan-400" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
+                            }`}>{food.portion_grams || 0} g</span>
                           </article>
                         ))
                       ) : (
                         fallbackMealPlan.map((item) => (
-                          <article key={item.title} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4 hover:border-emerald-500/40 transition duration-300">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500"><UtensilsCrossed className="h-5 w-5" /></div>
+                          <article key={item.title} className={`flex items-center gap-4 rounded-xl border p-4 transition duration-300 ${
+                            isDark ? "bg-[#384349] border-[#242d32] hover:border-cyan-400" : "bg-card-bg border-card-border hover:border-emerald-500/40"
+                          }`}>
+                            <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${isDark ? "bg-cyan-400/10 text-cyan-400" : "bg-emerald-500/10 text-emerald-500"}`}><UtensilsCrossed className="h-5 w-5" /></div>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <h3 className="truncate font-bold text-sm text-text-main">{item.title}</h3>
+                                <h3 className="truncate font-black text-sm text-white uppercase">{item.title}</h3>
                                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-655" />
-                                <span className="text-xs text-slate-500">{item.time}</span>
+                                <span className="text-xs text-slate-400 uppercase font-bold">{item.time}</span>
                               </div>
-                              <p className="mt-1 text-xs text-slate-400 leading-normal">{item.detail}</p>
+                              <p className="mt-1 text-xs text-slate-350 leading-normal uppercase font-bold">{item.detail}</p>
                             </div>
-                            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-500">{item.status}</span>
+                            <span className={`rounded-xl border px-3 py-1 text-[10px] font-black uppercase ${
+                              isDark ? "bg-cyan-400/10 border-cyan-400/20 text-cyan-400" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
+                            }`}>{item.status}</span>
                           </article>
                         ))
                       )}
@@ -530,18 +638,24 @@ export default function PatientPlanPage() {
 
                 {activeTab === 'rutina' ? (
                   <div className="space-y-4">
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-500">Rutina Semanal de Recomposición</h2>
+                    <h2 className={`text-sm font-black uppercase tracking-wider ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>{isDark ? "[RUTINA SEMANAL ACTIVIDAD]" : "Rutina Semanal de Recomposición"}</h2>
                     <div className="space-y-3">
                       {fallbackRoutineDays.map((item) => (
-                        <article key={item.day} className="flex items-center justify-between rounded-2xl border border-card-border bg-card-bg p-4">
+                        <article key={item.day} className={`flex items-center justify-between rounded-xl border p-4 ${
+                          isDark ? "bg-[#384349] border-[#242d32]" : "bg-card-bg border-card-border"
+                        }`}>
                           <div className="flex items-center gap-3">
-                            <span className={`h-2.5 w-2.5 rounded-full ${item.completed ? 'bg-emerald-500' : 'bg-slate-600'}`} />
+                            <span className={`h-2.5 w-2.5 rounded-full ${item.completed ? 'bg-cyan-400' : 'bg-slate-600'}`} />
                             <div>
-                              <h3 className="font-bold text-sm text-text-main">{item.day}</h3>
-                              <p className="text-xs text-slate-400">{item.activity}</p>
+                              <h3 className="font-black text-sm text-white uppercase tracking-wider">{item.day}</h3>
+                              <p className="text-xs text-slate-300 uppercase font-bold">{item.activity}</p>
                             </div>
                           </div>
-                          <span className={`rounded-xl px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${item.completed ? 'bg-emerald-500/15 text-emerald-450' : 'bg-slate-500/15 text-slate-450'}`}>
+                          <span className={`rounded-xl px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${
+                            item.completed 
+                              ? (isDark ? 'bg-cyan-400/15 text-cyan-400' : 'bg-emerald-500/15 text-emerald-600') 
+                              : 'bg-slate-500/15 text-slate-400'
+                          }`}>
                             {item.completed ? 'Completado' : 'Pendiente'}
                           </span>
                         </article>
@@ -552,14 +666,16 @@ export default function PatientPlanPage() {
 
                 {activeTab === 'logros' ? (
                   <div className="space-y-4">
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-emerald-500">Medallas y Logros unlocked</h2>
+                    <h2 className={`text-sm font-black uppercase tracking-wider ${isDark ? "text-cyan-400" : "text-emerald-500"}`}>{isDark ? "[LOGROS Y MEDALLAS DECK]" : "Medallas y Logros unlocked"}</h2>
                     <div className="grid gap-3 sm:grid-cols-2">
                       {fallbackAchievements.map((item) => (
-                        <article key={item.title} className="flex items-center gap-4 rounded-2xl border border-card-border bg-card-bg p-4">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500"><Star className="h-5 w-5" /></div>
+                        <article key={item.title} className={`flex items-center gap-4 rounded-xl border p-4 ${
+                          isDark ? "bg-[#384349] border-[#242d32]" : "bg-card-bg border-card-border"
+                        }`}>
+                          <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${isDark ? "bg-amber-400/10 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}><Star className="h-5 w-5" /></div>
                           <div>
-                            <h3 className="font-bold text-xs text-text-main uppercase tracking-wide">{item.title}</h3>
-                            <p className="mt-0.5 text-xs font-semibold text-amber-500">{item.points}</p>
+                            <h3 className="font-black text-xs text-white uppercase tracking-wider">{item.title}</h3>
+                            <p className="mt-0.5 text-xs font-black text-amber-400 uppercase tracking-widest">{item.points}</p>
                           </div>
                         </article>
                       ))}
@@ -569,12 +685,20 @@ export default function PatientPlanPage() {
               </section>
 
               <aside className="space-y-6">
-                <article className="rounded-3xl border border-card-border bg-input-bg p-5 space-y-3 transition-all duration-300">
-                  <h2 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Resumen Semanal</h2>
-                  <div className="space-y-2 text-xs text-slate-400">
-                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Calorías diarias</span><span className="font-bold text-text-main">{activePlan.calories}</span></div>
-                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Comidas del día</span><span className="font-bold text-text-main">{foods.length || 4} programadas</span></div>
-                    <div className="flex items-center justify-between rounded-xl bg-card-bg px-3 py-2.5 transition-colors duration-300"><span>Hidratación</span><span className="font-bold text-text-main">{activePlan.hydration}</span></div>
+                <article className={`rounded-3xl border p-5 space-y-3 transition-all duration-300 ${
+                  isDark ? "bg-[#242d32] border-[#242d32] shadow-inner" : "bg-input-bg border-card-border"
+                }`}>
+                  <h2 className="text-[10px] font-black text-slate-300 uppercase tracking-widest">[RESUMEN SEMANAL]</h2>
+                  <div className="space-y-2 text-xs text-slate-400 uppercase font-bold">
+                    <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors duration-300 ${
+                      isDark ? "bg-[#384349]" : "bg-card-bg"
+                    }`}><span>Calorías diarias</span><span className="font-black text-white">{activePlan.calories}</span></div>
+                    <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors duration-300 ${
+                      isDark ? "bg-[#384349]" : "bg-card-bg"
+                    }`}><span>Comidas del día</span><span className="font-black text-white">{foods.length || 4} programadas</span></div>
+                    <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors duration-300 ${
+                      isDark ? "bg-[#384349]" : "bg-card-bg"
+                    }`}><span>Hidratación</span><span className="font-black text-white">{activePlan.hydration}</span></div>
                   </div>
                 </article>
               </aside>
@@ -584,7 +708,9 @@ export default function PatientPlanPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
+      <nav className={`fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-2xl border shadow-2xl p-2.5 md:hidden transition-all duration-300 ${
+        isDark ? "border-4 border-[#242d32] bg-[#384349]/95" : "border-card-border bg-card-bg/95 backdrop-blur-xl"
+      }`}>
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -596,14 +722,14 @@ export default function PatientPlanPage() {
                 if (label === 'Recetas') navigate('/patient/recipes')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
-              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
+              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition ${
                 active 
-                  ? 'text-emerald-500 bg-emerald-500/5' 
-                  : 'text-slate-455 hover:text-emerald-500 hover:bg-slate-500/5'
+                  ? (isDark ? 'text-cyan-400 bg-cyan-400/10' : 'text-emerald-500 bg-emerald-500/5') 
+                  : (isDark ? 'text-slate-350 hover:text-cyan-400' : 'text-slate-500 hover:text-emerald-500')
               }`}
             >
               <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{label}</span>
             </button>
           ))}
         </div>

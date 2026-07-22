@@ -394,7 +394,11 @@ export default function PatientMenuPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#070b10] text-slate-100 pb-28 font-mono relative overflow-hidden crt-scanlines selection:bg-orange-500 selection:text-white transition-colors duration-300">
+    <main className={`min-h-screen pb-28 relative overflow-hidden transition-colors duration-300 selection:bg-orange-500 selection:text-white ${
+      isDark 
+        ? "bg-[#070b10] text-slate-100 font-mono crt-scanlines" 
+        : "bg-[#f3f4f6] text-slate-900 font-sans"
+    }`}>
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(15px); }
@@ -414,45 +418,71 @@ export default function PatientMenuPage() {
       `}</style>
 
       {/* Floating VHS Tape Horizontal Tracking Line Glitch */}
-      <div className="vhs-tracking-line" />
+      {isDark && <div className="vhs-tracking-line" />}
 
       {/* Floating Retro TV Navbar */}
-      <header className="sticky top-0 z-30 px-4 py-4 bg-[#070b10]/80 backdrop-blur-md transition-colors duration-300">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32] transition-all duration-300">
+      <header className={`sticky top-0 z-30 px-4 py-4 backdrop-blur-md transition-colors duration-300 ${
+        isDark ? "bg-[#070b10]/80" : "bg-[#f3f4f6]/80"
+      }`}>
+        <div className={`mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl transition-all duration-300 ${
+          isDark 
+            ? "bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32]" 
+            : "bg-white px-6 shadow-sm border border-slate-200"
+        }`}>
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-cyan-500/10 hover:text-cyan-400"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400" 
+                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            }`}
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-slate-100 tracking-[0.2em] uppercase transition-colors duration-300 vhs-text-glitch" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }}>
-            NUTRI<span className="text-cyan-400">TEC</span>
+          <div className={`flex items-center gap-2 text-xl font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+            isDark ? "text-slate-100 vhs-text-glitch" : "text-slate-900"
+          }`} style={isDark ? { filter: 'drop-shadow(0 0 6px #38bdf8)' } : {}}>
+            NUTRI<span className={isDark ? "text-cyan-400" : "text-emerald-500"}>TEC</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-300">
-            <button onClick={() => navigate('/patient/menu')} className="text-cyan-400 font-extrabold transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="hover:text-cyan-400 transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="hover:text-cyan-400 transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="hover:text-cyan-400 transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-400">
+            <button onClick={() => navigate('/patient/menu')} className={`${isDark ? "text-cyan-400 font-extrabold" : "text-emerald-500 font-bold"} transition`}>Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button 
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-cyan-500/10"
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
+                isDark 
+                  ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
+                  : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+              }`}
               title="Alternar modo claro/oscuro"
             >
-              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-300" />}
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-500" />}
             </button>
 
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-cyan-500/10">
+            <button className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
+                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            }`}>
               <Bell className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white">1</span>
+              <span className={`absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[8px] font-bold text-white ${
+                isDark ? "bg-red-500" : "bg-emerald-500"
+              }`}>1</span>
             </button>
-            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 text-xs font-black text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]">
+            <button className={`overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl transition ${
+              isDark 
+                ? "border border-cyan-400/40 bg-cyan-400/10 text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]" 
+                : "border border-slate-200 bg-slate-50 text-slate-500"
+            } text-xs font-black`}>
               {getAvatarUrl(userProfileData?.avatar_url) ? (
                 <img src={getAvatarUrl(userProfileData?.avatar_url)!} alt="Profile" className="h-full w-full object-cover" />
               ) : (
