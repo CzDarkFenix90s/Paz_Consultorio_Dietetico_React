@@ -597,33 +597,36 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans antialiased text-slate-600">
+    <div className="min-h-screen bg-[#070b10] text-slate-100 flex flex-col font-mono antialiased selection:bg-orange-500 selection:text-white crt-scanlines relative">
       
+      {/* Floating VHS Tape Horizontal Tracking Line Glitch */}
+      <div className="vhs-tracking-line" />
+
       {/* Glow backgrounds */}
-      <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-emerald-500/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-cyan-500/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-cyan-500/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-orange-500/5 rounded-full blur-[150px] pointer-events-none" />
 
       {/* Premium Navbar */}
-      <header className="sticky top-0 z-30 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-[#242d32] bg-[#070b10]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.35)] font-black text-xl">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400 border border-cyan-400/40 shadow-[0_0_15px_rgba(56,189,248,0.3)] font-black text-xl vhs-text-glitch">
               N
             </span>
             <div>
-              <h1 className="text-base font-black tracking-tight text-white">Panel Clínico</h1>
-              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-0.5 font-bold">NutriTec</p>
+              <h1 className="text-sm font-black tracking-widest text-white uppercase vhs-text-glitch">Panel Clínico</h1>
+              <p className="text-[9px] font-bold text-cyan-400 uppercase tracking-widest mt-0.5">NutriTec [Deck]</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-bold text-white">{user?.username}</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mt-0.5">{user?.role}</span>
+              <span className="text-xs font-black text-white uppercase tracking-wider">{user?.username}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-cyan-400 mt-0.5">[{user?.role}]</span>
             </div>
             <button
               onClick={handleLogout}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:bg-rose-500 hover:text-slate-950 hover:border-rose-500 transition shadow-sm"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-350 hover:bg-rose-600 hover:text-white transition shadow-sm"
               title="Cerrar sesión"
             >
               <LogOut className="h-5 w-5" />
@@ -637,33 +640,33 @@ export default function AdminDashboard() {
         
         {/* Metric Cards */}
         <div className="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-6">
-          <div className="rounded-3xl border border-white/5 bg-slate-900/60 p-5 shadow-lg flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400">
+          <div className="rounded-3xl border-4 border-[#242d32] bg-[#384349] p-5 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400 border border-cyan-400/20">
               <Users className="h-6 w-6" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Pacientes</p>
-              <h3 className="text-2xl font-black text-white mt-1">{pacientes.length}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Total Pacientes</p>
+              <h3 className="text-xl font-black text-white mt-1">{pacientes.length}</h3>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/5 bg-slate-900/60 p-5 shadow-lg flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400">
+          <div className="rounded-3xl border-4 border-[#242d32] bg-[#384349] p-5 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400 border border-cyan-400/20">
               <BookOpen className="h-6 w-6" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Planes Activos</p>
-              <h3 className="text-2xl font-black text-white mt-1">{planes.filter(p => p.is_active).length}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Planes Activos</p>
+              <h3 className="text-xl font-black text-white mt-1">{planes.filter(p => p.is_active).length}</h3>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/5 bg-slate-900/60 p-5 shadow-lg flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400">
+          <div className="rounded-3xl border-4 border-[#242d32] bg-[#384349] p-5 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-400/10 text-orange-400 border border-orange-400/20">
               <Activity className="h-6 w-6" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Calorías Promedio</p>
-              <h3 className="text-2xl font-black text-white mt-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Calorías Promedio</p>
+              <h3 className="text-xl font-black text-white mt-1">
                 {planes.length > 0 
                   ? Math.round(planes.reduce((acc, p) => acc + Number(p.target_calories || 0), 0) / planes.length)
                   : 0} kcal
@@ -671,13 +674,13 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/5 bg-slate-900/60 p-5 shadow-lg flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400">
+          <div className="rounded-3xl border-4 border-[#242d32] bg-[#384349] p-5 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-400/10 text-purple-400 border border-purple-400/20">
               <MessageSquare className="h-6 w-6" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Mensajería</p>
-              <h3 className="text-2xl font-black text-white mt-1">Activa</h3>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Mensajería</p>
+              <h3 className="text-xl font-black text-white mt-1 uppercase">Activa</h3>
             </div>
           </div>
         </div>
@@ -685,14 +688,14 @@ export default function AdminDashboard() {
         {/* Sidebar Nav & Main Sections */}
         <div className="grid gap-6 md:grid-cols-4 items-start">
           <aside className="md:col-span-1 space-y-4">
-            <div className="rounded-3xl border border-white/5 bg-slate-900/60 p-4 shadow-lg space-y-2">
-              <p className="px-3 text-[10px] font-bold tracking-widest text-slate-500 uppercase">Módulos</p>
+            <div className="rounded-3xl border-4 border-[#242d32] bg-[#384349] p-4 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] space-y-2">
+              <p className="px-3 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">[MÓDULOS DECK]</p>
               
               <button
                 onClick={() => { setActiveTab('pacientes'); setSelectedPatientForChat(null); }}
-                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-sm font-semibold transition ${
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-xs font-black uppercase tracking-widest transition ${
                   activeTab === 'pacientes'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    ? 'bg-[#ff5500] text-white shadow-md border border-orange-400 btn-pixel-retro'
                     : 'text-slate-300 hover:bg-white/5'
                 }`}
               >
@@ -703,9 +706,9 @@ export default function AdminDashboard() {
               {isRoleAdmin && (
                 <button
                   onClick={() => { setActiveTab('nutricionistas'); setSelectedPatientForChat(null); }}
-                  className={`flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-sm font-semibold transition ${
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-left text-xs font-black uppercase tracking-widest transition ${
                     activeTab === 'nutricionistas'
-                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                      ? 'bg-[#ff5500] text-white shadow-md border border-orange-400 btn-pixel-retro'
                       : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
@@ -713,8 +716,8 @@ export default function AdminDashboard() {
                     <Users className="h-5 w-5 shrink-0" />
                     <span>Nutricionistas</span>
                   </div>
-                  <span className={`inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-bold rounded-full ${
-                    activeTab === 'nutricionistas' ? 'bg-slate-950 text-emerald-400' : 'bg-white/10 text-slate-400'
+                  <span className={`inline-flex items-center justify-center px-2.5 py-0.5 text-[9px] font-bold rounded-full ${
+                    activeTab === 'nutricionistas' ? 'bg-slate-950 text-cyan-400' : 'bg-white/10 text-slate-400'
                   }`}>
                     {nutricionistasList.length}
                   </span>
@@ -723,9 +726,9 @@ export default function AdminDashboard() {
 
               <button
                 onClick={() => { setActiveTab('planes'); setSelectedPatientForChat(null); }}
-                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-sm font-semibold transition ${
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-xs font-black uppercase tracking-widest transition ${
                   activeTab === 'planes'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    ? 'bg-[#ff5500] text-white shadow-md border border-orange-400 btn-pixel-retro'
                     : 'text-slate-300 hover:bg-white/5'
                 }`}
               >
@@ -735,9 +738,9 @@ export default function AdminDashboard() {
 
               <button
                 onClick={() => { setActiveTab('chat'); if (pacientes.length > 0) setSelectedPatientForChat(pacientes[0]); }}
-                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-sm font-semibold transition ${
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-xs font-black uppercase tracking-widest transition ${
                   activeTab === 'chat'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    ? 'bg-[#ff5500] text-white shadow-md border border-orange-400 btn-pixel-retro'
                     : 'text-slate-300 hover:bg-white/5'
                 }`}
               >

@@ -93,7 +93,7 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { 
         viewBox="0 0 1400 420"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto drop-shadow-[0_0_22px_rgba(56,189,248,0.45)]"
+        className="w-full h-auto drop-shadow-[0_0_24px_rgba(56,189,248,0.5)]"
       >
         <defs>
           {/* Cyan Phosphor Dot Matrix Mesh Pattern matching screenshot */}
@@ -109,29 +109,61 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { 
           </linearGradient>
         </defs>
 
-        {/* Cyber-Sigilism Symmetrical Top Arching Halo Wings (Stretched Wide to Edges matching image_34.png) */}
+        {/* Widescreen Horizontal Cyber Circuit Data Pipelines */}
+        <g stroke="#38bdf8" strokeWidth="2.5" opacity="0.55" fill="none">
+          {/* Central pipelines stretching to screen sides */}
+          <path d="M 460,215 L 50,215 M 940,215 L 1350,215" strokeWidth="3" />
+          <path d="M 480,165 C 380,165 280,125 80,125" strokeDasharray="6,6" />
+          <path d="M 920,165 C 1020,165 1120,125 1320,125" strokeDasharray="6,6" />
+          <path d="M 500,270 C 400,270 300,310 100,310" />
+          <path d="M 900,270 C 1000,270 1100,310 1300,310" />
+          {/* Subtle node circles at terminal points */}
+          <circle cx="50" cy="215" r="4" fill="#7dd3fc" />
+          <circle cx="1350" cy="215" r="4" fill="#7dd3fc" />
+        </g>
+
+        {/* Glowing Cyber Apple Silhouette in the Center */}
+        {/* Apple body (Left and Right symmetric halves with bottom indent) */}
         <path
-          d="M 700,40 C 530,10 330,30 180,90 C 100,130 50,180 30,240 C 35,260 65,250 80,230 C 100,190 160,150 250,115 C 350,75 490,55 630,55 C 530,85 430,135 360,195 C 320,230 290,270 295,300 C 300,310 320,300 330,280 C 345,240 395,195 465,155 C 540,115 640,85 700,75 C 760,85 860,115 935,155 C 1005,195 1055,240 1070,280 C 1080,300 1100,310 1105,300 C 1110,270 1080,230 1040,195 C 970,135 870,85 770,55 C 910,55 1050,75 1150,115 C 1240,150 1300,190 1320,230 C 1335,250 1365,260 1370,240 C 1350,180 1300,130 1220,90 C 1070,30 870,10 700,40 Z"
+          d="M 700,105 
+             C 645,105 595,120 555,155 
+             C 505,200 495,265 525,315 
+             C 555,365 615,380 665,365 
+             C 680,360 692,368 700,368 
+             C 708,368 720,360 735,365 
+             C 785,380 845,365 875,315 
+             C 905,265 895,200 845,155 
+             C 805,120 755,105 700,105 Z"
           fill="url(#cyan-dot-matrix)"
           stroke="#38bdf8"
-          strokeWidth="3"
+          strokeWidth="3.5"
+          className="vhs-text-glitch"
         />
 
-        {/* Lower Symmetrical Organic Tribal Roots & Thorn Branches (Widescreen Extended) */}
-        <g stroke="url(#cyan-glow)" strokeWidth="3.5" fill="none">
-          <path d="M 700,280 C 610,320 510,350 410,370 C 350,380 300,385 260,375 C 310,360 380,340 450,310 C 540,275 620,230 660,180 Z" fill="url(#cyan-dot-matrix)" />
-          <path d="M 700,280 C 790,320 890,350 990,370 C 1050,380 1100,385 1140,375 C 1090,360 1020,340 950,310 C 860,275 780,230 740,180 Z" fill="url(#cyan-dot-matrix)" />
-          <path d="M 700,260 L 700,380 M 640,290 L 570,360 M 760,290 L 830,360 M 670,310 L 620,375 M 730,310 L 780,375" strokeWidth="3" />
-        </g>
+        {/* Stem of the Apple */}
+        <path
+          d="M 700,105 C 700,75 730,55 750,55 C 740,75 715,95 700,105 Z"
+          fill="#38bdf8"
+          stroke="#38bdf8"
+          strokeWidth="1.5"
+        />
+        
+        {/* Leaf of the Apple */}
+        <path
+          d="M 725,65 C 765,45 815,65 825,85 C 785,95 735,85 725,65 Z"
+          fill="url(#cyan-dot-matrix)"
+          stroke="#38bdf8"
+          strokeWidth="2.5"
+        />
 
         {/* Integrated Center NUTRITEC Text (Spaced Monospace Cyber Font) */}
         <text
           x="700"
-          y="215"
+          y="235"
           textAnchor="middle"
           fill="#f8fafc"
           stroke="#1e293b"
-          strokeWidth="7"
+          strokeWidth="8"
           className="font-black text-6xl sm:text-7xl md:text-8xl tracking-[0.25em] uppercase font-mono"
           style={{ letterSpacing: '0.25em', filter: 'drop-shadow(0 0 15px #38bdf8)' }}
         >
@@ -181,20 +213,22 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
     const clickX = e.clientX || canvas.width / 2
     const clickY = e.clientY || canvas.height / 2
 
-    // Explosive particles
-    const colors = ['#ff5500', '#38bdf8', '#7dd3fc', '#ffffff', '#eab308']
-    const particles = Array.from({ length: 350 }).map(() => {
+    // Explosive fruit particles
+    const fruits = ['🍎', '🍏', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍍', '🥝', '🥑']
+    const particles = Array.from({ length: 150 }).map(() => {
       const angle = Math.random() * Math.PI * 2
-      const speed = Math.random() * 18 + 4
+      const speed = Math.random() * 15 + 3
       return {
         x: clickX,
         y: clickY,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        size: Math.random() * 8 + 3,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 18 + 14, // Visible size for fruit emojis
+        fruit: fruits[Math.floor(Math.random() * fruits.length)],
         alpha: 1,
-        decay: Math.random() * 0.02 + 0.01
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.15,
+        decay: Math.random() * 0.015 + 0.008
       }
     })
 
@@ -209,14 +243,19 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
           aliveCount++
           p.x += p.vx
           p.y += p.vy
-          p.vy += 0.15
+          p.vy += 0.14 // gravity
           p.alpha -= p.decay
+          p.rotation += p.rotationSpeed
 
-          ctx.fillStyle = p.color
+          ctx.save()
+          ctx.translate(p.x, p.y)
+          ctx.rotate(p.rotation)
           ctx.globalAlpha = Math.max(0, p.alpha)
-          ctx.shadowBlur = 10
-          ctx.shadowColor = p.color
-          ctx.fillRect(p.x, p.y, p.size, p.size)
+          ctx.font = `${p.size}px sans-serif`
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillText(p.fruit, 0, 0)
+          ctx.restore()
         }
       })
 

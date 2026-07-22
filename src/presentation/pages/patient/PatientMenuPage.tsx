@@ -394,7 +394,7 @@ export default function PatientMenuPage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg-main text-text-main pb-28 font-sans relative overflow-hidden selection:bg-emerald-500 selection:text-slate-950 transition-colors duration-300">
+    <main className="min-h-screen bg-[#070b10] text-slate-100 pb-28 font-mono relative overflow-hidden crt-scanlines selection:bg-orange-500 selection:text-white transition-colors duration-300">
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(15px); }
@@ -413,43 +413,46 @@ export default function PatientMenuPage() {
         }
       `}</style>
 
-      {/* Floating white/dark Navbar */}
-      <header className="sticky top-0 z-30 px-4 py-4 bg-header-bg backdrop-blur-md transition-colors duration-300">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-full bg-card-bg px-6 shadow-sm border border-card-border transition-all duration-300">
+      {/* Floating VHS Tape Horizontal Tracking Line Glitch */}
+      <div className="vhs-tracking-line" />
+
+      {/* Floating Retro TV Navbar */}
+      <header className="sticky top-0 z-30 px-4 py-4 bg-[#070b10]/80 backdrop-blur-md transition-colors duration-300">
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32] transition-all duration-300">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-cyan-500/10 hover:text-cyan-400"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-xl font-black text-text-main tracking-widest uppercase transition-colors duration-300">
-            Nutri<span className="text-emerald-500">Tec</span>
+          <div className="flex items-center gap-2 text-xl font-black text-slate-100 tracking-[0.2em] uppercase transition-colors duration-300 vhs-text-glitch" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }}>
+            NUTRI<span className="text-cyan-400">TEC</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-400">
-            <button onClick={() => navigate('/patient/menu')} className="text-emerald-500 font-bold transition">Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className="hover:text-emerald-500 transition">Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className="hover:text-emerald-500 transition">Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className="hover:text-emerald-500 transition">Chat</button>
+          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-300">
+            <button onClick={() => navigate('/patient/menu')} className="text-cyan-400 font-extrabold transition">Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className="hover:text-cyan-400 transition">Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className="hover:text-cyan-400 transition">Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className="hover:text-cyan-400 transition">Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button 
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-cyan-500/10"
               title="Alternar modo claro/oscuro"
             >
-              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-400" />}
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-300" />}
             </button>
 
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-card-border bg-input-bg text-slate-400 transition hover:bg-slate-500/10">
+            <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-cyan-500/10">
               <Bell className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">1</span>
+              <span className="absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white">1</span>
             </button>
-            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-sm font-extrabold text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <button className="overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 text-xs font-black text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]">
               {getAvatarUrl(userProfileData?.avatar_url) ? (
                 <img src={getAvatarUrl(userProfileData?.avatar_url)!} alt="Profile" className="h-full w-full object-cover" />
               ) : (
@@ -537,35 +540,35 @@ export default function PatientMenuPage() {
         {/* Welcome Section & Quick log */}
         <section className="grid gap-6 lg:grid-cols-12 items-stretch animate-fade-in">
           {/* Left Column: Welcome box */}
-          <div className="lg:col-span-7 rounded-3xl bg-card-bg border border-card-border p-6 sm:p-8 shadow-sm flex flex-col justify-between h-full transition-all duration-300">
+          <div className="lg:col-span-7 rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 sm:p-8 shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] flex flex-col justify-between h-full transition-all duration-300">
             <div className="space-y-4">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-emerald-500 uppercase">NutriTec Dashboard</span>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-text-main leading-tight uppercase">
-                Listo para tu <br />
-                <span className="text-emerald-500">transformación de salud</span>
+              <span className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase vhs-text-glitch">[NUTRITEC HEALTH TERMINAL]</span>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight uppercase">
+                LISTO PARA TU <br />
+                <span className="text-cyan-400 vhs-text-glitch" style={{ filter: 'drop-shadow(0 0 8px #38bdf8)' }}>TRANSFORMACIÓN</span>
               </h1>
-              <p className="max-w-md text-sm text-slate-400 leading-relaxed font-semibold">
-                Bienvenido de vuelta, <span className="text-text-main font-extrabold">{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
+              <p className="max-w-md text-xs text-slate-300 leading-relaxed font-bold uppercase">
+                Bienvenido de vuelta, <span className="text-cyan-400 font-extrabold">{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
               </p>
             </div>
 
-            <div className="mt-6 w-full h-56 relative rounded-2xl overflow-hidden border border-card-border shadow-sm animate-float bg-input-bg shrink-0 transition-all duration-300">
+            <div className="mt-6 w-full h-56 relative rounded-2xl overflow-hidden border border-[#242d32] shadow-sm animate-float bg-slate-900 shrink-0 transition-all duration-300">
               <img 
                 src="/assets/patient_banner.png" 
                 alt="Dashboard Banner" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover opacity-80"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent flex items-end p-4">
-                <p className="text-xs font-bold text-white drop-shadow">Nutrición Inteligente</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent flex items-end p-4">
+                <p className="text-xs font-bold text-white drop-shadow uppercase tracking-widest">[SINCRO. NUTRICIÓN INTELIGENTE]</p>
               </div>
             </div>
           </div>
 
           {/* Right Column: Keep up with NutriTec (Symptom Log Form) */}
-          <div className="lg:col-span-5 rounded-3xl bg-card-bg border border-card-border p-6 sm:p-8 text-text-main shadow-xl flex flex-col justify-between transition-all duration-300">
+          <div className="lg:col-span-5 rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 sm:p-8 text-slate-100 shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] flex flex-col justify-between transition-all duration-300">
             <div className="space-y-2">
-              <h2 className="text-2xl font-black tracking-tight">Mi Estado de Hoy</h2>
-              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+              <h2 className="text-2xl font-black tracking-wider uppercase text-cyan-400 vhs-text-glitch">Mi Estado de Hoy</h2>
+              <p className="text-[10px] text-slate-300 font-bold leading-relaxed uppercase">
                 Ayuda a tu nutricionista a entender cómo evoluciona tu cuerpo registrando tus métricas y síntomas del día.
               </p>
             </div>
@@ -574,46 +577,46 @@ export default function PatientMenuPage() {
               <div className="space-y-3">
                 <div className="grid grid-cols-3 gap-2">
                   <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Edad</span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Edad</span>
                     <input 
                       type="number"
                       required
                       value={fichaFormData.age}
                       onChange={e => setFichaFormData(prev => ({ ...prev, age: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
+                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
                     />
                   </label>
                   <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Peso (kg)</span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Peso (kg)</span>
                     <input 
                       type="number"
                       step="0.01"
                       required
                       value={fichaFormData.current_weight}
                       onChange={e => setFichaFormData(prev => ({ ...prev, current_weight: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
+                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
                     />
                   </label>
                   <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Altura (cm)</span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Altura (cm)</span>
                     <input 
                       type="number"
                       step="0.1"
                       required
                       value={fichaFormData.height_cm}
                       onChange={e => setFichaFormData(prev => ({ ...prev, height_cm: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
+                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
                     />
                   </label>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">¿Cómo te sientes?</span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">¿Cómo te sientes?</span>
                     <select 
                       value={fichaFormData.sintoma_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
+                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
                     >
                       <option value="EXCELENTE">Excelente</option>
                       <option value="BUENA_ENERGIA">Buena energía</option>
@@ -627,11 +630,11 @@ export default function PatientMenuPage() {
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Objetivo</span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Objetivo</span>
                     <select 
                       value={fichaFormData.objetivo_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, objetivo_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
+                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
                     >
                       <option value="BAJAR_PESO">Bajar peso</option>
                       <option value="GANAR_MASA">Ganar masa muscular</option>
@@ -644,20 +647,20 @@ export default function PatientMenuPage() {
                 </div>
 
                 <label className="block">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">Notas sobre tus síntomas</span>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Notas sobre tus síntomas</span>
                   <input 
                     type="text"
                     placeholder="Ej: Siento algo de cansancio por la tarde..."
                     value={fichaFormData.sintoma_notas}
                     onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_notas: e.target.value }))}
-                    className="mt-1 w-full rounded-xl bg-input-bg border border-card-border p-2.5 text-xs text-text-main outline-none focus:border-emerald-500 transition-all duration-300"
+                    className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
                   />
                 </label>
               </div>
 
               <button 
                 type="submit"
-                className="mt-6 w-full rounded-full bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-extrabold text-xs uppercase tracking-widest py-3.5 transition shadow-lg shadow-emerald-500/10"
+                className="mt-6 w-full rounded-xl bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 transition shadow-lg btn-pixel-retro"
               >
                 Registrar Estado
               </button>
@@ -679,27 +682,27 @@ export default function PatientMenuPage() {
         <section className="grid gap-6 md:grid-cols-3">
           
           {/* Card 1: Hidratación */}
-          <article className="overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300">
-            <div className="relative h-44 overflow-hidden bg-slate-800">
+          <article className="overflow-hidden rounded-3xl bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)] flex flex-col justify-between group h-[340px] transition-all duration-300">
+            <div className="relative h-44 overflow-hidden bg-slate-800 border-b border-[#242d32]">
               <img 
                 src="/assets/hydration_banner.png" 
                 alt="Hidratación" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
               />
-              <div className="absolute top-4 right-4 rounded-full bg-sky-500 text-slate-950 font-extrabold text-xs px-3 py-1">
+              <div className="absolute top-4 right-4 rounded-xl bg-cyan-400 text-slate-950 font-black text-xs px-3 py-1 shadow-md">
                 {Math.round(waterProgressPct)}%
               </div>
             </div>
 
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-base font-extrabold text-text-main">Seguimiento de Hidratación</h3>
-                <p className="text-xs text-slate-400 mt-0.5 font-semibold">Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
+                <h3 className="text-base font-black text-white uppercase tracking-wider">Seguimiento de Hidratación</h3>
+                <p className="text-xs text-slate-300 mt-0.5 font-bold uppercase">Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
               </div>
 
               <button 
                 onClick={handleAddWater}
-                className="w-full rounded-full border border-sky-500/20 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-bold text-xs py-2.5 transition"
+                className="w-full rounded-xl border border-cyan-400/30 bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-400 font-extrabold text-xs py-2.5 transition uppercase tracking-widest"
               >
                 + Registrar 250ml
               </button>
@@ -709,26 +712,26 @@ export default function PatientMenuPage() {
           {/* Card 2: Recetas */}
           <article 
             onClick={() => navigate('/patient/recipes')}
-            className="cursor-pointer overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300"
+            className="cursor-pointer overflow-hidden rounded-3xl bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)] flex flex-col justify-between group h-[340px] transition-all duration-300"
           >
-            <div className="relative h-44 overflow-hidden bg-slate-850">
+            <div className="relative h-44 overflow-hidden bg-slate-850 border-b border-[#242d32]">
               <img 
                 src="/assets/recipe_banner.png" 
                 alt="Recetas" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
               />
-              <div className="absolute top-4 right-4 rounded-full bg-emerald-500 text-slate-950 font-extrabold text-[10px] px-3 py-1 uppercase tracking-wider">
+              <div className="absolute top-4 right-4 rounded-xl bg-[#ff5500] text-white font-black text-[10px] px-3 py-1 uppercase tracking-wider border border-orange-400">
                 Nutritivo
               </div>
             </div>
 
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-base font-extrabold text-text-main">Recetas del Plan</h3>
-                <p className="text-xs text-slate-400 mt-0.5 font-semibold">Explora las comidas saludables diseñadas para tu plan de dieta.</p>
+                <h3 className="text-base font-black text-white uppercase tracking-wider">Recetas del Plan</h3>
+                <p className="text-xs text-slate-300 mt-0.5 font-bold uppercase">Explora las comidas saludables diseñadas para tu plan de dieta.</p>
               </div>
 
-              <div className="w-full flex items-center justify-between text-xs font-bold text-emerald-500 group-hover:underline">
+              <div className="w-full flex items-center justify-between text-xs font-bold text-cyan-400 group-hover:underline uppercase tracking-wider">
                 <span>Ver catálogo de recetas</span>
                 <ChevronRight className="h-4 w-4" />
               </div>
@@ -736,14 +739,14 @@ export default function PatientMenuPage() {
           </article>
 
           {/* Card 3: Progreso */}
-          <article className="overflow-hidden rounded-3xl bg-card-bg border border-card-border shadow-sm flex flex-col justify-between group h-[340px] transition-all duration-300">
-            <div className="relative h-44 overflow-hidden bg-slate-850">
+          <article className="overflow-hidden rounded-3xl bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)] flex flex-col justify-between group h-[340px] transition-all duration-300">
+            <div className="relative h-44 overflow-hidden bg-slate-850 border-b border-[#242d32]">
               <img 
                 src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=80" 
                 alt="Progreso" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-70"
               />
-              <div className="absolute top-4 right-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 font-extrabold text-[10px] px-3 py-1 uppercase tracking-wider">
+              <div className="absolute top-4 right-4 rounded-xl bg-cyan-400 text-slate-950 font-black text-[10px] px-3 py-1 uppercase tracking-wider">
                 IMC {calculateIMC()}
               </div>
             </div>
@@ -751,16 +754,16 @@ export default function PatientMenuPage() {
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Peso Actual</span>
-                  <span className="text-lg font-black text-text-main">{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Peso Actual</span>
+                  <span className="text-lg font-black text-white">{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Estatura</span>
-                  <span className="text-lg font-black text-text-main">{formatHeight(pacienteData?.height_cm)} m</span>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Estatura</span>
+                  <span className="text-lg font-black text-white">{formatHeight(pacienteData?.height_cm)} m</span>
                 </div>
               </div>
 
-              <span className="text-[10px] font-bold text-emerald-500 block leading-relaxed truncate">
+              <span className="text-[10px] font-extrabold text-cyan-400 block leading-relaxed truncate uppercase tracking-widest">
                 Meta: {pacienteData?.goal ? pacienteData.goal : 'Sin registrar'}
               </span>
             </div>
@@ -769,28 +772,28 @@ export default function PatientMenuPage() {
         </section>
 
         {/* Historial Antropométrico */}
-        <section className="rounded-3xl bg-card-bg border border-card-border p-6 sm:p-8 shadow-sm space-y-4 transition-all duration-300">
+        <section className="rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 sm:p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.65)] space-y-4 transition-all duration-300">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-extrabold text-text-main">Historial de Progreso Corporal</h3>
-            <span className="text-xs font-semibold text-slate-400">Total de controles: {pacienteData?.seguimientos?.length || 0}</span>
+            <h3 className="text-lg font-black text-white uppercase tracking-wider">Historial de Progreso Corporal</h3>
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">[CONTROLES: {pacienteData?.seguimientos?.length || 0}]</span>
           </div>
-          <div className="overflow-x-auto rounded-2xl border border-card-border">
+          <div className="overflow-x-auto rounded-xl border border-[#242d32]">
             <table className="min-w-full text-xs text-left">
-              <thead className="bg-input-bg text-slate-450 uppercase font-bold border-b border-card-border">
+              <thead className="bg-[#242d32] text-slate-300 uppercase font-black tracking-widest border-b border-[#242d32]">
                 <tr>
-                  <th className="px-4 py-3.5 text-slate-400">Fecha</th>
-                  <th className="px-4 py-3.5 text-slate-400">Peso</th>
-                  <th className="px-4 py-3.5 text-slate-400">Cintura</th>
-                  <th className="px-4 py-3.5 text-slate-400">Nota del Nutricionista</th>
+                  <th className="px-4 py-3.5">Fecha</th>
+                  <th className="px-4 py-3.5">Peso</th>
+                  <th className="px-4 py-3.5">Cintura</th>
+                  <th className="px-4 py-3.5">Nota del Nutricionista</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-card-border bg-card-bg text-slate-400 font-semibold">
+              <tbody className="divide-y divide-[#242d32] bg-[#384349] text-slate-300 font-bold uppercase">
                 {(pacienteData?.seguimientos || []).map((ev: any) => (
-                  <tr key={ev.id} className="hover:bg-slate-500/5 transition-colors">
+                  <tr key={ev.id} className="hover:bg-slate-900/40 transition-colors">
                     <td className="px-4 py-3.5">{new Date(ev.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3.5 font-bold text-text-main">{ev.weight_kg} kg</td>
+                    <td className="px-4 py-3.5 font-black text-white">{ev.weight_kg} kg</td>
                     <td className="px-4 py-3.5">{ev.waist_cm ? `${ev.waist_cm} cm` : 'N/D'}</td>
-                    <td className="px-4 py-3.5 text-slate-400">{ev.notes || 'Control de rutina'}</td>
+                    <td className="px-4 py-3.5 text-slate-400 normal-case font-normal">{ev.notes || 'Control de rutina'}</td>
                   </tr>
                 ))}
                 {(!pacienteData?.seguimientos || pacienteData.seguimientos.length === 0) && (
@@ -807,18 +810,18 @@ export default function PatientMenuPage() {
         <section className="grid gap-6 md:grid-cols-2">
           
           {/* Next Meal */}
-          <article className="rounded-3xl bg-card-bg border border-card-border p-6 shadow-sm space-y-4 transition-all duration-300">
-            <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-400">Siguiente Comida del Plan</h2>
+          <article className="rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 shadow-[inset_0_0_30px_rgba(0,0,0,0.65)] space-y-4 transition-all duration-300">
+            <h2 className="text-xs font-black uppercase tracking-wider text-slate-300">[SIGUIENTE COMIDA EN PLAN]</h2>
             
             {meals.map((item) => (
-              <div key={item.title} className="flex items-center gap-4 rounded-2xl bg-input-bg p-4 border border-card-border transition-all duration-300">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <div key={item.title} className="flex items-center gap-4 rounded-xl bg-[#242d32] p-4 border border-[#242d32] transition-all duration-300">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400">
                   <item.icon className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-bold text-text-main">{item.title}</h3>
-                  <div className="mt-1 flex items-center gap-3 text-xs font-semibold text-slate-400">
-                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-emerald-500" /> {item.time}</span>
+                  <h3 className="truncate text-sm font-black text-white uppercase tracking-wider">{item.title}</h3>
+                  <div className="mt-1 flex items-center gap-3 text-xs font-bold text-slate-300 uppercase tracking-widest">
+                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-cyan-450" /> {item.time}</span>
                     <span className="flex items-center gap-1"><Flame className="h-3.5 w-3.5 text-orange-500" /> {item.calories}</span>
                   </div>
                 </div>
@@ -828,23 +831,23 @@ export default function PatientMenuPage() {
           </article>
 
           {/* Consultation Alerts */}
-          <article className="rounded-3xl bg-card-bg border border-card-border p-6 shadow-sm space-y-4 flex flex-col justify-between transition-all duration-300">
+          <article className="rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 shadow-[inset_0_0_30px_rgba(0,0,0,0.65)] space-y-4 flex flex-col justify-between transition-all duration-300">
             <div>
-              <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-400">Cita Programada</h2>
+              <h2 className="text-xs font-black uppercase tracking-wider text-slate-300">[CITA PROGRAMADA]</h2>
               <div className="mt-4 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400">
                   <CalendarCheck2 className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-text-main">Lunes, 24 de Julio</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">10:00 AM - Dra. Maria Cosio</p>
+                  <h3 className="text-base font-black text-white uppercase tracking-wider">Lunes, 24 de Julio</h3>
+                  <p className="text-xs text-slate-300 mt-0.5 uppercase tracking-wider font-bold">10:00 AM - Dra. Maria Cosio</p>
                 </div>
               </div>
             </div>
             
             <button 
               onClick={() => navigate('/patient/chat')}
-              className="w-full flex items-center justify-center gap-2 rounded-full bg-text-main hover:bg-slate-500/15 hover:text-emerald-500 py-3.5 text-xs font-extrabold uppercase tracking-widest text-bg-main border border-card-border transition mt-4"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white shadow-md transition mt-4 btn-pixel-retro"
             >
               <MessageSquareText className="h-4 w-4" />
               Chatear con Nutricionista
@@ -856,7 +859,7 @@ export default function PatientMenuPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-3xl border border-card-border bg-card-bg/95 backdrop-blur-xl shadow-lg p-2.5 md:hidden transition-all duration-300">
+      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-2xl border-4 border-[#242d32] bg-[#384349]/95 backdrop-blur-xl shadow-2xl p-2.5 md:hidden transition-all duration-300">
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -868,14 +871,14 @@ export default function PatientMenuPage() {
                 if (label === 'Recetas') navigate('/patient/recipes')
                 if (label === 'Chat') navigate('/patient/chat')
               }}
-              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-2xl transition ${
+              className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition ${
                 active 
-                  ? 'text-emerald-500 bg-emerald-500/5' 
-                  : 'text-slate-450 hover:text-emerald-500 hover:bg-slate-500/5'
+                  ? 'text-cyan-400 bg-cyan-400/10' 
+                  : 'text-slate-350 hover:text-cyan-400 hover:bg-slate-500/5'
               }`}
             >
               <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">{label}</span>
             </button>
           ))}
         </div>
