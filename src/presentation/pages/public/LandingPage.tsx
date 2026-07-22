@@ -91,7 +91,7 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { 
       {/* 3D Wireframe Red/Green Apple image centered behind the NUTRITEC text with VHS glitch and glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img 
-          src="/assets/wireframe_apple.png" 
+          src="/assets/wireframe_apple.png?v=2.2" 
           alt="3D Wireframe Apple" 
           className="w-[14rem] h-[14rem] sm:w-[22rem] sm:h-[22rem] md:w-[26rem] md:h-[26rem] object-contain mix-blend-screen opacity-90 scale-95 md:scale-100 vhs-text-glitch" 
           style={{ filter: "drop-shadow(0 0 16px rgba(239, 68, 68, 0.45))" }}
