@@ -88,12 +88,13 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { className?: string }) {
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
-      {/* 3D Wireframe Red/Green Apple image centered behind the NUTRITEC text */}
+      {/* 3D Wireframe Red/Green Apple image centered behind the NUTRITEC text with VHS glitch and glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img 
           src="/assets/wireframe_apple.png" 
           alt="3D Wireframe Apple" 
-          className="w-[14rem] h-[14rem] sm:w-[22rem] sm:h-[22rem] md:w-[26rem] md:h-[26rem] object-contain mix-blend-screen opacity-90 scale-95 md:scale-100" 
+          className="w-[14rem] h-[14rem] sm:w-[22rem] sm:h-[22rem] md:w-[26rem] md:h-[26rem] object-contain mix-blend-screen opacity-90 scale-95 md:scale-100 vhs-text-glitch" 
+          style={{ filter: "drop-shadow(0 0 16px rgba(239, 68, 68, 0.45))" }}
         />
       </div>
 
@@ -143,15 +144,15 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { 
           NUTRITEC
         </text>
 
-        {/* Ink Blotches / Ground Reflections under logo */}
+        {/* Ink Blotches / Ground Reflections under logo - shifted down by +35px */}
         <g fill="#1e293b" opacity="0.85">
-          <ellipse cx="700" cy="330" rx="200" ry="12" />
-          <path d="M 440,325 Q 530,340 610,328 Q 730,342 850,326 Q 930,340 1010,325 Q 890,355 700,350 Q 530,355 440,325 Z" />
-          <circle cx="380" cy="335" r="5" />
-          <circle cx="470" cy="345" r="7" />
-          <circle cx="570" cy="350" r="8" />
-          <circle cx="820" cy="352" r="7" />
-          <circle cx="930" cy="342" r="6" />
+          <ellipse cx="700" cy="365" rx="200" ry="12" />
+          <path d="M 440,360 Q 530,375 610,363 Q 730,377 850,361 Q 930,375 1010,360 Q 890,390 700,385 Q 530,390 440,360 Z" />
+          <circle cx="380" cy="370" r="5" />
+          <circle cx="470" cy="380" r="7" />
+          <circle cx="570" cy="385" r="8" />
+          <circle cx="820" cy="387" r="7" />
+          <circle cx="930" cy="377" r="6" />
         </g>
       </svg>
     </div>
