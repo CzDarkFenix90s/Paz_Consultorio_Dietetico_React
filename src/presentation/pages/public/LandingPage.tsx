@@ -85,22 +85,25 @@ function playRetroSound(type: 'click' | 'hover' | 'explode' | 'boot', soundEnabl
 }
 
 // Particle Shatter Canvas Splash Overlay ("CLICK TO ENTER / CLICK TO BREAK")
-// Symmetrical Cyber-Sigilism Emblem for NUTRITEC (Stretched Horizontally matching image_34.png)
 function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { className?: string }) {
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
+      {/* 3D Wireframe Red/Green Apple image centered behind the NUTRITEC text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <img 
+          src="/assets/wireframe_apple.png" 
+          alt="3D Wireframe Apple" 
+          className="w-[14rem] h-[14rem] sm:w-[22rem] sm:h-[22rem] md:w-[26rem] md:h-[26rem] object-contain mix-blend-screen opacity-90 scale-95 md:scale-100" 
+        />
+      </div>
+
       <svg
         viewBox="0 0 1400 420"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto drop-shadow-[0_0_24px_rgba(56,189,248,0.5)]"
+        className="w-full h-auto drop-shadow-[0_0_24px_rgba(56,189,248,0.4)] relative z-10"
       >
         <defs>
-          {/* Cyan Phosphor Dot Matrix Mesh Pattern matching screenshot */}
-          <pattern id="cyan-dot-matrix" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
-            <rect width="6" height="6" fill="#2d373c" />
-            <circle cx="3" cy="3" r="1.4" fill="#7dd3fc" opacity="0.85" />
-          </pattern>
           {/* Cyan Glow Gradient */}
           <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#bae6fd" />
@@ -122,50 +125,20 @@ function CyberSigilismNutritecLogo({ className = "w-full max-w-6xl h-auto" }: { 
           <circle cx="1350" cy="215" r="4" fill="#7dd3fc" />
         </g>
 
-        {/* Glowing Cyber Apple Silhouette in the Center */}
-        {/* Apple body (Left and Right symmetric halves with bottom indent) */}
-        <path
-          d="M 700,105 
-             C 645,105 595,120 555,155 
-             C 505,200 495,265 525,315 
-             C 555,365 615,380 665,365 
-             C 680,360 692,368 700,368 
-             C 708,368 720,360 735,365 
-             C 785,380 845,365 875,315 
-             C 905,265 895,200 845,155 
-             C 805,120 755,105 700,105 Z"
-          fill="url(#cyan-dot-matrix)"
-          stroke="#38bdf8"
-          strokeWidth="3.5"
-          className="vhs-text-glitch"
-        />
-
-        {/* Stem of the Apple */}
-        <path
-          d="M 700,105 C 700,75 730,55 750,55 C 740,75 715,95 700,105 Z"
-          fill="#38bdf8"
-          stroke="#38bdf8"
-          strokeWidth="1.5"
-        />
-        
-        {/* Leaf of the Apple */}
-        <path
-          d="M 725,65 C 765,45 815,65 825,85 C 785,95 735,85 725,65 Z"
-          fill="url(#cyan-dot-matrix)"
-          stroke="#38bdf8"
-          strokeWidth="2.5"
-        />
-
         {/* Integrated Center NUTRITEC Text (Spaced Monospace Cyber Font) */}
         <text
           x="700"
           y="235"
+          fill="url(#cyan-glow)"
+          fontSize="72"
+          fontWeight="900"
+          letterSpacing="0.35em"
           textAnchor="middle"
-          fill="#f8fafc"
-          stroke="#1e293b"
-          strokeWidth="8"
-          className="font-black text-6xl sm:text-7xl md:text-8xl tracking-[0.25em] uppercase font-mono"
-          style={{ letterSpacing: '0.25em', filter: 'drop-shadow(0 0 15px #38bdf8)' }}
+          className="vhs-text-glitch select-none"
+          style={{
+            fontFamily: "monospace",
+            filter: "drop-shadow(0 0 12px rgba(56,189,248,0.95))"
+          }}
         >
           NUTRITEC
         </text>
@@ -213,11 +186,11 @@ function CanvasShatterSplash({ onFinish, soundEnabled }: { onFinish: () => void;
     const clickX = e.clientX || canvas.width / 2
     const clickY = e.clientY || canvas.height / 2
 
-    // Explosive fruit particles
+    // Explosive fruit particles (optimized to 35 to prevent lag)
     const fruits = ['🍎', '🍏', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍍', '🥝', '🥑']
-    const particles = Array.from({ length: 150 }).map(() => {
+    const particles = Array.from({ length: 35 }).map(() => {
       const angle = Math.random() * Math.PI * 2
-      const speed = Math.random() * 15 + 3
+      const speed = Math.random() * 12 + 3
       return {
         x: clickX,
         y: clickY,

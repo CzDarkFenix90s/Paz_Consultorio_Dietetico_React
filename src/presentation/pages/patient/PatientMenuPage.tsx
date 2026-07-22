@@ -394,10 +394,10 @@ export default function PatientMenuPage() {
   }
 
   return (
-    <main className={`min-h-screen pb-28 relative overflow-hidden transition-colors duration-300 selection:bg-orange-500 selection:text-white ${
+    <main className={`min-h-screen pb-28 relative overflow-hidden transition-colors duration-300 selection:bg-orange-500 selection:text-white font-mono crt-scanlines ${
       isDark 
-        ? "bg-[#070b10] text-slate-100 font-mono crt-scanlines" 
-        : "bg-[#f3f4f6] text-slate-900 font-sans"
+        ? "bg-[#070b10] text-slate-100" 
+        : "bg-[#f5f1e6] text-[#2c281e]"
     }`}>
       <style>{`
         @keyframes fadeIn {
@@ -422,12 +422,12 @@ export default function PatientMenuPage() {
 
       {/* Floating Retro TV Navbar */}
       <header className={`sticky top-0 z-30 px-4 py-4 backdrop-blur-md transition-colors duration-300 ${
-        isDark ? "bg-[#070b10]/80" : "bg-[#f3f4f6]/80"
+        isDark ? "bg-[#070b10]/80" : "bg-[#f5f1e6]/80"
       }`}>
         <div className={`mx-auto flex h-16 max-w-[1600px] items-center justify-between rounded-2xl transition-all duration-300 ${
           isDark 
             ? "bg-[#384349] px-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] border border-[#242d32]" 
-            : "bg-white px-6 shadow-sm border border-slate-200"
+            : "bg-[#e6d8b3] px-6 border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
         }`}>
           <button
             type="button"
@@ -435,23 +435,23 @@ export default function PatientMenuPage() {
             className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
               isDark 
                 ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400" 
-                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+                : "border-2 border-[#3c372b] bg-[#fbf9f3] text-[#3c372b] hover:bg-[#e6d8b3]"
             }`}
           >
             <Menu className="h-5 w-5" />
           </button>
 
           <div className={`flex items-center gap-2 text-xl font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
-            isDark ? "text-slate-100 vhs-text-glitch" : "text-slate-900"
+            isDark ? "text-slate-100 vhs-text-glitch" : "text-[#2c281e]"
           }`} style={isDark ? { filter: 'drop-shadow(0 0 6px #38bdf8)' } : {}}>
-            NUTRI<span className={isDark ? "text-cyan-400" : "text-emerald-500"}>TEC</span>
+            NUTRI<span className={isDark ? "text-cyan-400" : "text-[#d15900]"}>TEC</span>
           </div>
 
           <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-slate-400">
-            <button onClick={() => navigate('/patient/menu')} className={`${isDark ? "text-cyan-400 font-extrabold" : "text-emerald-500 font-bold"} transition`}>Inicio</button>
-            <button onClick={() => navigate('/patient/plan')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Mi Plan</button>
-            <button onClick={() => navigate('/patient/recipes')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Recetas</button>
-            <button onClick={() => navigate('/patient/chat')} className={`hover:${isDark ? "text-cyan-400" : "text-emerald-500"} transition`}>Chat</button>
+            <button onClick={() => navigate('/patient/menu')} className={`${isDark ? "text-cyan-400 font-extrabold" : "text-[#d15900] font-black"} transition`}>Inicio</button>
+            <button onClick={() => navigate('/patient/plan')} className={`hover:${isDark ? "text-cyan-400" : "text-[#d15900]"} transition`}>Mi Plan</button>
+            <button onClick={() => navigate('/patient/recipes')} className={`hover:${isDark ? "text-cyan-400" : "text-[#d15900]"} transition`}>Recetas</button>
+            <button onClick={() => navigate('/patient/chat')} className={`hover:${isDark ? "text-cyan-400" : "text-[#d15900]"} transition`}>Chat</button>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -461,27 +461,27 @@ export default function PatientMenuPage() {
               className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
                 isDark 
                   ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
-                  : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+                  : "border-2 border-[#3c372b] bg-[#fbf9f3] text-[#3c372b] hover:bg-[#e6d8b3]"
               }`}
               title="Alternar modo claro/oscuro"
             >
-              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-500" />}
+              {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-[#3c372b]" />}
             </button>
 
             <button className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition ${
               isDark 
                 ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-cyan-500/10" 
-                : "border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+                : "border-2 border-[#3c372b] bg-[#fbf9f3] text-[#3c372b] hover:bg-[#e6d8b3]"
             }`}>
               <Bell className="h-5 w-5" />
               <span className={`absolute right-1.5 top-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[8px] font-bold text-white ${
-                isDark ? "bg-red-500" : "bg-emerald-500"
+                isDark ? "bg-red-500" : "bg-[#d15900]"
               }`}>1</span>
             </button>
             <button className={`overflow-hidden flex h-10 w-10 items-center justify-center rounded-xl transition ${
               isDark 
                 ? "border border-cyan-400/40 bg-cyan-400/10 text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]" 
-                : "border border-slate-200 bg-slate-50 text-slate-500"
+                : "border-2 border-[#3c372b] bg-[#fbf9f3] text-[#3c372b]"
             } text-xs font-black`}>
               {getAvatarUrl(userProfileData?.avatar_url) ? (
                 <img src={getAvatarUrl(userProfileData?.avatar_url)!} alt="Profile" className="h-full w-full object-cover" />
@@ -494,11 +494,15 @@ export default function PatientMenuPage() {
       </header>
 
       {/* Sidebar Drawer */}
-      <div className={`fixed inset-0 z-40 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
+      <div className={`fixed inset-0 z-50 transition ${menuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!menuOpen}>
         <button type="button" aria-label="Cerrar menú" className={`absolute inset-0 bg-slate-950/60 backdrop-blur-[3px] transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setMenuOpen(false)} />
-        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden bg-slate-900 border-r border-white/5 shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="relative flex min-h-[260px] flex-col justify-between bg-gradient-to-b from-emerald-950 to-slate-900 px-6 pb-8 pt-7 text-white">
-            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
+        <aside className={`absolute left-0 top-0 flex h-full w-[min(86vw,420px)] flex-col overflow-hidden shadow-[24px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out ${menuOpen ? 'translate-x-0' : '-translate-x-full'} ${
+          isDark ? "bg-[#384349] border-r border-[#242d32]" : "bg-[#e6d8b3] border-r-4 border-[#3c372b]"
+        }`}>
+          <div className={`relative flex min-h-[260px] flex-col justify-between px-6 pb-8 pt-7 text-white ${
+            isDark ? "bg-gradient-to-b from-[#242d32] to-[#1e2528]" : "bg-gradient-to-b from-[#3c372b] to-[#2c281e]"
+          }`}>
+            <button type="button" onClick={() => setMenuOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white transition hover:bg-white/10">
               <PanelLeftClose className="h-5 w-5" />
             </button>
 
@@ -513,7 +517,7 @@ export default function PatientMenuPage() {
                 />
                 <label 
                   htmlFor="avatar-upload-sidebar"
-                  className="cursor-pointer block overflow-hidden relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-emerald-400 shadow-[0_10px_25px_rgba(16,185,129,0.2)] hover:border-emerald-500/50 transition-colors"
+                  className="cursor-pointer block overflow-hidden relative flex h-20 w-20 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-cyan-400 shadow-[0_10px_25px_rgba(56,189,248,0.2)] hover:border-cyan-500/50 transition-colors"
                 >
                   {getAvatarUrl(userProfileData?.avatar_url) ? (
                     <img src={getAvatarUrl(userProfileData?.avatar_url)!} alt="Profile" className="h-full w-full object-cover" />
@@ -562,27 +566,35 @@ export default function PatientMenuPage() {
             </nav>
           </div>
         </aside>
-      </div>
-
-      {/* Main Container */}
+      </div>      {/* Main Container */}
       <div className="mx-auto max-w-[1600px] px-4 pt-6 space-y-8">
         
         {/* Welcome Section & Quick log */}
         <section className="grid gap-6 lg:grid-cols-12 items-stretch animate-fade-in">
           {/* Left Column: Welcome box */}
-          <div className="lg:col-span-7 rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 sm:p-8 shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] flex flex-col justify-between h-full transition-all duration-300">
+          <div className={`lg:col-span-7 rounded-3xl p-6 sm:p-8 flex flex-col justify-between h-full transition-all duration-300 border ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] text-slate-100" 
+              : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b] text-[#2c281e]"
+          }`}>
             <div className="space-y-4">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase vhs-text-glitch">[NUTRITEC HEALTH TERMINAL]</span>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight uppercase">
+              <span className={`text-[10px] font-bold tracking-[0.2em] uppercase vhs-text-glitch ${
+                isDark ? "text-cyan-400" : "text-[#d15900]"
+              }`}>{isDark ? "[NUTRITEC HEALTH TERMINAL]" : "[NUTRITEC BEIGE CONSOLE]"}</span>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight uppercase">
                 LISTO PARA TU <br />
-                <span className="text-cyan-400 vhs-text-glitch" style={{ filter: 'drop-shadow(0 0 8px #38bdf8)' }}>TRANSFORMACIÓN</span>
+                <span className={isDark ? "text-cyan-400 vhs-text-glitch" : "text-[#d15900]"} style={isDark ? { filter: 'drop-shadow(0 0 8px #38bdf8)' } : {}}>TRANSFORMACIÓN</span>
               </h1>
-              <p className="max-w-md text-xs text-slate-300 leading-relaxed font-bold uppercase">
-                Bienvenido de vuelta, <span className="text-cyan-400 font-extrabold">{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
+              <p className={`max-w-md text-xs leading-relaxed font-bold uppercase ${
+                isDark ? "text-slate-300" : "text-slate-700"
+              }`}>
+                Bienvenido de vuelta, <span className={isDark ? "text-cyan-400 font-extrabold" : "text-[#d15900] font-black"}>{user?.username}</span>. Registra tus hábitos diarios y consulta las recetas preparadas por tu nutricionista.
               </p>
             </div>
 
-            <div className="mt-6 w-full h-56 relative rounded-2xl overflow-hidden border border-[#242d32] shadow-sm animate-float bg-slate-900 shrink-0 transition-all duration-300">
+            <div className={`mt-6 w-full h-56 relative rounded-2xl overflow-hidden shadow-sm animate-float shrink-0 transition-all duration-300 border ${
+              isDark ? "border-[#242d32] bg-slate-900" : "border-[#3c372b] bg-[#e6d8b3]"
+            }`}>
               <img 
                 src="/assets/patient_banner.png" 
                 alt="Dashboard Banner" 
@@ -595,10 +607,14 @@ export default function PatientMenuPage() {
           </div>
 
           {/* Right Column: Keep up with NutriTec (Symptom Log Form) */}
-          <div className="lg:col-span-5 rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 sm:p-8 text-slate-100 shadow-[inset_0_0_40px_rgba(0,0,0,0.7)] flex flex-col justify-between transition-all duration-300">
+          <div className={`lg:col-span-5 rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 border ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] text-slate-100 shadow-[inset_0_0_40px_rgba(0,0,0,0.7)]" 
+              : "bg-[#fbf9f3] border-4 border-[#3c372b] text-[#2c281e] shadow-[4px_4px_0px_0px_#3c372b]"
+          }`}>
             <div className="space-y-2">
-              <h2 className="text-2xl font-black tracking-wider uppercase text-cyan-400 vhs-text-glitch">Mi Estado de Hoy</h2>
-              <p className="text-[10px] text-slate-300 font-bold leading-relaxed uppercase">
+              <h2 className={`text-2xl font-black tracking-wider uppercase ${isDark ? "text-cyan-400 vhs-text-glitch" : "text-[#d15900]"}`}>Mi Estado de Hoy</h2>
+              <p className={`text-[10px] font-bold leading-relaxed uppercase ${isDark ? "text-slate-300" : "text-slate-650"}`}>
                 Ayuda a tu nutricionista a entender cómo evoluciona tu cuerpo registrando tus métricas y síntomas del día.
               </p>
             </div>
@@ -607,46 +623,62 @@ export default function PatientMenuPage() {
               <div className="space-y-3">
                 <div className="grid grid-cols-3 gap-2">
                   <label className="block">
-                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Edad</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Edad</span>
                     <input 
                       type="number"
                       required
                       value={fichaFormData.age}
                       onChange={e => setFichaFormData(prev => ({ ...prev, age: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
+                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
+                        isDark 
+                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
+                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
+                      }`}
                     />
                   </label>
                   <label className="block">
-                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Peso (kg)</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Peso (kg)</span>
                     <input 
                       type="number"
                       step="0.01"
                       required
                       value={fichaFormData.current_weight}
                       onChange={e => setFichaFormData(prev => ({ ...prev, current_weight: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
+                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
+                        isDark 
+                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
+                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
+                      }`}
                     />
                   </label>
                   <label className="block">
-                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Altura (cm)</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Altura (cm)</span>
                     <input 
                       type="number"
                       step="0.1"
                       required
                       value={fichaFormData.height_cm}
                       onChange={e => setFichaFormData(prev => ({ ...prev, height_cm: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
+                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
+                        isDark 
+                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
+                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
+                      }`}
                     />
                   </label>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <label className="block">
-                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">¿Cómo te sientes?</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>¿Cómo te sientes?</span>
                     <select 
                       value={fichaFormData.sintoma_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
+                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
+                        isDark 
+                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
+                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
+                      }`}
                     >
                       <option value="EXCELENTE">Excelente</option>
                       <option value="BUENA_ENERGIA">Buena energía</option>
@@ -660,11 +692,15 @@ export default function PatientMenuPage() {
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Objetivo</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Objetivo</span>
                     <select 
                       value={fichaFormData.objetivo_choice}
                       onChange={e => setFichaFormData(prev => ({ ...prev, objetivo_choice: e.target.value }))}
-                      className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
+                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
+                        isDark 
+                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
+                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
+                      }`}
                     >
                       <option value="BAJAR_PESO">Bajar peso</option>
                       <option value="GANAR_MASA">Ganar masa muscular</option>
@@ -677,20 +713,28 @@ export default function PatientMenuPage() {
                 </div>
 
                 <label className="block">
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider">Notas sobre tus síntomas</span>
+                  <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Notas sobre tus síntomas</span>
                   <input 
                     type="text"
                     placeholder="Ej: Siento algo de cansancio por la tarde..."
                     value={fichaFormData.sintoma_notas}
                     onChange={e => setFichaFormData(prev => ({ ...prev, sintoma_notas: e.target.value }))}
-                    className="mt-1 w-full rounded-xl bg-[#242d32] border border-white/10 p-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all duration-300 uppercase tracking-widest font-bold"
+                    className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
+                      isDark 
+                        ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
+                        : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
+                    }`}
                   />
                 </label>
               </div>
 
               <button 
                 type="submit"
-                className="mt-6 w-full rounded-xl bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 transition shadow-lg btn-pixel-retro"
+                className={`mt-6 w-full rounded-xl border font-extrabold text-xs uppercase tracking-widest py-3.5 transition shadow-lg btn-pixel-retro ${
+                  isDark 
+                    ? "bg-[#ff5500] hover:bg-[#e04b00] border-orange-400 text-white" 
+                    : "bg-[#d15900] hover:bg-[#b04a00] border-[#3c372b] text-white"
+                }`}
               >
                 Registrar Estado
               </button>
@@ -700,10 +744,12 @@ export default function PatientMenuPage() {
 
         {/* Warning Banner if profile not complete */}
         {pacienteData && (!pacienteData.current_weight || !pacienteData.height_cm) && (
-          <section className="rounded-2xl border border-amber-200/20 bg-amber-500/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-amber-300">
+          <section className={`rounded-2xl border p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${
+            isDark ? "border-amber-200/20 bg-amber-500/10 text-amber-300" : "border-[#3c372b] bg-[#e6d8b3] text-[#2c281e]"
+          }`}>
             <div>
               <p className="font-bold text-base">⚠️ Ficha médica incompleta</p>
-              <p className="text-sm text-slate-400 mt-1">Por favor completa tu peso y altura en el panel derecho para poder calcular tu IMC y habilitar tu plan.</p>
+              <p className="text-sm mt-1 opacity-80">Por favor completa tu peso y altura en el panel derecho para poder calcular tu IMC y habilitar tu plan.</p>
             </div>
           </section>
         )}
@@ -712,27 +758,37 @@ export default function PatientMenuPage() {
         <section className="grid gap-6 md:grid-cols-3">
           
           {/* Card 1: Hidratación */}
-          <article className="overflow-hidden rounded-3xl bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)] flex flex-col justify-between group h-[340px] transition-all duration-300">
-            <div className="relative h-44 overflow-hidden bg-slate-800 border-b border-[#242d32]">
+          <article className={`overflow-hidden rounded-3xl flex flex-col justify-between group h-[340px] transition-all duration-300 border ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)]" 
+              : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
+          }`}>
+            <div className={`relative h-44 overflow-hidden border-b ${isDark ? "bg-slate-800 border-[#242d32]" : "bg-[#e6d8b3] border-[#3c372b]"}`}>
               <img 
                 src="/assets/hydration_banner.png" 
                 alt="Hidratación" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
               />
-              <div className="absolute top-4 right-4 rounded-xl bg-cyan-400 text-slate-950 font-black text-xs px-3 py-1 shadow-md">
+              <div className={`absolute top-4 right-4 rounded-xl font-black text-xs px-3 py-1 shadow-md border ${
+                isDark ? "bg-cyan-400 text-slate-950 border-transparent" : "bg-[#d15900] text-white border-[#3c372b]"
+              }`}>
                 {Math.round(waterProgressPct)}%
               </div>
             </div>
 
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-base font-black text-white uppercase tracking-wider">Seguimiento de Hidratación</h3>
-                <p className="text-xs text-slate-300 mt-0.5 font-bold uppercase">Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
+                <h3 className={`text-base font-black uppercase tracking-wider ${isDark ? "text-white" : "text-[#2c281e]"}`}>Seguimiento de Hidratación</h3>
+                <p className={`text-xs mt-0.5 font-bold uppercase ${isDark ? "text-slate-300" : "text-slate-600"}`}>Meta de hoy: 2.0L (Consumo: {(waterLogToday / 1000).toFixed(2)} L)</p>
               </div>
 
               <button 
                 onClick={handleAddWater}
-                className="w-full rounded-xl border border-cyan-400/30 bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-400 font-extrabold text-xs py-2.5 transition uppercase tracking-widest"
+                className={`w-full rounded-xl font-extrabold text-xs py-2.5 transition uppercase tracking-widest border ${
+                  isDark 
+                    ? "border-cyan-400/30 bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-400" 
+                    : "border-[#3c372b] bg-[#e6d8b3] hover:bg-[#dfcfad] text-[#2c281e]"
+                }`}
               >
                 + Registrar 250ml
               </button>
@@ -742,26 +798,34 @@ export default function PatientMenuPage() {
           {/* Card 2: Recetas */}
           <article 
             onClick={() => navigate('/patient/recipes')}
-            className="cursor-pointer overflow-hidden rounded-3xl bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)] flex flex-col justify-between group h-[340px] transition-all duration-300"
+            className={`cursor-pointer overflow-hidden rounded-3xl flex flex-col justify-between group h-[340px] transition-all duration-300 border ${
+              isDark 
+                ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)]" 
+                : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
+            }`}
           >
-            <div className="relative h-44 overflow-hidden bg-slate-850 border-b border-[#242d32]">
+            <div className={`relative h-44 overflow-hidden border-b ${isDark ? "bg-slate-850 border-[#242d32]" : "bg-[#e6d8b3] border-[#3c372b]"}`}>
               <img 
                 src="/assets/recipe_banner.png" 
                 alt="Recetas" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80"
               />
-              <div className="absolute top-4 right-4 rounded-xl bg-[#ff5500] text-white font-black text-[10px] px-3 py-1 uppercase tracking-wider border border-orange-400">
+              <div className={`absolute top-4 right-4 rounded-xl font-black text-[10px] px-3 py-1 uppercase tracking-wider border ${
+                isDark ? "bg-[#ff5500] border-orange-400 text-white" : "bg-[#d15900] border-[#3c372b] text-white"
+              }`}>
                 Nutritivo
               </div>
             </div>
 
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-base font-black text-white uppercase tracking-wider">Recetas del Plan</h3>
-                <p className="text-xs text-slate-300 mt-0.5 font-bold uppercase">Explora las comidas saludables diseñadas para tu plan de dieta.</p>
+                <h3 className={`text-base font-black uppercase tracking-wider ${isDark ? "text-white" : "text-[#2c281e]"}`}>Recetas del Plan</h3>
+                <p className={`text-xs mt-0.5 font-bold uppercase ${isDark ? "text-slate-300" : "text-slate-600"}`}>Explora las comidas saludables diseñadas para tu plan de dieta.</p>
               </div>
 
-              <div className="w-full flex items-center justify-between text-xs font-bold text-cyan-400 group-hover:underline uppercase tracking-wider">
+              <div className={`w-full flex items-center justify-between text-xs font-bold group-hover:underline uppercase tracking-wider ${
+                isDark ? "text-cyan-400" : "text-[#d15900]"
+              }`}>
                 <span>Ver catálogo de recetas</span>
                 <ChevronRight className="h-4 w-4" />
               </div>
@@ -769,14 +833,20 @@ export default function PatientMenuPage() {
           </article>
 
           {/* Card 3: Progreso */}
-          <article className="overflow-hidden rounded-3xl bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)] flex flex-col justify-between group h-[340px] transition-all duration-300">
-            <div className="relative h-44 overflow-hidden bg-slate-850 border-b border-[#242d32]">
+          <article className={`overflow-hidden rounded-3xl flex flex-col justify-between group h-[340px] transition-all duration-300 border ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_25px_rgba(0,0,0,0.65)]" 
+              : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
+          }`}>
+            <div className={`relative h-44 overflow-hidden border-b ${isDark ? "bg-slate-850 border-[#242d32]" : "bg-[#e6d8b3] border-[#3c372b]"}`}>
               <img 
                 src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=80" 
                 alt="Progreso" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-70"
               />
-              <div className="absolute top-4 right-4 rounded-xl bg-cyan-400 text-slate-950 font-black text-[10px] px-3 py-1 uppercase tracking-wider">
+              <div className={`absolute top-4 right-4 rounded-xl font-black text-[10px] px-3 py-1 uppercase tracking-wider border ${
+                isDark ? "bg-cyan-400 text-slate-950 border-transparent" : "bg-[#d15900] text-white border-[#3c372b]"
+              }`}>
                 IMC {calculateIMC()}
               </div>
             </div>
@@ -784,16 +854,18 @@ export default function PatientMenuPage() {
             <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Peso Actual</span>
-                  <span className="text-lg font-black text-white">{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
+                  <span className={`text-[9px] font-bold uppercase block tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Peso Actual</span>
+                  <span className={`text-lg font-black ${isDark ? "text-white" : "text-[#2c281e]"}`}>{pacienteData?.current_weight ? `${pacienteData.current_weight}` : '0.0'} kg</span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Estatura</span>
-                  <span className="text-lg font-black text-white">{formatHeight(pacienteData?.height_cm)} m</span>
+                  <span className={`text-[9px] font-bold uppercase block tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Estatura</span>
+                  <span className={`text-lg font-black ${isDark ? "text-white" : "text-[#2c281e]"}`}>{formatHeight(pacienteData?.height_cm)} m</span>
                 </div>
               </div>
 
-              <span className="text-[10px] font-extrabold text-cyan-400 block leading-relaxed truncate uppercase tracking-widest">
+              <span className={`text-[10px] font-extrabold block leading-relaxed truncate uppercase tracking-widest ${
+                isDark ? "text-cyan-400" : "text-[#d15900]"
+              }`}>
                 Meta: {pacienteData?.goal ? pacienteData.goal : 'Sin registrar'}
               </span>
             </div>
@@ -802,14 +874,20 @@ export default function PatientMenuPage() {
         </section>
 
         {/* Historial Antropométrico */}
-        <section className="rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 sm:p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.65)] space-y-4 transition-all duration-300">
+        <section className={`rounded-3xl p-6 sm:p-8 space-y-4 transition-all duration-300 border ${
+          isDark 
+            ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_30px_rgba(0,0,0,0.65)]" 
+            : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
+        }`}>
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-black text-white uppercase tracking-wider">Historial de Progreso Corporal</h3>
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">[CONTROLES: {pacienteData?.seguimientos?.length || 0}]</span>
+            <h3 className={`text-lg font-black uppercase tracking-wider ${isDark ? "text-white" : "text-[#2c281e]"}`}>Historial de Progreso Corporal</h3>
+            <span className={`text-xs font-bold uppercase tracking-widest ${isDark ? "text-slate-300" : "text-slate-600"}`}>[CONTROLES: {pacienteData?.seguimientos?.length || 0}]</span>
           </div>
-          <div className="overflow-x-auto rounded-xl border border-[#242d32]">
+          <div className={`overflow-x-auto rounded-xl border ${isDark ? "border-[#242d32]" : "border-[#3c372b]"}`}>
             <table className="min-w-full text-xs text-left">
-              <thead className="bg-[#242d32] text-slate-300 uppercase font-black tracking-widest border-b border-[#242d32]">
+              <thead className={`uppercase font-black tracking-widest border-b ${
+                isDark ? "bg-[#242d32] text-slate-300 border-[#242d32]" : "bg-[#e6d8b3] text-[#2c281e] border-[#3c372b]"
+              }`}>
                 <tr>
                   <th className="px-4 py-3.5">Fecha</th>
                   <th className="px-4 py-3.5">Peso</th>
@@ -817,11 +895,13 @@ export default function PatientMenuPage() {
                   <th className="px-4 py-3.5">Nota del Nutricionista</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#242d32] bg-[#384349] text-slate-300 font-bold uppercase">
+              <tbody className={`divide-y font-bold uppercase ${
+                isDark ? "divide-[#242d32] bg-[#384349] text-slate-300" : "divide-[#3c372b] bg-[#fbf9f3] text-[#2c281e]"
+              }`}>
                 {(pacienteData?.seguimientos || []).map((ev: any) => (
-                  <tr key={ev.id} className="hover:bg-slate-900/40 transition-colors">
+                  <tr key={ev.id} className={`transition-colors ${isDark ? "hover:bg-slate-900/40" : "hover:bg-[#e6d8b3]/30"}`}>
                     <td className="px-4 py-3.5">{new Date(ev.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3.5 font-black text-white">{ev.weight_kg} kg</td>
+                    <td className={`px-4 py-3.5 font-black ${isDark ? "text-white" : "text-[#d15900]"}`}>{ev.weight_kg} kg</td>
                     <td className="px-4 py-3.5">{ev.waist_cm ? `${ev.waist_cm} cm` : 'N/D'}</td>
                     <td className="px-4 py-3.5 text-slate-400 normal-case font-normal">{ev.notes || 'Control de rutina'}</td>
                   </tr>
@@ -840,18 +920,26 @@ export default function PatientMenuPage() {
         <section className="grid gap-6 md:grid-cols-2">
           
           {/* Next Meal */}
-          <article className="rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 shadow-[inset_0_0_30px_rgba(0,0,0,0.65)] space-y-4 transition-all duration-300">
-            <h2 className="text-xs font-black uppercase tracking-wider text-slate-300">[SIGUIENTE COMIDA EN PLAN]</h2>
+          <article className={`rounded-3xl p-6 space-y-4 transition-all duration-300 border ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_30px_rgba(0,0,0,0.65)]" 
+              : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
+          }`}>
+            <h2 className={`text-xs font-black uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-650"}`}>{isDark ? "[SIGUIENTE COMIDA EN PLAN]" : "[SIGUIENTE COMIDA EN PLAN]"}</h2>
             
             {meals.map((item) => (
-              <div key={item.title} className="flex items-center gap-4 rounded-xl bg-[#242d32] p-4 border border-[#242d32] transition-all duration-300">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400">
+              <div key={item.title} className={`flex items-center gap-4 rounded-xl p-4 border transition-all duration-300 ${
+                isDark ? "bg-[#242d32] border-[#242d32]" : "bg-[#e6d8b3] border-[#3c372b] text-[#2c281e]"
+              }`}>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${
+                  isDark ? "bg-cyan-400/10 text-cyan-400" : "bg-[#fbf9f3] border border-[#3c372b] text-[#d15900]"
+                }`}>
                   <item.icon className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-black text-white uppercase tracking-wider">{item.title}</h3>
-                  <div className="mt-1 flex items-center gap-3 text-xs font-bold text-slate-300 uppercase tracking-widest">
-                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-cyan-450" /> {item.time}</span>
+                  <h3 className={`truncate text-sm font-black uppercase tracking-wider ${isDark ? "text-white" : "text-[#2c281e]"}`}>{item.title}</h3>
+                  <div className={`mt-1 flex items-center gap-3 text-xs font-bold uppercase tracking-widest ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+                    <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5 text-cyan-455" /> {item.time}</span>
                     <span className="flex items-center gap-1"><Flame className="h-3.5 w-3.5 text-orange-500" /> {item.calories}</span>
                   </div>
                 </div>
@@ -861,23 +949,33 @@ export default function PatientMenuPage() {
           </article>
 
           {/* Consultation Alerts */}
-          <article className="rounded-3xl bg-[#384349] border-4 border-[#242d32] p-6 shadow-[inset_0_0_30px_rgba(0,0,0,0.65)] space-y-4 flex flex-col justify-between transition-all duration-300">
+          <article className={`rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 border ${
+            isDark 
+              ? "bg-[#384349] border-4 border-[#242d32] shadow-[inset_0_0_30px_rgba(0,0,0,0.65)]" 
+              : "bg-[#fbf9f3] border-4 border-[#3c372b] shadow-[4px_4px_0px_0px_#3c372b]"
+          }`}>
             <div>
-              <h2 className="text-xs font-black uppercase tracking-wider text-slate-300">[CITA PROGRAMADA]</h2>
+              <h2 className={`text-xs font-black uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-650"}`}>{isDark ? "[CITA PROGRAMADA]" : "[CITA PROGRAMADA]"}</h2>
               <div className="mt-4 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${
+                  isDark ? "bg-cyan-400/10 text-cyan-400" : "bg-[#e6d8b3] border border-[#3c372b] text-[#d15900]"
+                }`}>
                   <CalendarCheck2 className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white uppercase tracking-wider">Lunes, 24 de Julio</h3>
-                  <p className="text-xs text-slate-300 mt-0.5 uppercase tracking-wider font-bold">10:00 AM - Dra. Maria Cosio</p>
+                  <h3 className={`text-base font-black uppercase tracking-wider ${isDark ? "text-white" : "text-[#2c281e]"}`}>Lunes, 24 de Julio</h3>
+                  <p className={`text-xs mt-0.5 uppercase tracking-wider font-bold ${isDark ? "text-slate-300" : "text-slate-600"}`}>10:00 AM - Dra. Maria Cosio</p>
                 </div>
               </div>
             </div>
             
             <button 
               onClick={() => navigate('/patient/chat')}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white shadow-md transition mt-4 btn-pixel-retro"
+              className={`w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-extrabold uppercase tracking-widest text-white shadow-md transition mt-4 btn-pixel-retro ${
+                isDark 
+                  ? "bg-[#ff5500] hover:bg-[#e04b00] border border-orange-400" 
+                  : "bg-[#d15900] hover:bg-[#b04a00] border border-[#3c372b]"
+              }`}
             >
               <MessageSquareText className="h-4 w-4" />
               Chatear con Nutricionista
@@ -889,7 +987,9 @@ export default function PatientMenuPage() {
       </div>
 
       {/* Floating Bottom Nav Dock (Extremely Premium) */}
-      <nav className="fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-2xl border-4 border-[#242d32] bg-[#384349]/95 backdrop-blur-xl shadow-2xl p-2.5 md:hidden transition-all duration-300">
+      <nav className={`fixed bottom-6 inset-x-4 z-40 max-w-lg mx-auto rounded-2xl shadow-2xl p-2.5 md:hidden transition-all duration-300 border ${
+        isDark ? "border-4 border-[#242d32] bg-[#384349]/95" : "border-4 border-[#3c372b] bg-[#e6d8b3]/95"
+      }`}>
         <div className="grid grid-cols-4 items-center">
           {bottomNav.map(({ label, icon: Icon, active }) => (
             <button
@@ -903,8 +1003,8 @@ export default function PatientMenuPage() {
               }}
               className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition ${
                 active 
-                  ? 'text-cyan-400 bg-cyan-400/10' 
-                  : 'text-slate-350 hover:text-cyan-400 hover:bg-slate-500/5'
+                  ? (isDark ? 'text-cyan-400 bg-cyan-400/10' : 'text-[#d15900] bg-[#dfcfad]/30') 
+                  : (isDark ? 'text-slate-350 hover:text-cyan-400' : 'text-[#3c372b] hover:text-[#d15900]')
               }`}
             >
               <Icon className="h-5 w-5" />
