@@ -415,7 +415,7 @@ function ScrollRevealVideo({ number, title, titleHover, subtitle, videoName, pos
     }
   }, [isHovered])
 
-  const videoUrl = `${getMediaUrl(`videos/${videoName}`)}?v=2`
+  const videoUrl = `${getMediaUrl(`videos/${videoName}`)}?v=4`
 
   return (
     <div 
@@ -624,7 +624,7 @@ export default function LandingPage() {
   const heroCtaRef = useRef<HTMLDivElement>(null)
   const specGridRef = useRef<HTMLDivElement>(null)
 
-  const heroVideoUrl = `${getMediaUrl('videos/1.mp4')}?v=2`
+  const heroVideoUrl = `${getMediaUrl('videos/1.mp4')}?v=4`
 
   // Interactive CRT Floating Monitor items
   const monitorGridItems = [
@@ -1171,7 +1171,7 @@ export default function LandingPage() {
               {/* Video / Content Display */}
               <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 bg-black shadow-inner">
                 <video 
-                  src={`${getMediaUrl(`videos/${activeModalItem.video}`)}?v=2`}
+                  src={`${getMediaUrl(`videos/${activeModalItem.video}`)}?v=4`}
                   autoPlay
                   loop
                   muted
