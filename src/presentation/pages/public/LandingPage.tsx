@@ -661,7 +661,7 @@ export default function LandingPage() {
       title: 'BALANCE HÍDRICO DIARIO',
       desc: 'Control intuitivo de consumo de agua con metas calculadas según peso y nivel de actividad física.',
       icon: Droplets,
-      video: '2.mp4',
+      video: '5.mp4',
       poster: '/assets/service_diet.png'
     },
     {
@@ -670,7 +670,7 @@ export default function LandingPage() {
       title: 'COMUNICACIÓN CON NUTRICIONISTA',
       desc: 'Envío de mensajes privados en tiempo real para resolver dudas alimentarias directamente.',
       icon: MessageSquare,
-      video: '3.mp4',
+      video: '6.mp4',
       poster: '/assets/service_gym.png'
     },
     {
@@ -679,7 +679,7 @@ export default function LandingPage() {
       title: 'ENCRIPTACIÓN JWT Y PRIVACIDAD',
       desc: 'Protección de expediente clínico bajo estándares internacionales de encriptación.',
       icon: ShieldCheck,
-      video: '4.mp4',
+      video: '7.mp4',
       poster: '/assets/service_recipe.png'
     }
   ]
@@ -1005,6 +1005,39 @@ export default function LandingPage() {
                   videoName="4.mp4"
                   posterSrc="/assets/service_recipe.png"
                   onOpenModal={() => openModalItem(monitorGridItems[2], 2)}
+                  soundEnabled={soundEnabled}
+                />
+                <ScrollRevealVideo 
+                  number="04"
+                  title="BALANCE HÍDRICO"
+                  titleHover="METAS DIARIAS"
+                  subtitle="Monitoreo y cálculo personalizado de hidratación"
+                  subtitleHover="[ CONTROL HÍDRICO · METAS DIARIAS ]"
+                  videoName="8.mp4"
+                  posterSrc="/assets/service_diet.png"
+                  onOpenModal={() => openModalItem(monitorGridItems[3], 3)}
+                  soundEnabled={soundEnabled}
+                />
+                <ScrollRevealVideo 
+                  number="05"
+                  title="CHAT CON NUTRICIONISTA"
+                  titleHover="SOPORTE EN VIVO"
+                  subtitle="Mensajería directa en tiempo real"
+                  subtitleHover="[ CHAT DIRECTO · RESPUESTAS RÁPIDAS ]"
+                  videoName="9.mp4"
+                  posterSrc="/assets/service_gym.png"
+                  onOpenModal={() => openModalItem(monitorGridItems[4], 4)}
+                  soundEnabled={soundEnabled}
+                />
+                <ScrollRevealVideo 
+                  number="06"
+                  title="SEGURIDAD Y PRIVACIDAD"
+                  titleHover="EXPEDIENTE CLÍNICO"
+                  subtitle="Encriptación JWT bajo altos estándares"
+                  subtitleHover="[ CONEXIÓN SEGURA · DATOS ENCRIPTADOS ]"
+                  videoName="10.mp4"
+                  posterSrc="/assets/service_recipe.png"
+                  onOpenModal={() => openModalItem(monitorGridItems[5], 5)}
                   soundEnabled={soundEnabled}
                 />
               </div>
