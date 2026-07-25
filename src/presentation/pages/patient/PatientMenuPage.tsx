@@ -221,8 +221,8 @@ export default function PatientMenuPage() {
         'Content-Type': 'application/json'
       } : { 'Content-Type': 'application/json' }
 
-      const parsedWeight = parseFloat(fichaFormData.current_weight.replace(',', '.'))
-      const parsedHeight = parseFloat(fichaFormData.height_cm.replace(',', '.'))
+      const parsedWeight = parseFloat((fichaFormData.current_weight || '0').replace(',', '.')) || 0
+      const parsedHeight = parseFloat((fichaFormData.height_cm || '0').replace(',', '.')) || 0
 
       // 1. Update patient model (weight & height)
       const patchResponse = await fetch(`${API_CONFIG.BASE_URL}/pacientes/${pacienteData.id}/`, {
@@ -365,8 +365,8 @@ export default function PatientMenuPage() {
   // IMC Calculation fallback helper
   const calculateIMC = () => {
     if (pacienteData?.bmi) return Number(pacienteData.bmi).toFixed(1)
-    const weight = Number(fichaFormData.current_weight.replace(',', '.'))
-    const rawHeight = fichaFormData.height_cm.replace(',', '.')
+    const weight = Number((fichaFormData.current_weight || '0').replace(',', '.'))
+    const rawHeight = (fichaFormData.height_cm || '0').replace(',', '.')
     let height = Number(rawHeight)
     if (height > 3) height = height / 100 // convert to meters if cm
     if (weight && height) {
@@ -621,52 +621,6 @@ export default function PatientMenuPage() {
 
             <form onSubmit={handleSaveFicha} className="mt-6 space-y-4 flex-1 flex flex-col justify-between">
               <div className="space-y-3">
-                <div className="grid grid-cols-3 gap-2">
-                  <label className="block">
-                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Edad</span>
-                    <input 
-                      type="number"
-                      required
-                      value={fichaFormData.age}
-                      onChange={e => setFichaFormData(prev => ({ ...prev, age: e.target.value }))}
-                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
-                        isDark 
-                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
-                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
-                      }`}
-                    />
-                  </label>
-                  <label className="block">
-                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Peso (kg)</span>
-                    <input 
-                      type="number"
-                      step="0.01"
-                      required
-                      value={fichaFormData.current_weight}
-                      onChange={e => setFichaFormData(prev => ({ ...prev, current_weight: e.target.value }))}
-                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
-                        isDark 
-                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
-                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
-                      }`}
-                    />
-                  </label>
-                  <label className="block">
-                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-600"}`}>Altura (cm)</span>
-                    <input 
-                      type="number"
-                      step="0.1"
-                      required
-                      value={fichaFormData.height_cm}
-                      onChange={e => setFichaFormData(prev => ({ ...prev, height_cm: e.target.value }))}
-                      className={`mt-1 w-full rounded-xl p-2.5 text-xs outline-none transition-all duration-300 uppercase tracking-widest font-bold ${
-                        isDark 
-                          ? "bg-[#242d32] border border-white/10 text-white focus:border-cyan-400" 
-                          : "bg-[#fbf9f3] border-2 border-[#3c372b] text-[#2c281e] focus:border-[#d15900]"
-                      }`}
-                    />
-                  </label>
-                </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <label className="block">
